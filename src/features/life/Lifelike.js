@@ -1,5 +1,6 @@
 import React from 'react';
 import { clamp } from 'lodash';
+import PropTypes from 'prop-types';
 
 // Chakra UI
 import { Box, Flex, useColorMode } from '@chakra-ui/core';
@@ -21,7 +22,7 @@ import { Neighborhoods } from './neighborhoods';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 
-export const Lifelike = () => {
+export const Lifelike = ({ appContainerRef }) => {
   const { colorMode } = useColorMode();
 
   const [cells, setCells] = React.useState([]);
@@ -54,18 +55,21 @@ export const Lifelike = () => {
   const [cellSize, setCellSize] = React.useState(5);
   const [canvasWidth, setCanvasWidth] = React.useState(0);
   const [canvasHeight, setCanvasHeight] = React.useState(0);
+
+  const [canvasContainerWidth, setCanvasContainerWidth] = React.useState(0);
+  const [canvasContainerHeight, setCanvasContainerHeight] = React.useState(0);
+
   const [generations, setGenerations] = React.useState(0);
   const [isRunning, setIsRunning] = React.useState(false);
-
   const [maxFps, setMaxFps] = React.useState(60);
   const [fpsInterval, setFpsInterval] = React.useState(1000 / 60);
   const [currentFps, setCurrentFps] = React.useState(0);
   const [previousFrameTime, setPreviousFrameTime] = React.useState(0);
-
   const [lastFpsUpdate, setLastFpsUpdate] = React.useState(0);
 
-  const fpsLog = React.useRef([]);
+  const fpsLogRef = React.useRef([]);
   const canvasRef = React.useRef(null);
+  const canvasContainerRef = React.useRef(null);
 
   useGlobalKeyDown(
     React.useCallback(
@@ -98,12 +102,39 @@ export const Lifelike = () => {
     [wrap]
   );
 
+  const handleCanvasSizeChange = React.useCallback(
+    ({
+      newCellWidth = cellWidth,
+      newCellHeight = cellHeight,
+      newCellSize = cellSize,
+    }) => {
+      const rem = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
+
+      const newCanvasHeight = newCellHeight * newCellSize;
+      const newCanvasWidth = newCellWidth * newCellSize;
+
+      setCellSize(newCellSize);
+      setCellWidth(newCellWidth);
+      setCellHeight(newCellHeight);
+      setCanvasWidth(newCanvasWidth);
+      setCanvasHeight(newCanvasHeight);
+
+      canvasRef.current.width = newCanvasWidth;
+      canvasRef.current.height = newCanvasHeight;
+
+      setCanvasContainerWidth(newCanvasWidth + rem + 2);
+      setCanvasContainerHeight(newCanvasHeight + rem + 2);
+    },
+    [cellHeight, cellWidth, cellSize]
+  );
+
   const handleCellWidthChange = React.useCallback(
     (val) => {
       const newCellWidth = clamp(val, 5, 500);
 
-      setCellWidth(newCellWidth);
-      setCanvasWidth(newCellWidth * cellSize);
+      handleCanvasSizeChange({ newCellWidth });
 
       const newCells = createCells({
         cellHeight,
@@ -124,20 +155,23 @@ export const Lifelike = () => {
         })
       );
     },
-    [isRunning] // eslint-disable-line react-hooks/exhaustive-deps
+    [isRunning, cellHeight, cellSize] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleCellHeightChange = React.useCallback(
-    (newCellHeight) => {
-      setCellHeight(newCellHeight);
-      setCanvasHeight(newCellHeight * cellSize);
+    (val) => {
+      const newCellHeight = clamp(val, 5, 500);
+
+      handleCanvasSizeChange({ newCellHeight });
 
       const newCells = createCells({
         cellWidth,
         cellHeight: newCellHeight,
         fill: cells,
       });
+
       setCells(newCells);
+
       window.requestAnimationFrame(() =>
         drawCells({
           colorMode,
@@ -149,14 +183,18 @@ export const Lifelike = () => {
         })
       );
     },
-    [isRunning] // eslint-disable-line react-hooks/exhaustive-deps
+    [isRunning, cellWidth, cellSize] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleCellSizeChange = React.useCallback(
-    (newCellSize) => {
-      setCellSize(newCellSize);
-      setCanvasWidth(cellWidth * newCellSize);
-      setCanvasHeight(cellHeight * newCellSize);
+    (val) => {
+      const newCellSize = clamp(val, 1, 25);
+
+      handleCanvasSizeChange({ newCellSize });
+
+      // setCellSize(newCellSize);
+      // setCanvasWidth(cellWidth * newCellSize);
+      // setCanvasHeight(cellHeight * newCellSize);
 
       window.requestAnimationFrame(() =>
         drawCells({
@@ -169,7 +207,7 @@ export const Lifelike = () => {
         })
       );
     },
-    [isRunning] // eslint-disable-line react-hooks/exhaustive-deps
+    [isRunning, cellHeight, cellWidth] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleMaxFpsChange = React.useCallback((val) => {
@@ -226,19 +264,25 @@ export const Lifelike = () => {
     );
   }, [cellWidth, cellHeight, cellSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  React.useLayoutEffect(() => {
-    const canvasRect = canvasRef.current.getBoundingClientRect();
-    const newCellHeight = Math.trunc(canvasRect.height / cellSize);
-    const newCellWidth = Math.trunc(canvasRect.width / cellSize);
-    const newCanvasHeight = newCellHeight * cellSize;
-    const newCanvasWidth = newCellWidth * cellSize;
+  const fitCellsToCanvas = React.useCallback(() => {
+    // calculate 1 rem in px
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-    setCellWidth(newCellWidth);
-    setCellHeight(newCellHeight);
-    setCanvasWidth(newCanvasWidth);
-    canvasRef.current.width = newCanvasWidth;
-    setCanvasHeight(newCanvasHeight);
-    canvasRef.current.height = newCanvasHeight;
+    const canvasRect = canvasRef.current.getBoundingClientRect();
+
+    // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
+    const widthOffset = rem * 2 + 2;
+    const heightOffset = rem * 2 + 2;
+
+    const newCellWidth = Math.trunc(
+      (window.innerWidth - canvasRect.left - widthOffset) / cellSize
+    );
+
+    const newCellHeight = Math.trunc(
+      (window.innerHeight - canvasRect.top - heightOffset) / cellSize
+    );
+
+    handleCanvasSizeChange({ newCellWidth, newCellHeight });
 
     const newCells = createCells({
       cellWidth: newCellWidth,
@@ -254,28 +298,30 @@ export const Lifelike = () => {
       cellWidth: newCellWidth,
       cellHeight: newCellHeight,
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cellSize]);
+
+  React.useLayoutEffect(fitCellsToCanvas, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useAnimationFrame(() => {
     if (
       isRunning &&
       window.performance.now() - previousFrameTime > fpsInterval
     ) {
-      fpsLog.current.push(
+      fpsLogRef.current.push(
         1000 / (window.performance.now() - previousFrameTime)
       );
 
       if (window.performance.now() - lastFpsUpdate > 100) {
         setCurrentFps(
           Math.trunc(
-            (fpsLog.current.reduce((acc, val) => acc + val) * 10) /
-              fpsLog.current.length
+            (fpsLogRef.current.reduce((acc, val) => acc + val) * 10) /
+              fpsLogRef.current.length
           ) / 10
         );
         setLastFpsUpdate(window.performance.now());
       }
 
-      if (fpsLog.current.length > maxFps) fpsLog.current.shift();
+      if (fpsLogRef.current.length > maxFps) fpsLogRef.current.shift();
 
       setPreviousFrameTime(window.performance.now());
       tick();
@@ -308,13 +354,14 @@ export const Lifelike = () => {
     <Box w="100%" h="100%">
       <Nav />
       <Flex w="100%" h="calc(100vh - 6rem)">
-        <Box mr="2" mt="4">
+        <Box mr="0.5rem" mt="1rem">
           <Controls
             isRunning={isRunning}
             onClickStartStop={handleToggleIsRunning}
             onClickTick={tick}
-            onRandomizeCells={handleRandomizeCells}
-            onClearCells={handleClearCells}
+            onClickRandomizeCells={handleRandomizeCells}
+            onClickClearCells={handleClearCells}
+            onClickFitCellsToCanvas={fitCellsToCanvas}
           />
           <Menu
             neighborhood={neighborhood}
@@ -337,14 +384,19 @@ export const Lifelike = () => {
           />
           <Monitor generations={generations} currentFps={currentFps} />
         </Box>
-        <Box ml="2" mt="4" h="100%" w="100%">
-          <Canvas
-            canvasRef={canvasRef}
-            canvasWidth={canvasWidth}
-            canvasHeight={canvasHeight}
-          />
-        </Box>
+        <Canvas
+          canvasContainerRef={canvasContainerRef}
+          canvasContainerWidth={canvasContainerWidth}
+          canvasContainerHeight={canvasContainerHeight}
+          canvasRef={canvasRef}
+          canvasWidth={canvasWidth}
+          canvasHeight={canvasHeight}
+        />
       </Flex>
     </Box>
   );
+};
+
+Lifelike.propTypes = {
+  appContainerRef: PropTypes.object.isRequired,
 };
