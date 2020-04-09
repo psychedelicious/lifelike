@@ -63,4 +63,5 @@ Canvas.propTypes = {
   canvasContainerWidth: PropTypes.number,
   canvasContainerHeight: PropTypes.number,
   canvasOverlayRef: PropTypes.object.isRequired,
+  mousePositionRef: PropTypes.object.isRequired,
 };
