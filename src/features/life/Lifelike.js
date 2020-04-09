@@ -61,7 +61,7 @@ export const Lifelike = () => {
   const [cellSize, setCellSize] = React.useState(5);
 
   const [deadCellColor, setDeadCellColor] = React.useState(
-    lifelikeTheme.colors.gray['100']
+    lifelikeTheme.colors.gray['50']
   );
   const [aliveCellColor, setAliveCellColor] = React.useState(
     lifelikeTheme.colors.gray['700']
