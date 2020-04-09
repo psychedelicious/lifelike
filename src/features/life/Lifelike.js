@@ -244,9 +244,14 @@ export const Lifelike = () => {
   );
 
   const handleMaxFpsChange = React.useCallback((val) => {
-    const newMaxFps = clamp(val, 1, 120);
+    const newMaxFps = clamp(
+      val,
+      minMaxLimits.current.maxFps.min,
+      minMaxLimits.current.maxFps.max
+    );
     setMaxFps(newMaxFps);
     setFpsInterval(1000 / newMaxFps);
+    fpsLogRef.current = [];
   }, []);
 
   const handleNeighborhoodChange = React.useCallback((e) => {
@@ -267,6 +272,9 @@ export const Lifelike = () => {
     const newCells = createCells({ cellHeight, cellWidth, fill: 0 });
 
     setCells(newCells);
+    setGenerations(0);
+    setCurrentFps(0);
+    fpsLogRef.current = [];
 
     window.requestAnimationFrame(() =>
       drawCells({
@@ -284,6 +292,9 @@ export const Lifelike = () => {
     const newCells = createCells({ cellHeight, cellWidth });
 
     setCells(newCells);
+    setGenerations(0);
+    setCurrentFps(0);
+    fpsLogRef.current = [];
 
     window.requestAnimationFrame(() =>
       drawCells({
@@ -344,12 +355,12 @@ export const Lifelike = () => {
         1000 / (window.performance.now() - previousFrameTime)
       );
 
-      if (window.performance.now() - lastFpsUpdate > 100) {
+      if (window.performance.now() - lastFpsUpdate > 200) {
         setCurrentFps(
-          Math.trunc(
-            (fpsLogRef.current.reduce((acc, val) => acc + val) * 10) /
+          Math.round(
+            fpsLogRef.current.reduce((acc, val) => acc + val) /
               fpsLogRef.current.length
-          ) / 10
+          )
         );
         setLastFpsUpdate(window.performance.now());
       }
