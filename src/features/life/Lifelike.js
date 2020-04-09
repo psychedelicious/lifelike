@@ -298,7 +298,7 @@ export const Lifelike = ({ appContainerRef }) => {
       cellWidth: newCellWidth,
       cellHeight: newCellHeight,
     });
-  }, [cellSize]);
+  }, [cellSize, handleCanvasSizeChange]);
 
   React.useLayoutEffect(fitCellsToCanvas, []); // eslint-disable-line react-hooks/exhaustive-deps
 
