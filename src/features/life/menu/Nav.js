@@ -9,7 +9,9 @@ export const Nav = () => {
 
   return (
     <Flex justify="space-between">
-      <Heading mr="3">lifelike</Heading>
+      <Heading mr="3" fontWeight={300}>
+        lifelike
+      </Heading>
 
       <IconButton
         icon={colorMode === 'light' ? IoMdMoon : IoMdSunny}

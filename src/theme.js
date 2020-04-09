@@ -2,6 +2,11 @@ import { theme } from '@chakra-ui/core';
 
 export const lifelikeTheme = {
   ...theme,
+  fonts: {
+    ...theme.fonts,
+    body: "'Fira Code', monospace",
+    heading: "'Fira Code', monospace",
+  },
   colors: {
     ...theme.colors,
     transparent: 'transparent',
