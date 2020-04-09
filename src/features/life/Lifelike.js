@@ -83,7 +83,7 @@ export const Lifelike = () => {
   const [canvasContainerWidth, setCanvasContainerWidth] = React.useState(0);
   const [canvasContainerHeight, setCanvasContainerHeight] = React.useState(0);
 
-  const [showGridLines, setShowGridLines] = React.useState(true);
+  const [showGridLines, setShowGridLines] = React.useState(false);
 
   const [generations, setGenerations] = React.useState(0);
   const [isRunning, setIsRunning] = React.useState(false);
