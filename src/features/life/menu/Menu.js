@@ -100,16 +100,9 @@ export const Menu = React.memo(
           <Checkbox isChecked={showGridLines} onChange={onToggleGridLines}>
             gridlines
           </Checkbox>
-        <Flex my="1" align="center" justify="left">
-          <FormLabel htmlFor="wrap" fontSize="sm">
+          <Checkbox isChecked={wrap} onChange={onWrapChange}>
             wrap
-          </FormLabel>
-          <Switch
-            isChecked={wrap}
-            id="wrap"
-            size="sm"
-            onChange={onWrapChange}
-          />
+          </Checkbox>
         </Flex>
       </Flex>
     );
