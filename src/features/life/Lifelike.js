@@ -3,7 +3,7 @@ import { clamp } from 'lodash';
 import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
-import { Box, Flex, useColorMode } from '@chakra-ui/core';
+import { Box, Flex } from '@chakra-ui/core';
 
 // Components
 import { Canvas } from './canvas/Canvas';
@@ -28,8 +28,6 @@ import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { lifelikeTheme } from '../../theme';
 
 export const Lifelike = () => {
-  const { colorMode } = useColorMode();
-
   const [cells, setCells] = React.useState([]);
   const [neighborhood, setNeighborhood] = React.useState(Neighborhoods.MOORE);
   const [born, setBorn] = React.useState([

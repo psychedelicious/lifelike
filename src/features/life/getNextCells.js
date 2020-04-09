@@ -7,7 +7,6 @@ export const getNextCells = ({
   wrap,
   neighborhood,
 }) => {
-  // let newCells = [...cells];
   let newCells = Array.from(Array(cellWidth), () => new Array(cellHeight));
 
   for (let x = 0; x < cellWidth; x++) {
