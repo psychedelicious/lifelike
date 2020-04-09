@@ -28,15 +28,15 @@ export const Canvas = ({
         ref={mousePositionRef}
         style={{ height: '100%', width: '100%', padding: '0', margin: '0' }}
       >
-      <canvas
-        ref={canvasRef}
-        style={{
-          padding: '0.5rem',
-          width: canvasWidth || '100%',
-          height: canvasHeight || '100%',
-          boxSizing: 'initial',
-        }}
-      ></canvas>
+        <canvas
+          ref={canvasRef}
+          style={{
+            padding: '0.5rem',
+            width: canvasWidth || '100%',
+            height: canvasHeight || '100%',
+            boxSizing: 'initial',
+          }}
+        ></canvas>
         <canvas
           ref={canvasOverlayRef}
           style={{
@@ -59,4 +59,8 @@ Canvas.propTypes = {
   canvasRef: PropTypes.object.isRequired,
   canvasWidth: PropTypes.number,
   canvasHeight: PropTypes.number,
+  canvasContainerRef: PropTypes.object.isRequired,
+  canvasContainerWidth: PropTypes.number,
+  canvasContainerHeight: PropTypes.number,
+  canvasOverlayRef: PropTypes.object.isRequired,
 };
