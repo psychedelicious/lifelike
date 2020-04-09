@@ -27,6 +27,7 @@ export const Menu = React.memo(
     onCellHeightChange,
     cellSize,
     onCellSizeChange,
+    minMaxLimits,
     maxFps,
     onMaxFpsChange,
     isRunning,
@@ -36,8 +37,8 @@ export const Menu = React.memo(
         <Flex direction="column">
           <NumberSlider
             value={cellWidth}
-            min={5}
-            max={500}
+            min={minMaxLimits.current.cellWidth.min}
+            max={minMaxLimits.current.cellWidth.max}
             onChange={onCellWidthChange}
             isDisabled={isRunning}
             icon={AiOutlineColumnWidth}
@@ -46,8 +47,8 @@ export const Menu = React.memo(
 
           <NumberSlider
             value={cellHeight}
-            min={5}
-            max={500}
+            min={minMaxLimits.current.cellHeight.min}
+            max={minMaxLimits.current.cellHeight.max}
             onChange={onCellHeightChange}
             isDisabled={isRunning}
             icon={AiOutlineColumnHeight}
@@ -56,8 +57,8 @@ export const Menu = React.memo(
 
           <NumberSlider
             value={cellSize}
-            min={1}
-            max={25}
+            min={minMaxLimits.current.cellSize.min}
+            max={minMaxLimits.current.cellSize.max}
             onChange={onCellSizeChange}
             isDisabled={isRunning}
             icon={GiResize}
@@ -66,8 +67,8 @@ export const Menu = React.memo(
 
           <NumberSlider
             value={maxFps}
-            min={1}
-            max={120}
+            min={minMaxLimits.current.maxFps.min}
+            max={minMaxLimits.current.maxFps.max}
             onChange={onMaxFpsChange}
             icon={IoIosSpeedometer}
             tooltipLabel="max fps"
@@ -122,6 +123,7 @@ Menu.propTypes = {
   onCellHeightChange: PropTypes.func.isRequired,
   cellSize: PropTypes.number.isRequired,
   onCellSizeChange: PropTypes.func.isRequired,
+  minMaxLimits: PropTypes.object.isRequired,
   maxFps: PropTypes.number.isRequired,
   onMaxFpsChange: PropTypes.func.isRequired,
   isRunning: PropTypes.bool.isRequired,

@@ -50,9 +50,30 @@ export const Lifelike = () => {
     false,
   ]);
   const [wrap, setWrap] = React.useState(true);
+
   const [cellWidth, setCellWidth] = React.useState(0);
   const [cellHeight, setCellHeight] = React.useState(0);
   const [cellSize, setCellSize] = React.useState(5);
+
+  const minMaxLimits = React.useRef({
+    cellWidth: {
+      min: 1,
+      max: 2000,
+    },
+    cellHeight: {
+      min: 1,
+      max: 2000,
+    },
+    cellSize: {
+      min: 1,
+      max: 25,
+    },
+    maxFps: {
+      min: 1,
+      max: 120,
+    },
+  });
+
   const [canvasWidth, setCanvasWidth] = React.useState(0);
   const [canvasHeight, setCanvasHeight] = React.useState(0);
 
@@ -112,6 +133,10 @@ export const Lifelike = () => {
         getComputedStyle(document.documentElement).fontSize
       );
 
+      // newCellSize = clamp(newCellSize, minMaxLimits.current.cellHeight.min, minMaxLimits.current.cellHeight.max,);
+      // newCellWidth = clamp(newCellWidth, minMaxLimits.current.cellHeight.min, minMaxLimits.current.cellHeight.max,);
+      // newCellHeight = clamp(newCellHeight, minMaxLimits.current.cellHeight.min, minMaxLimits.current.cellHeight.max,);
+
       const newCanvasHeight = newCellHeight * newCellSize;
       const newCanvasWidth = newCellWidth * newCellSize;
 
@@ -132,7 +157,11 @@ export const Lifelike = () => {
 
   const handleCellWidthChange = React.useCallback(
     (val) => {
-      const newCellWidth = clamp(val, 5, 500);
+      const newCellWidth = clamp(
+        val,
+        minMaxLimits.current.cellWidth.min,
+        minMaxLimits.current.cellWidth.max
+      );
 
       handleCanvasSizeChange({ newCellWidth });
 
@@ -160,7 +189,11 @@ export const Lifelike = () => {
 
   const handleCellHeightChange = React.useCallback(
     (val) => {
-      const newCellHeight = clamp(val, 5, 500);
+      const newCellHeight = clamp(
+        val,
+        minMaxLimits.current.cellHeight.min,
+        minMaxLimits.current.cellHeight.max
+      );
 
       handleCanvasSizeChange({ newCellHeight });
 
@@ -188,13 +221,13 @@ export const Lifelike = () => {
 
   const handleCellSizeChange = React.useCallback(
     (val) => {
-      const newCellSize = clamp(val, 1, 25);
+      const newCellSize = clamp(
+        val,
+        minMaxLimits.current.cellSize.min,
+        minMaxLimits.current.cellSize.max
+      );
 
       handleCanvasSizeChange({ newCellSize });
-
-      // setCellSize(newCellSize);
-      // setCanvasWidth(cellWidth * newCellSize);
-      // setCanvasHeight(cellHeight * newCellSize);
 
       window.requestAnimationFrame(() =>
         drawCells({
@@ -378,6 +411,7 @@ export const Lifelike = () => {
             onCellHeightChange={handleCellHeightChange}
             cellSize={cellSize}
             onCellSizeChange={handleCellSizeChange}
+            minMaxLimits={minMaxLimits}
             maxFps={maxFps}
             onMaxFpsChange={handleMaxFpsChange}
             isRunning={isRunning}
