@@ -5,7 +5,7 @@ import { AiOutlineColumnHeight, AiOutlineColumnWidth } from 'react-icons/ai';
 import { GiResize } from 'react-icons/gi';
 import { IoIosSpeedometer } from 'react-icons/io';
 
-import { Flex, FormLabel, Switch } from '@chakra-ui/core';
+import { Checkbox, Flex } from '@chakra-ui/core';
 
 import { NeighborhoodRadio } from './NeighborhoodRadio';
 import { NumberSlider } from './NumberSlider';
@@ -31,9 +31,11 @@ export const Menu = React.memo(
     maxFps,
     onMaxFpsChange,
     isRunning,
+    showGridLines,
+    onToggleGridLines,
   }) => {
     return (
-      <Flex direction="column" align="left" w="18rem">
+      <Flex direction="column" align="left">
         <Flex direction="column">
           <NumberSlider
             value={cellWidth}
@@ -75,23 +77,29 @@ export const Menu = React.memo(
           />
         </Flex>
 
-        <RuleCheckboxes
-          ruleArray={born}
-          ruleType="born"
-          onChange={onBornChange}
-        />
+        <Flex direction="column">
+          <RuleCheckboxes
+            ruleArray={born}
+            ruleType="born"
+            onChange={onBornChange}
+          />
 
-        <RuleCheckboxes
-          ruleArray={survive}
-          ruleType="survive"
-          onChange={onSurviveChange}
-        />
+          <RuleCheckboxes
+            ruleArray={survive}
+            ruleType="survive"
+            onChange={onSurviveChange}
+          />
+        </Flex>
 
         <NeighborhoodRadio
           neighborhood={neighborhood}
           onChange={onNeighborhoodChange}
         />
 
+        <Flex justify="space-between">
+          <Checkbox isChecked={showGridLines} onChange={onToggleGridLines}>
+            gridlines
+          </Checkbox>
         <Flex my="1" align="center" justify="left">
           <FormLabel htmlFor="wrap" fontSize="sm">
             wrap
@@ -127,4 +135,6 @@ Menu.propTypes = {
   maxFps: PropTypes.number.isRequired,
   onMaxFpsChange: PropTypes.func.isRequired,
   isRunning: PropTypes.bool.isRequired,
+  showGridLines: PropTypes.bool.isRequired,
+  onToggleGridLines: PropTypes.func.isRequired,
 };

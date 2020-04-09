@@ -10,6 +10,7 @@ export const Canvas = ({
   canvasContainerRef,
   canvasContainerWidth,
   canvasContainerHeight,
+  canvasOverlayRef,
 }) => {
   return (
     <Box
@@ -20,6 +21,7 @@ export const Canvas = ({
       w={canvasContainerWidth || '100%'}
       h={canvasContainerHeight || '100%'}
       ref={canvasContainerRef}
+      position="relative"
     >
       <canvas
         ref={canvasRef}
@@ -30,6 +32,19 @@ export const Canvas = ({
           boxSizing: 'initial',
         }}
       ></canvas>
+        <canvas
+          ref={canvasOverlayRef}
+          style={{
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            zIndex: '1',
+            padding: '0.5rem',
+            width: canvasWidth || '100%',
+            height: canvasHeight || '100%',
+            boxSizing: 'initial',
+          }}
+        ></canvas>
     </Box>
   );
 };

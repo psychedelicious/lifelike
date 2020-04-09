@@ -1,5 +1,6 @@
 import React from 'react';
 import { clamp } from 'lodash';
+import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
 import { Box, Flex, useColorMode } from '@chakra-ui/core';
@@ -14,9 +15,11 @@ import { Nav } from './menu/Nav';
 
 // Functions
 import { createCells } from './createCells';
-import { drawCells } from './canvas/drawCells';
 import { getNextCells } from './getNextCells';
 import { Neighborhoods } from './neighborhoods';
+import { drawCells } from './canvas/drawCells';
+import { drawGridLines } from './canvas/drawGridLines';
+import { clearCanvas } from './canvas/clearCanvas';
 
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
@@ -80,6 +83,8 @@ export const Lifelike = () => {
   const [canvasContainerWidth, setCanvasContainerWidth] = React.useState(0);
   const [canvasContainerHeight, setCanvasContainerHeight] = React.useState(0);
 
+  const [showGridLines, setShowGridLines] = React.useState(true);
+
   const [generations, setGenerations] = React.useState(0);
   const [isRunning, setIsRunning] = React.useState(false);
   const [maxFps, setMaxFps] = React.useState(60);
@@ -88,9 +93,16 @@ export const Lifelike = () => {
   const [previousFrameTime, setPreviousFrameTime] = React.useState(0);
   const [lastFpsUpdate, setLastFpsUpdate] = React.useState(0);
 
+  const [mousePosition, mousePositionRef] = useMousePosition(
+    0, // enterDelay
+    0, // leaveDelay
+    10 // fps
+  );
+
   const fpsLogRef = React.useRef([]);
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
+  const canvasOverlayRef = React.useRef(null);
 
   useGlobalKeyDown(
     React.useCallback(
@@ -107,7 +119,7 @@ export const Lifelike = () => {
             return;
         }
       },
-      [isRunning, cells] // eslint-disable-line react-hooks/exhaustive-deps
+      [isRunning, cells]
     )
   );
 
@@ -133,10 +145,6 @@ export const Lifelike = () => {
         getComputedStyle(document.documentElement).fontSize
       );
 
-      // newCellSize = clamp(newCellSize, minMaxLimits.current.cellHeight.min, minMaxLimits.current.cellHeight.max,);
-      // newCellWidth = clamp(newCellWidth, minMaxLimits.current.cellHeight.min, minMaxLimits.current.cellHeight.max,);
-      // newCellHeight = clamp(newCellHeight, minMaxLimits.current.cellHeight.min, minMaxLimits.current.cellHeight.max,);
-
       const newCanvasHeight = newCellHeight * newCellSize;
       const newCanvasWidth = newCellWidth * newCellSize;
 
@@ -149,11 +157,50 @@ export const Lifelike = () => {
       canvasRef.current.width = newCanvasWidth;
       canvasRef.current.height = newCanvasHeight;
 
+      canvasOverlayRef.current.width = newCanvasWidth;
+      canvasOverlayRef.current.height = newCanvasHeight;
+
       setCanvasContainerWidth(newCanvasWidth + rem + 2);
       setCanvasContainerHeight(newCanvasHeight + rem + 2);
     },
     [cellHeight, cellWidth, cellSize]
   );
+
+  // const handleDrawGridLines = React.useCallback(
+  //   ({
+  //     _cellWidth = cellWidth,
+  //     _cellHeight = cellHeight,
+  //     _cellSize = cellSize,
+  //     _showGridLines = showGridLines,
+  //   }) => {
+  //     clearCanvas({ canvas: canvasOverlayRef.current });
+
+  //     _showGridLines &&
+  //       drawGridLines({
+  //         canvas: canvasOverlayRef.current,
+  //         cellWidth: _cellWidth,
+  //         cellHeight: _cellHeight,
+  //         cellSize: _cellSize,
+  //       });
+  //   },
+  //   [showGridLines, cellWidth, cellHeight, cellSize]
+  // );
+
+  const handleToggleGridLines = React.useCallback(() => {
+    const newShowGridLines = !showGridLines;
+
+    setShowGridLines(newShowGridLines);
+    clearCanvas({ canvas: canvasOverlayRef.current });
+
+    if (newShowGridLines) {
+      drawGridLines({
+        canvas: canvasOverlayRef.current,
+        cellHeight,
+        cellWidth,
+        cellSize,
+      });
+    }
+  }, [showGridLines, cellHeight, cellWidth, cellSize]);
 
   const handleCellWidthChange = React.useCallback(
     (val) => {
@@ -173,6 +220,17 @@ export const Lifelike = () => {
 
       setCells(newCells);
 
+      clearCanvas({ canvas: canvasOverlayRef.current });
+
+      if (showGridLines) {
+        drawGridLines({
+          canvas: canvasOverlayRef.current,
+          cellHeight,
+          cellWidth: newCellWidth,
+          cellSize,
+        });
+      }
+
       window.requestAnimationFrame(() =>
         drawCells({
           colorMode,
@@ -184,7 +242,7 @@ export const Lifelike = () => {
         })
       );
     },
-    [isRunning, cellHeight, cellSize] // eslint-disable-line react-hooks/exhaustive-deps
+    [isRunning, cellHeight, cellSize, showGridLines]
   );
 
   const handleCellHeightChange = React.useCallback(
@@ -205,6 +263,17 @@ export const Lifelike = () => {
 
       setCells(newCells);
 
+      clearCanvas({ canvas: canvasOverlayRef.current });
+
+      if (showGridLines) {
+        drawGridLines({
+          canvas: canvasOverlayRef.current,
+          cellHeight: newCellHeight,
+          cellWidth,
+          cellSize,
+        });
+      }
+
       window.requestAnimationFrame(() =>
         drawCells({
           colorMode,
@@ -216,7 +285,7 @@ export const Lifelike = () => {
         })
       );
     },
-    [isRunning, cellWidth, cellSize] // eslint-disable-line react-hooks/exhaustive-deps
+    [isRunning, cellWidth, cellSize, showGridLines]
   );
 
   const handleCellSizeChange = React.useCallback(
@@ -227,7 +296,20 @@ export const Lifelike = () => {
         minMaxLimits.current.cellSize.max
       );
 
+      setCellSize(newCellSize);
+
       handleCanvasSizeChange({ newCellSize });
+
+      clearCanvas({ canvas: canvasOverlayRef.current });
+
+      if (showGridLines) {
+        drawGridLines({
+          canvas: canvasOverlayRef.current,
+          cellHeight,
+          cellWidth,
+          cellSize: newCellSize,
+        });
+      }
 
       window.requestAnimationFrame(() =>
         drawCells({
@@ -240,7 +322,7 @@ export const Lifelike = () => {
         })
       );
     },
-    [isRunning, cellHeight, cellWidth] // eslint-disable-line react-hooks/exhaustive-deps
+    [isRunning, cellHeight, cellWidth, showGridLines]
   );
 
   const handleMaxFpsChange = React.useCallback((val) => {
@@ -286,7 +368,7 @@ export const Lifelike = () => {
         cells: newCells,
       })
     );
-  }, [cellWidth, cellHeight, cellSize]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cellWidth, cellHeight, cellSize]);
 
   const handleRandomizeCells = React.useCallback(() => {
     const newCells = createCells({ cellHeight, cellWidth });
@@ -306,7 +388,7 @@ export const Lifelike = () => {
         cells: newCells,
       })
     );
-  }, [cellWidth, cellHeight, cellSize]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cellWidth, cellHeight, cellSize]);
 
   const fitCellsToCanvas = React.useCallback(
     (currentCells) => {
@@ -346,6 +428,17 @@ export const Lifelike = () => {
         cellWidth: newCellWidth,
         cellHeight: newCellHeight,
       });
+
+      clearCanvas({ canvas: canvasOverlayRef.current });
+
+      if (showGridLines) {
+        drawGridLines({
+          canvas: canvasOverlayRef.current,
+          cellHeight: newCellHeight,
+          cellWidth: newCellWidth,
+          cellSize: cellSize,
+        });
+      }
     },
     [cellSize, handleCanvasSizeChange]
   );
@@ -388,8 +481,10 @@ export const Lifelike = () => {
       wrap,
       neighborhood,
     });
+
     setCells(newCells);
     setGenerations((generations) => generations + 1);
+
     drawCells({
       colorMode,
       cellSize,
@@ -432,6 +527,8 @@ export const Lifelike = () => {
             maxFps={maxFps}
             onMaxFpsChange={handleMaxFpsChange}
             isRunning={isRunning}
+            showGridLines={showGridLines}
+            onToggleGridLines={handleToggleGridLines}
           />
           <Monitor generations={generations} currentFps={currentFps} />
         </Box>
@@ -442,6 +539,8 @@ export const Lifelike = () => {
           canvasRef={canvasRef}
           canvasWidth={canvasWidth}
           canvasHeight={canvasHeight}
+          canvasOverlayRef={canvasOverlayRef}
+          mousePositionRef={mousePositionRef}
         />
       </Flex>
     </Box>
