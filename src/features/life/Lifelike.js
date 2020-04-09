@@ -69,7 +69,7 @@ export const Lifelike = () => {
   const [gridLineColor, setGridLineColor] = React.useState(
     lifelikeTheme.colors.gray['300']
   );
-  
+
   const minMaxLimits = React.useRef({
     cellWidth: {
       min: 1,
