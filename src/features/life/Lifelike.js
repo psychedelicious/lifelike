@@ -1,6 +1,5 @@
 import React from 'react';
 import { clamp } from 'lodash';
-import PropTypes from 'prop-types';
 
 // Chakra UI
 import { Box, Flex, useColorMode } from '@chakra-ui/core';
@@ -22,7 +21,7 @@ import { Neighborhoods } from './neighborhoods';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 
-export const Lifelike = ({ appContainerRef }) => {
+export const Lifelike = () => {
   const { colorMode } = useColorMode();
 
   const [cells, setCells] = React.useState([]);
@@ -395,8 +394,4 @@ export const Lifelike = ({ appContainerRef }) => {
       </Flex>
     </Box>
   );
-};
-
-Lifelike.propTypes = {
-  appContainerRef: PropTypes.object.isRequired,
 };
