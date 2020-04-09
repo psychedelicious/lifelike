@@ -8,9 +8,7 @@ import {
   FaRandom,
   FaExpand,
 } from 'react-icons/fa';
-import { Flex, IconButton } from '@chakra-ui/core';
-
-import { IconButtonModalConfirm } from './IconButtonModalConfirm';
+import { Flex, IconButton, Tooltip } from '@chakra-ui/core';
 
 export const Controls = React.memo(
   ({
@@ -23,41 +21,51 @@ export const Controls = React.memo(
   }) => {
     return (
       <Flex mb="2" justify="space-between">
-        <IconButton
-          icon={isRunning ? FaPause : FaPlay}
-          variant="solid"
-          aria-label="start/stop"
-          onClick={onClickStartStop}
-        />
-        <IconButton
-          isDisabled={isRunning}
-          icon={FaForward}
-          variant="solid"
-          aria-label="tick once"
-          onClick={onClickTick}
-        />
-        <IconButtonModalConfirm
-          icon={FaTrash}
-          header="clear all cells"
-          body="for real?"
-          confirmText="yeah clear 'em"
-          onConfirmCallback={onClickClearCells}
-        />
-        <IconButtonModalConfirm
-          icon={FaRandom}
-          header="randomize all cells"
-          body="for real?"
-          confirmText="yeah shuffle 'em"
-          onConfirmCallback={onClickRandomizeCells}
-        />
-        <IconButtonModalConfirm
-          isDisabled={isRunning}
-          icon={FaExpand}
-          header="fit cell grid to window"
-          body="if the cell grid needs to expand to fill the window, extra empty space will be added. if the cell grid need to shrink to fit, cells will be lost!"
-          confirmText="yeah resize 'em"
-          onConfirmCallback={onClickFitCellsToCanvas}
-        />
+        <Tooltip hasArrow label={isRunning ? 'stop' : 'start'} placement="top">
+          <IconButton
+            icon={isRunning ? FaPause : FaPlay}
+            variant="solid"
+            aria-label="start/stop"
+            onClick={onClickStartStop}
+          />
+        </Tooltip>
+
+        <Tooltip hasArrow label="tick" placement="top">
+          <IconButton
+            isDisabled={isRunning}
+            icon={FaForward}
+            variant="solid"
+            aria-label="tick"
+            onClick={onClickTick}
+          />
+        </Tooltip>
+
+        <Tooltip hasArrow label="clear all cells" placement="top">
+          <IconButton
+            icon={FaTrash}
+            variant="solid"
+            aria-label="clear all cells"
+            onClick={onClickClearCells}
+          />
+        </Tooltip>
+
+        <Tooltip hasArrow label="randomize all cells" placement="top">
+          <IconButton
+            icon={FaRandom}
+            variant="solid"
+            aria-label="randomize all cells"
+            onClick={onClickRandomizeCells}
+          />
+        </Tooltip>
+
+        <Tooltip hasArrow label="expand/shrink grid to fit" placement="top">
+          <IconButton
+            icon={FaExpand}
+            variant="solid"
+            aria-label="expand/shrink grid to fit"
+            onClick={onClickFitCellsToCanvas}
+          />
+        </Tooltip>
       </Flex>
     );
   }

@@ -5,7 +5,7 @@ import { AiOutlineColumnHeight, AiOutlineColumnWidth } from 'react-icons/ai';
 import { GiResize } from 'react-icons/gi';
 import { IoIosSpeedometer } from 'react-icons/io';
 
-import { Checkbox, Flex } from '@chakra-ui/core';
+import { Checkbox, Flex, Tooltip, Text } from '@chakra-ui/core';
 
 import { NeighborhoodRadio } from './NeighborhoodRadio';
 import { NumberSlider } from './NumberSlider';
@@ -35,7 +35,7 @@ export const Menu = React.memo(
     onToggleGridLines,
   }) => {
     return (
-      <Flex direction="column" align="left" w='17rem'>
+      <Flex direction="column" align="left" w="18.5rem">
         <Flex direction="column">
           <NumberSlider
             value={cellWidth}
@@ -73,7 +73,7 @@ export const Menu = React.memo(
             max={minMaxLimits.current.maxFps.max}
             onChange={onMaxFpsChange}
             icon={IoIosSpeedometer}
-            tooltipLabel="max fps"
+            tooltipLabel="target ticks per second"
           />
         </Flex>
 
@@ -96,12 +96,25 @@ export const Menu = React.memo(
           onChange={onNeighborhoodChange}
         />
 
-        <Flex justify="space-between">
-          <Checkbox isChecked={showGridLines} onChange={onToggleGridLines}>
-            gridlines
+        <Flex justify="left">
+          <Checkbox
+            isChecked={showGridLines}
+            onChange={onToggleGridLines}
+            mr="0.5rem"
+          >
+            <Tooltip hasArrow label="toggle grid lines" placement="top">
+              <Text fontSize="sm">grid lines</Text>
+            </Tooltip>
           </Checkbox>
+
           <Checkbox isChecked={wrap} onChange={onWrapChange}>
-            wrap
+            <Tooltip
+              hasArrow
+              label="toggle edge wrapping"
+              placement="top"
+            >
+              <Text fontSize="sm">wrap</Text>
+            </Tooltip>
           </Checkbox>
         </Flex>
       </Flex>

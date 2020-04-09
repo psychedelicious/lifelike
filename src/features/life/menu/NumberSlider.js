@@ -26,11 +26,13 @@ export const NumberSlider = React.memo(
         >
           <SliderTrack />
           <SliderFilledTrack />
-          <SliderThumb size={6}>
-            <Box color="gray.900" as={icon} />
-          </SliderThumb>
+          <Tooltip hasArrow label={tooltipLabel} placement="top" zIndex="2">
+            <SliderThumb size={6}>
+              <Box color="gray.800" as={icon} />
+            </SliderThumb>
+          </Tooltip>
         </Slider>
-        <Tooltip label={tooltipLabel} placement="top" zIndex="2">
+        <Tooltip hasArrow label={tooltipLabel} placement="top" zIndex="2">
           <NumberInput
             size="sm"
             maxW="5rem"
