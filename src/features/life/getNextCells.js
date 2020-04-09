@@ -9,7 +9,7 @@ export const getNextCells = ({
 }) => {
   // let newCells = [...cells];
   let newCells = Array.from(Array(cellWidth), () => new Array(cellHeight));
-  
+
   for (let x = 0; x < cellWidth; x++) {
     for (let y = 0; y < cellHeight; y++) {
       let neighborCount = 0;
@@ -34,7 +34,6 @@ export const getNextCells = ({
             // wrap to the south
             _y = cellHeight - _y;
           }
-          // console.log(`cell ${x},${y}, n ${_x},${_y} = ${cells[_x][_y]}`)
         } else {
           if (_x < 0 || _x >= cellWidth || _y < 0 || _y >= cellHeight) {
             // ignore this neighbor
@@ -45,14 +44,12 @@ export const getNextCells = ({
         neighborCount += cells[_x][_y];
       }
 
-      // console.log(`cell ${x},${y} - ${neighborCount}`);
-
       if (cells[x][y] === 0 && born[neighborCount] === true) {
         newCells[x][y] = 1;
       } else if (cells[x][y] === 1 && survive[neighborCount] === false) {
         newCells[x][y] = 0;
       } else {
-        newCells[x][y] = cells[x][y]
+        newCells[x][y] = cells[x][y];
       }
     }
   }
