@@ -166,26 +166,6 @@ export const Lifelike = () => {
     [cellHeight, cellWidth, cellSize]
   );
 
-  // const handleDrawGridLines = React.useCallback(
-  //   ({
-  //     _cellWidth = cellWidth,
-  //     _cellHeight = cellHeight,
-  //     _cellSize = cellSize,
-  //     _showGridLines = showGridLines,
-  //   }) => {
-  //     clearCanvas({ canvas: canvasOverlayRef.current });
-
-  //     _showGridLines &&
-  //       drawGridLines({
-  //         canvas: canvasOverlayRef.current,
-  //         cellWidth: _cellWidth,
-  //         cellHeight: _cellHeight,
-  //         cellSize: _cellSize,
-  //       });
-  //   },
-  //   [showGridLines, cellWidth, cellHeight, cellSize]
-  // );
-
   const handleToggleGridLines = React.useCallback(() => {
     const newShowGridLines = !showGridLines;
 
