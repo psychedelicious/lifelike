@@ -1087,6 +1087,14 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
+"@essentials/request-timeout@^1.0.1":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@essentials/request-timeout/-/request-timeout-1.0.2.tgz#0fcb7d7ec186fcfc5f32685968407a2d51d6443d"
+  integrity sha512-P4pM8z1J9Ifj9SanjHyIuzV+AF/Ry6Coxm6foyza3aiDsweHME3t5sRrKv0ohpsmQLrmgt8XLlwFLPoAYLpq2Q==
+  dependencies:
+    performance-now "^2.1.0"
+    raf "^3.4.1"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -1323,6 +1331,20 @@
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@reach/visually-hidden/-/visually-hidden-0.1.4.tgz#0dc4ecedf523004337214187db70a46183bd945b"
   integrity sha512-QHbzXjflSlCvDd6vJwdwx16mSB+vUCCQMiU/wK/CgVNPibtpEiIbisyxkpZc55DyDFNUIqP91rSUsNae+ogGDQ==
+
+"@react-hook/mouse-position@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@react-hook/mouse-position/-/mouse-position-3.1.0.tgz#f85dae1c7e994d5ddae22b80432920a01db8b018"
+  integrity sha512-Twqs7G+FvoSPQ4Z5nY+Tp9Ur1YRegz7939BOl8/ihG4Y8551Xjukitd9J/2d7/1nMDKDkd3G7LNzPpRPVsIb8g==
+  dependencies:
+    "@react-hook/throttle" "^1.0.9"
+
+"@react-hook/throttle@^1.0.9":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@react-hook/throttle/-/throttle-1.0.12.tgz#4e78cf19de2a733d9a2dfcb342bf99de21fa3d64"
+  integrity sha512-hukkwzt3ok8vhDJGfBIJfQIfI+o2xaMwrZKUUY3yAHTGThJZ8SG5Uga/suuwa9vDNS3+PORPL4ib5cri/QHKnw==
+  dependencies:
+    "@essentials/request-timeout" "^1.0.1"
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"

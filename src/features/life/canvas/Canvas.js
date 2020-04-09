@@ -11,6 +11,7 @@ export const Canvas = ({
   canvasContainerWidth,
   canvasContainerHeight,
   canvasOverlayRef,
+  mousePositionRef,
 }) => {
   return (
     <Box
@@ -23,6 +24,10 @@ export const Canvas = ({
       ref={canvasContainerRef}
       position="relative"
     >
+      <div
+        ref={mousePositionRef}
+        style={{ height: '100%', width: '100%', padding: '0', margin: '0' }}
+      >
       <canvas
         ref={canvasRef}
         style={{
@@ -45,6 +50,7 @@ export const Canvas = ({
             boxSizing: 'initial',
           }}
         ></canvas>
+      </div>
     </Box>
   );
 };
