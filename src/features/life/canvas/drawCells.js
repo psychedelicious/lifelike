@@ -4,12 +4,14 @@ export const drawCells = ({
   cellSize,
   cellWidth,
   cellHeight,
+  deadCellColor,
+  aliveCellColor,
 }) => {
   const context = canvas.getContext('2d', { alpha: false });
-  context.fillStyle = '#EDF2F7';
+  context.fillStyle = deadCellColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  context.fillStyle = '#2D3748';
+  context.fillStyle = aliveCellColor;
   for (let x = 0; x < cellWidth; x++) {
     for (let y = 0; y < cellHeight; y++) {
       cells[x][y] &&

@@ -3,11 +3,11 @@ export const drawGridLines = ({
   cellWidth,
   cellHeight,
   cellSize,
-  color = '#B3B7BB',
+  gridLineColor,
   thickness = 0.5,
 }) => {
   const context = canvas.getContext('2d');
-  context.fillStyle = color;
+  context.fillStyle = gridLineColor;
   for (let cellX = 1; cellX < cellWidth; cellX++) {
     context.fillRect(cellX * cellSize, 0, thickness, cellHeight * cellSize);
   }

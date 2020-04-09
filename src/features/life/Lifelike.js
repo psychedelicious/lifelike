@@ -7,7 +7,6 @@ import { Box, Flex, useColorMode } from '@chakra-ui/core';
 
 // Components
 import { Canvas } from './canvas/Canvas';
-
 import { Controls } from './menu/Controls';
 import { Menu } from './menu/Menu';
 import { Monitor } from './menu/Monitor';
@@ -24,6 +23,9 @@ import { clearCanvas } from './canvas/clearCanvas';
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
+
+// theme
+import { lifelikeTheme } from '../../theme';
 
 export const Lifelike = () => {
   const { colorMode } = useColorMode();
@@ -58,6 +60,16 @@ export const Lifelike = () => {
   const [cellHeight, setCellHeight] = React.useState(0);
   const [cellSize, setCellSize] = React.useState(5);
 
+  const [deadCellColor, setDeadCellColor] = React.useState(
+    lifelikeTheme.colors.gray['100']
+  );
+  const [aliveCellColor, setAliveCellColor] = React.useState(
+    lifelikeTheme.colors.gray['700']
+  );
+  const [gridLineColor, setGridLineColor] = React.useState(
+    lifelikeTheme.colors.gray['300']
+  );
+  console.log(lifelikeTheme.colors.gray);
   const minMaxLimits = React.useRef({
     cellWidth: {
       min: 1,
@@ -174,6 +186,7 @@ export const Lifelike = () => {
 
     if (newShowGridLines) {
       drawGridLines({
+        gridLineColor,
         canvas: canvasOverlayRef.current,
         cellHeight,
         cellWidth,
@@ -204,6 +217,7 @@ export const Lifelike = () => {
 
       if (showGridLines) {
         drawGridLines({
+          gridLineColor,
           canvas: canvasOverlayRef.current,
           cellHeight,
           cellWidth: newCellWidth,
@@ -213,7 +227,8 @@ export const Lifelike = () => {
 
       window.requestAnimationFrame(() =>
         drawCells({
-          colorMode,
+          aliveCellColor,
+          deadCellColor,
           cellSize,
           cellHeight,
           canvas: canvasRef.current,
@@ -247,6 +262,7 @@ export const Lifelike = () => {
 
       if (showGridLines) {
         drawGridLines({
+          gridLineColor,
           canvas: canvasOverlayRef.current,
           cellHeight: newCellHeight,
           cellWidth,
@@ -256,7 +272,8 @@ export const Lifelike = () => {
 
       window.requestAnimationFrame(() =>
         drawCells({
-          colorMode,
+          aliveCellColor,
+          deadCellColor,
           cellSize,
           cellWidth,
           canvas: canvasRef.current,
@@ -284,6 +301,7 @@ export const Lifelike = () => {
 
       if (showGridLines) {
         drawGridLines({
+          gridLineColor,
           canvas: canvasOverlayRef.current,
           cellHeight,
           cellWidth,
@@ -293,7 +311,8 @@ export const Lifelike = () => {
 
       window.requestAnimationFrame(() =>
         drawCells({
-          colorMode,
+          aliveCellColor,
+          deadCellColor,
           cells,
           cellWidth,
           cellHeight,
@@ -340,7 +359,8 @@ export const Lifelike = () => {
 
     window.requestAnimationFrame(() =>
       drawCells({
-        colorMode,
+        aliveCellColor,
+        deadCellColor,
         cellSize,
         cellWidth,
         cellHeight,
@@ -360,7 +380,8 @@ export const Lifelike = () => {
 
     window.requestAnimationFrame(() =>
       drawCells({
-        colorMode,
+        aliveCellColor,
+        deadCellColor,
         cellSize,
         cellWidth,
         cellHeight,
@@ -407,12 +428,15 @@ export const Lifelike = () => {
         cellSize: cellSize,
         cellWidth: newCellWidth,
         cellHeight: newCellHeight,
+        aliveCellColor,
+        deadCellColor,
       });
 
       clearCanvas({ canvas: canvasOverlayRef.current });
 
       if (showGridLines) {
         drawGridLines({
+          gridLineColor,
           canvas: canvasOverlayRef.current,
           cellHeight: newCellHeight,
           cellWidth: newCellWidth,
@@ -466,7 +490,8 @@ export const Lifelike = () => {
     setGenerations((generations) => generations + 1);
 
     drawCells({
-      colorMode,
+      aliveCellColor,
+      deadCellColor,
       cellSize,
       cellWidth,
       cellHeight,

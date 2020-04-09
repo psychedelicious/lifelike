@@ -35,7 +35,7 @@ export const Menu = React.memo(
     onToggleGridLines,
   }) => {
     return (
-      <Flex direction="column" align="left">
+      <Flex direction="column" align="left" w='17rem'>
         <Flex direction="column">
           <NumberSlider
             value={cellWidth}
