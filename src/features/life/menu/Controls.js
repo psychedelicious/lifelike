@@ -51,6 +51,7 @@ export const Controls = React.memo(
           onConfirmCallback={onClickRandomizeCells}
         />
         <IconButtonModalConfirm
+          isDisabled={isRunning}
           icon={FaExpand}
           header="fit cell grid to window"
           body="if the cell grid needs to expand to fill the window, extra empty space will be added. if the cell grid need to shrink to fit, cells will be lost!"

@@ -308,41 +308,47 @@ export const Lifelike = () => {
     );
   }, [cellWidth, cellHeight, cellSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fitCellsToCanvas = React.useCallback(() => {
-    // calculate 1 rem in px
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const fitCellsToCanvas = React.useCallback(
+    (currentCells) => {
+      // calculate 1 rem in px
+      const rem = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
 
-    const canvasRect = canvasRef.current.getBoundingClientRect();
+      const canvasRect = canvasRef.current.getBoundingClientRect();
 
-    // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
-    const widthOffset = rem * 2 + 2;
-    const heightOffset = rem * 2 + 2;
+      // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
+      const widthOffset = rem * 2 + 2;
+      const heightOffset = rem * 2 + 2;
 
-    const newCellWidth = Math.trunc(
-      (window.innerWidth - canvasRect.left - widthOffset) / cellSize
-    );
+      const newCellWidth = Math.trunc(
+        (window.innerWidth - canvasRect.left - widthOffset) / cellSize
+      );
 
-    const newCellHeight = Math.trunc(
-      (window.innerHeight - canvasRect.top - heightOffset) / cellSize
-    );
+      const newCellHeight = Math.trunc(
+        (window.innerHeight - canvasRect.top - heightOffset) / cellSize
+      );
 
-    handleCanvasSizeChange({ newCellWidth, newCellHeight });
+      handleCanvasSizeChange({ newCellWidth, newCellHeight });
 
-    const newCells = createCells({
-      cellWidth: newCellWidth,
-      cellHeight: newCellHeight,
-    });
+      const newCells = createCells({
+        cellWidth: newCellWidth,
+        cellHeight: newCellHeight,
+        fill: currentCells ?? 'random',
+      });
 
-    setCells(newCells);
+      setCells(newCells);
 
-    drawCells({
-      canvas: canvasRef.current,
-      cells: newCells,
-      cellSize: cellSize,
-      cellWidth: newCellWidth,
-      cellHeight: newCellHeight,
-    });
-  }, [cellSize, handleCanvasSizeChange]);
+      drawCells({
+        canvas: canvasRef.current,
+        cells: newCells,
+        cellSize: cellSize,
+        cellWidth: newCellWidth,
+        cellHeight: newCellHeight,
+      });
+    },
+    [cellSize, handleCanvasSizeChange]
+  );
 
   React.useLayoutEffect(fitCellsToCanvas, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -405,7 +411,7 @@ export const Lifelike = () => {
             onClickTick={tick}
             onClickRandomizeCells={handleRandomizeCells}
             onClickClearCells={handleClearCells}
-            onClickFitCellsToCanvas={fitCellsToCanvas}
+            onClickFitCellsToCanvas={() => fitCellsToCanvas(cells)}
           />
           <Menu
             neighborhood={neighborhood}
