@@ -5,15 +5,16 @@ import { clamp } from 'lodash';
 import { Box, Flex, useColorMode } from '@chakra-ui/core';
 
 // Components
-import { Canvas } from './Canvas';
-import { Controls } from '../menu/Controls';
-import { Menu } from '../menu/Menu';
-import { Monitor } from '../menu/Monitor';
-import { Nav } from '../menu/Nav';
+import { Canvas } from './canvas/Canvas';
+
+import { Controls } from './menu/Controls';
+import { Menu } from './menu/Menu';
+import { Monitor } from './menu/Monitor';
+import { Nav } from './menu/Nav';
 
 // Functions
 import { createCells } from './createCells';
-import { drawCells } from './drawCells';
+import { drawCells } from './canvas/drawCells';
 import { getNextCells } from './getNextCells';
 import { Neighborhoods } from './neighborhoods';
 

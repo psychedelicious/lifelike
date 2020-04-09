@@ -10,7 +10,7 @@ import {
 } from 'react-icons/fa';
 import { Flex, IconButton } from '@chakra-ui/core';
 
-import { IconButtonModalConfirm } from '../life/IconButtonModalConfirm';
+import { IconButtonModalConfirm } from './IconButtonModalConfirm';
 
 export const Controls = React.memo(
   ({

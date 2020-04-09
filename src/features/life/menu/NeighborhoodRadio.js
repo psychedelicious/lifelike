@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Radio, RadioGroup } from '@chakra-ui/core';
 
-import { Neighborhoods } from '../life/neighborhoods';
+import { Neighborhoods } from '../neighborhoods';
 
 export const NeighborhoodRadio = React.memo(({ neighborhood, onChange }) => {
   return (
