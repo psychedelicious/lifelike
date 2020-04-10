@@ -592,6 +592,7 @@ export const Lifelike = () => {
           canvasWidth={canvasWidth}
           canvasHeight={canvasHeight}
           canvasOverlayRef={canvasOverlayRef}
+          isRunning={isRunning}
           mousePositionRef={mousePositionRef}
         />
       </Flex>

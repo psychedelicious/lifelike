@@ -11,6 +11,7 @@ export const Canvas = ({
   canvasContainerWidth,
   canvasContainerHeight,
   canvasOverlayRef,
+  isRunning,
   mousePositionRef,
 }) => {
   return (
@@ -25,7 +26,7 @@ export const Canvas = ({
       position="relative"
     >
       <div
-        ref={mousePositionRef}
+        ref={!isRunning ? mousePositionRef : null}
         style={{ height: '100%', width: '100%', padding: '0', margin: '0' }}
       >
         <canvas
@@ -63,5 +64,6 @@ Canvas.propTypes = {
   canvasContainerWidth: PropTypes.number,
   canvasContainerHeight: PropTypes.number,
   canvasOverlayRef: PropTypes.object.isRequired,
+  isRunning: PropTypes.bool.isRequired,
   mousePositionRef: PropTypes.object.isRequired,
 };
