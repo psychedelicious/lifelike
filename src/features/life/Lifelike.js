@@ -387,7 +387,6 @@ export const Lifelike = () => {
 
   const fitCellsToCanvas = React.useCallback(() => {
     // calculate 1 rem in px
-    console.log(cells);
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
     const canvasRect = canvasRef.current.getBoundingClientRect();
@@ -435,14 +434,17 @@ export const Lifelike = () => {
         cellSize: cellSize,
       });
     }
+
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]);
 
   const handleClickTick = React.useCallback(() => {
     tick();
+    setLastConfigChange(window.performance.now());
+
   }, [lastConfigChange]);
 
-  React.useLayoutEffect(fitCellsToCanvas, []); // eslint-disable-line react-hooks/exhaustive-deps
+  React.useLayoutEffect(fitCellsToCanvas, []);
 
   useAnimationFrame(() => {
     if (
@@ -508,7 +510,7 @@ export const Lifelike = () => {
         !isRunning && handleRandomizeCells();
         break;
       case 'f':
-        !isRunning && fitCellsToCanvas(cells);
+        !isRunning && fitCellsToCanvas();
         break;
       case 'g':
         handleToggleGridLines();
@@ -534,7 +536,7 @@ export const Lifelike = () => {
         break;
       case 'ArrowRight':
         e.preventDefault();
-        !isRunning && tick();
+        !isRunning && handleClickTick();
         break;
       default:
         break;
