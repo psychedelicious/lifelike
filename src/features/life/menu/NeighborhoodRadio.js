@@ -1,9 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Flex, Radio, RadioGroup, Tooltip } from '@chakra-ui/core';
+import { Text, Radio, Tooltip, Box, Stack } from '@chakra-ui/core';
 
 import { Neighborhoods } from '../neighborhoods';
+
+// The tooltip arrows are not where I want them to be when using a <RadioGroup />,
+// using a custom radio component allows me to put them where I want them.
+const CustomRadio = React.forwardRef((props, ref) => {
+  const { isChecked, value, text, tooltip, ...rest } = props;
+  return (
+    <Tooltip hasArrow label={tooltip} placement="top">
+      <Box>
+        <Radio
+          ref={ref}
+          value={value}
+          size="sm"
+          isChecked={isChecked}
+          {...rest}
+        >
+          <Text fontSize="sm">{text}</Text>
+        </Radio>
+      </Box>
+    </Tooltip>
+  );
+});
 
 export const NeighborhoodRadio = React.memo(({ neighborhood, onChange }) => {
   const tooltipLabels = {
@@ -12,23 +33,18 @@ export const NeighborhoodRadio = React.memo(({ neighborhood, onChange }) => {
     HEXAGONAL: 'neighborhood == 6 directions [6]',
   };
   return (
-    <Flex justify="left" direction="column">
-      <RadioGroup
-        isInline
-        onChange={(e) => onChange(e.target.value)}
-        value={neighborhood.id}
-        display="flex"
-        justifyContent="space-between"
-      >
-        {Neighborhoods.types.map((n) => (
-          <Radio key={n} value={n} size="sm">
-            <Tooltip hasArrow label={tooltipLabels[n]} placement="top">
-              {Neighborhoods[n].name.toLowerCase()}
-            </Tooltip>
-          </Radio>
-        ))}
-      </RadioGroup>
-    </Flex>
+    <Stack direction="row">
+      {Neighborhoods.types.map((n) => (
+        <CustomRadio
+          key={n}
+          value={n}
+          text={Neighborhoods[n].name.toLowerCase()}
+          tooltip={tooltipLabels[n]}
+          isChecked={neighborhood.id === n}
+          onClick={() => onChange(n)}
+        />
+      ))}
+    </Stack>
   );
 });
 

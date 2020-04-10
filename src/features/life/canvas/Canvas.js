@@ -33,7 +33,7 @@ export const Canvas = ({
             padding: '0.5rem',
             width: canvasWidth || '100%',
             height: canvasHeight || '100%',
-            boxSizing: 'initial',
+            boxSizing: 'content-box',
           }}
         ></canvas>
         <canvas

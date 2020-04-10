@@ -3,14 +3,24 @@ import { clamp } from 'lodash';
 import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
-import { Box, Flex, useTheme } from '@chakra-ui/core';
+import {
+  Box,
+  Flex,
+  Grid,
+  useTheme,
+  Checkbox,
+  Tooltip,
+  Text,
+} from '@chakra-ui/core';
 
 // Components
 import { Canvas } from './canvas/Canvas';
-import { Controls } from './menu/Controls';
-import { Menu } from './menu/Menu';
+import { Header } from './menu/Header';
+import { MainControls } from './menu/MainControls';
+import { SliderControls } from './menu/SliderControls';
+import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
+import { RuleCheckboxes } from './menu/RuleCheckboxes';
 import { Monitor } from './menu/Monitor';
-import { Nav } from './menu/Nav';
 
 // Functions
 import { createCells } from './createCells';
@@ -60,6 +70,8 @@ export const Lifelike = () => {
   const [lastConfigChange, setLastConfigChange] = React.useState(
     window.performance.now()
   );
+
+  const [optionsOpen, setOptionsOpen] = React.useState(false);
 
   const [deadCellColor, setDeadCellColor] = React.useState(
     theme.colors.gray['50']
@@ -554,10 +566,40 @@ export const Lifelike = () => {
   });
 
   return (
-    <Flex w="100%" h="100%" direction={['column', 'row', 'row']}>
-      <Flex direction="column" mr={[0, '1rem', '1rem']}>
-        <Nav />
-        <Controls
+    <Grid
+      w="100%"
+      // h="100%"
+      gridGap="0.5rem"
+      gridTemplateColumns={{ base: '1fr', md: '18.5rem 1fr' }}
+      gridTemplateRows={{
+        base: '2rem 1fr 3rem 10rem 4rem 2rem 2rem 4rem',
+        md: '2rem 3rem 10rem 4rem 2rem 2rem 4rem 1fr',
+      }}
+      gridTemplateAreas={{
+        base: `"header"
+          "canvas"
+          "maincontrols"
+          "slidercontrols"
+          "rulecheckboxes"
+          "neighborhoodradio"
+          "gridlineswrap"
+          "monitor"`,
+        md: `"header canvas"
+          "maincontrols canvas"
+          "slidercontrols canvas"
+          "rulecheckboxes canvas"
+          "neighborhoodradio canvas"
+          "gridlineswrap canvas"
+          "monitor canvas"
+          ". canvas"`,
+      }}
+    >
+      <Box gridArea="header">
+        <Header />
+      </Box>
+
+      <Box gridArea="maincontrols">
+        <MainControls
           isRunning={isRunning}
           onClickStartStop={handleToggleIsRunning}
           onClickTick={handleClickTick}
@@ -565,41 +607,79 @@ export const Lifelike = () => {
           onClickClearCells={handleClearCells}
           onClickFitCellsToCanvas={fitCellsToCanvas}
         />
-        <Menu
-          neighborhood={neighborhood}
-          onNeighborhoodChange={handleNeighborhoodChange}
-          born={born}
-          onBornChange={handleRuleChange}
-          survive={survive}
-          onSurviveChange={handleRuleChange}
-          wrap={wrap}
-          onWrapChange={handleWrapChange}
+      </Box>
+
+      <Box gridArea="slidercontrols">
+        <SliderControls
           cellWidth={cellWidth}
           onCellWidthChange={handleCellWidthChange}
           cellHeight={cellHeight}
-          onCellHeightChange={handleCellHeightChange}
+          onCellHeightChange={handleCellSizeChange}
           cellSize={cellSize}
           onCellSizeChange={handleCellSizeChange}
           minMaxLimits={minMaxLimits}
           maxFps={maxFps}
           onMaxFpsChange={handleMaxFpsChange}
           isRunning={isRunning}
-          showGridLines={showGridLines}
-          onToggleGridLines={handleToggleGridLines}
         />
+      </Box>
+
+      <Box gridArea="rulecheckboxes">
+        <RuleCheckboxes
+          born={born}
+          survive={survive}
+          onRuleChange={handleRuleChange}
+        />
+      </Box>
+
+      <Box gridArea="neighborhoodradio">
+        <NeighborhoodRadio
+          neighborhood={neighborhood}
+          onChange={handleNeighborhoodChange}
+        />
+      </Box>
+
+      <Box gridArea="gridlineswrap">
+        <Flex justify="left">
+          <Tooltip label="toggle grid lines [g]" placement="top" hasArrow>
+            <Box>
+              <Checkbox
+                isChecked={showGridLines}
+                onChange={handleToggleGridLines}
+                mr="0.5rem"
+              >
+                <Text fontSize="sm">grid lines</Text>
+              </Checkbox>
+            </Box>
+          </Tooltip>
+
+          <Tooltip label="toggle edge wrapping [w]" placement="top" hasArrow>
+            <Box>
+              <Checkbox isChecked={wrap} onChange={handleWrapChange}>
+                <Text fontSize="sm">wrap</Text>
+              </Checkbox>
+            </Box>
+          </Tooltip>
+        </Flex>
+      </Box>
+
+      <Box gridArea="monitor">
         <Monitor generations={generations} currentFps={currentFps} />
-      </Flex>
-      <Canvas
-        canvasContainerRef={canvasContainerRef}
-        canvasContainerWidth={canvasContainerWidth}
-        canvasContainerHeight={canvasContainerHeight}
-        canvasRef={canvasRef}
-        canvasWidth={canvasWidth}
-        canvasHeight={canvasHeight}
-        canvasOverlayRef={canvasOverlayRef}
-        isRunning={isRunning}
-        mousePositionRef={mousePositionRef}
-      />
-    </Flex>
+      </Box>
+
+      <Box gridArea="canvas">
+        <Canvas
+          canvasContainerRef={canvasContainerRef}
+          canvasContainerWidth={canvasContainerWidth}
+          canvasContainerHeight={canvasContainerHeight}
+          canvasRef={canvasRef}
+          canvasWidth={canvasWidth}
+          canvasHeight={canvasHeight}
+          canvasOverlayRef={canvasOverlayRef}
+          isRunning={isRunning}
+          mousePositionRef={mousePositionRef}
+        />
+      </Box>
+    </Grid>
   );
 };
