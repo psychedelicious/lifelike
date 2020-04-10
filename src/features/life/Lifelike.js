@@ -58,6 +58,9 @@ export const Lifelike = () => {
   const [cellHeight, setCellHeight] = React.useState(0);
   const [cellSize, setCellSize] = React.useState(5);
 
+  const [lastConfigChange, setLastConfigChange] = React.useState(
+    window.performance.now()
+  );
   const [deadCellColor, setDeadCellColor] = React.useState(
     lifelikeTheme.colors.gray['50']
   );
@@ -116,7 +119,8 @@ export const Lifelike = () => {
 
   const handleToggleIsRunning = React.useCallback(() => {
     setIsRunning((isRunning) => !isRunning);
-  }, []);
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleWrapChange = React.useCallback(
     (e) => {
@@ -153,8 +157,10 @@ export const Lifelike = () => {
 
       setCanvasContainerWidth(newCanvasWidth + rem + 2);
       setCanvasContainerHeight(newCanvasHeight + rem + 2);
+
+      setLastConfigChange(window.performance.now());
     },
-    [cellHeight, cellWidth, cellSize]
+    [lastConfigChange]
   );
 
   const handleToggleGridLines = React.useCallback(() => {
@@ -172,7 +178,8 @@ export const Lifelike = () => {
         cellSize,
       });
     }
-  }, [showGridLines, cellHeight, cellWidth, cellSize]);
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleCellWidthChange = React.useCallback(
     (val) => {
@@ -215,8 +222,9 @@ export const Lifelike = () => {
           cellWidth: newCellWidth,
         })
       );
+      setLastConfigChange(window.performance.now());
     },
-    [isRunning, cellHeight, cellSize, showGridLines]
+    [lastConfigChange]
   );
 
   const handleCellHeightChange = React.useCallback(
@@ -260,8 +268,9 @@ export const Lifelike = () => {
           cellHeight: newCellHeight,
         })
       );
+      setLastConfigChange(window.performance.now());
     },
-    [isRunning, cellWidth, cellSize, showGridLines]
+    [lastConfigChange]
   );
 
   const handleCellSizeChange = React.useCallback(
@@ -299,8 +308,9 @@ export const Lifelike = () => {
           canvas: canvasRef.current,
         })
       );
+      setLastConfigChange(window.performance.now());
     },
-    [isRunning, cellHeight, cellWidth, showGridLines]
+    [lastConfigChange]
   );
 
   const handleMaxFpsChange = React.useCallback((val) => {
@@ -314,8 +324,8 @@ export const Lifelike = () => {
     fpsLogRef.current = [];
   }, []);
 
-  const handleNeighborhoodChange = React.useCallback((e) => {
-    const newNeighborhood = Neighborhoods[e.target.value];
+  const handleNeighborhoodChange = React.useCallback((val) => {
+    const newNeighborhood = Neighborhoods[val];
     setNeighborhood(newNeighborhood);
   }, []);
 
@@ -324,8 +334,9 @@ export const Lifelike = () => {
       ruleType === 'born'
         ? setBorn(born.map((val, i) => (i === index ? !val : val)))
         : setSurvive(survive.map((val, i) => (i === index ? !val : val)));
+      setLastConfigChange(window.performance.now());
     },
-    [born, survive]
+    [lastConfigChange]
   );
 
   const handleClearCells = React.useCallback(() => {
@@ -347,7 +358,8 @@ export const Lifelike = () => {
         cells: newCells,
       })
     );
-  }, [cellWidth, cellHeight, cellSize]);
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleRandomizeCells = React.useCallback(() => {
     const newCells = createCells({ cellHeight, cellWidth });
@@ -368,7 +380,8 @@ export const Lifelike = () => {
         cells: newCells,
       })
     );
-  }, [cellWidth, cellHeight, cellSize]);
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const fitCellsToCanvas = React.useCallback(
     (currentCells) => {
@@ -422,8 +435,9 @@ export const Lifelike = () => {
           cellSize: cellSize,
         });
       }
+      setLastConfigChange(window.performance.now());
     },
-    [cellSize, handleCanvasSizeChange]
+    [lastConfigChange]
   );
 
   React.useLayoutEffect(fitCellsToCanvas, []); // eslint-disable-line react-hooks/exhaustive-deps
