@@ -467,6 +467,7 @@ export const Lifelike = () => {
       if (fpsLogRef.current.length > maxFps) fpsLogRef.current.shift();
 
       setPreviousFrameTime(window.performance.now());
+      
       tick();
     }
   });
