@@ -53,8 +53,8 @@ export const Lifelike = () => {
   ]);
   const [wrap, setWrap] = React.useState(true);
 
-  const [cellWidth, setCellWidth] = React.useState(0);
-  const [cellHeight, setCellHeight] = React.useState(0);
+  const [cellWidth, setCellWidth] = React.useState(1);
+  const [cellHeight, setCellHeight] = React.useState(1);
   const [cellSize, setCellSize] = React.useState(5);
 
   const [lastConfigChange, setLastConfigChange] = React.useState(
@@ -395,13 +395,23 @@ export const Lifelike = () => {
     const widthOffset = rem * 2 + 2;
     const heightOffset = rem * 2 + 2;
 
-    const newCellWidth = Math.trunc(
-      (window.innerWidth - canvasRect.left - widthOffset) / cellSize
+    const newCellWidth = clamp(
+      Math.trunc(
+        (window.innerWidth - canvasRect.left - widthOffset) / cellSize
+      ),
+      minMaxLimits.current.cellWidth.min,
+      minMaxLimits.current.cellWidth.max
     );
 
-    const newCellHeight = Math.trunc(
-      (window.innerHeight - canvasRect.top - heightOffset) / cellSize
+    const newCellHeight = clamp(
+      Math.trunc(
+        (window.innerHeight - canvasRect.top - heightOffset) / cellSize
+      ),
+      minMaxLimits.current.cellHeight.min,
+      minMaxLimits.current.cellHeight.max
     );
+
+    console.log(newCellWidth, newCellHeight);
 
     handleCanvasSizeChange({ newCellWidth, newCellHeight });
 
@@ -467,7 +477,7 @@ export const Lifelike = () => {
       if (fpsLogRef.current.length > maxFps) fpsLogRef.current.shift();
 
       setPreviousFrameTime(window.performance.now());
-      
+
       tick();
     }
   });
