@@ -441,7 +441,6 @@ export const Lifelike = () => {
   const handleClickTick = React.useCallback(() => {
     tick();
     setLastConfigChange(window.performance.now());
-
   }, [lastConfigChange]);
 
   React.useLayoutEffect(fitCellsToCanvas, []);
@@ -544,54 +543,52 @@ export const Lifelike = () => {
   });
 
   return (
-    <Box w="100%" h="100%">
-      <Nav />
-      <Flex w="100%" h="calc(100vh - 6rem)">
-        <Box mr="0.5rem" mt="1rem">
-          <Controls
-            isRunning={isRunning}
-            onClickStartStop={handleToggleIsRunning}
-            onClickTick={handleClickTick}
-            onClickRandomizeCells={handleRandomizeCells}
-            onClickClearCells={handleClearCells}
-            onClickFitCellsToCanvas={fitCellsToCanvas}
-          />
-          <Menu
-            neighborhood={neighborhood}
-            onNeighborhoodChange={handleNeighborhoodChange}
-            born={born}
-            onBornChange={handleRuleChange}
-            survive={survive}
-            onSurviveChange={handleRuleChange}
-            wrap={wrap}
-            onWrapChange={handleWrapChange}
-            cellWidth={cellWidth}
-            onCellWidthChange={handleCellWidthChange}
-            cellHeight={cellHeight}
-            onCellHeightChange={handleCellHeightChange}
-            cellSize={cellSize}
-            onCellSizeChange={handleCellSizeChange}
-            minMaxLimits={minMaxLimits}
-            maxFps={maxFps}
-            onMaxFpsChange={handleMaxFpsChange}
-            isRunning={isRunning}
-            showGridLines={showGridLines}
-            onToggleGridLines={handleToggleGridLines}
-          />
-          <Monitor generations={generations} currentFps={currentFps} />
-        </Box>
-        <Canvas
-          canvasContainerRef={canvasContainerRef}
-          canvasContainerWidth={canvasContainerWidth}
-          canvasContainerHeight={canvasContainerHeight}
-          canvasRef={canvasRef}
-          canvasWidth={canvasWidth}
-          canvasHeight={canvasHeight}
-          canvasOverlayRef={canvasOverlayRef}
+    <Flex w="100%" h="100%" direction={['column', 'row', 'row']}>
+      <Flex direction="column" mr={[0, '1rem', '1rem']}>
+        <Nav />
+        <Controls
           isRunning={isRunning}
-          mousePositionRef={mousePositionRef}
+          onClickStartStop={handleToggleIsRunning}
+          onClickTick={handleClickTick}
+          onClickRandomizeCells={handleRandomizeCells}
+          onClickClearCells={handleClearCells}
+          onClickFitCellsToCanvas={fitCellsToCanvas}
         />
+        <Menu
+          neighborhood={neighborhood}
+          onNeighborhoodChange={handleNeighborhoodChange}
+          born={born}
+          onBornChange={handleRuleChange}
+          survive={survive}
+          onSurviveChange={handleRuleChange}
+          wrap={wrap}
+          onWrapChange={handleWrapChange}
+          cellWidth={cellWidth}
+          onCellWidthChange={handleCellWidthChange}
+          cellHeight={cellHeight}
+          onCellHeightChange={handleCellHeightChange}
+          cellSize={cellSize}
+          onCellSizeChange={handleCellSizeChange}
+          minMaxLimits={minMaxLimits}
+          maxFps={maxFps}
+          onMaxFpsChange={handleMaxFpsChange}
+          isRunning={isRunning}
+          showGridLines={showGridLines}
+          onToggleGridLines={handleToggleGridLines}
+        />
+        <Monitor generations={generations} currentFps={currentFps} />
       </Flex>
-    </Box>
+      <Canvas
+        canvasContainerRef={canvasContainerRef}
+        canvasContainerWidth={canvasContainerWidth}
+        canvasContainerHeight={canvasContainerHeight}
+        canvasRef={canvasRef}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
+        canvasOverlayRef={canvasOverlayRef}
+        isRunning={isRunning}
+        mousePositionRef={mousePositionRef}
+      />
+    </Flex>
   );
 };

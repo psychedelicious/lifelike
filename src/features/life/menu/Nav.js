@@ -6,8 +6,8 @@ export const Nav = React.memo(() => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Flex justify="space-between">
-      <Heading size="lg" mr="3" fontWeight={300}>
+    <Flex justify="space-between" mb='1rem'>
+      <Heading size="lg" fontWeight={400}>
         lifelike
       </Heading>
 

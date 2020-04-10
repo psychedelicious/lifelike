@@ -18,8 +18,6 @@ export const Canvas = ({
     <Box
       borderWidth="1px"
       rounded="lg"
-      mt="1rem"
-      ml="0.5rem"
       w={canvasContainerWidth || '100%'}
       h={canvasContainerHeight || '100%'}
       ref={canvasContainerRef}
