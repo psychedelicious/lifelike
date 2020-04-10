@@ -442,6 +442,10 @@ export const Lifelike = () => {
     [lastConfigChange]
   );
 
+  const handleClickTick = React.useCallback(() => {
+    tick();
+  }, [lastConfigChange]);
+
   React.useLayoutEffect(fitCellsToCanvas, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useAnimationFrame(() => {
@@ -557,10 +561,10 @@ export const Lifelike = () => {
           <Controls
             isRunning={isRunning}
             onClickStartStop={handleToggleIsRunning}
-            onClickTick={tick}
+            onClickTick={handleClickTick}
             onClickRandomizeCells={handleRandomizeCells}
             onClickClearCells={handleClearCells}
-            onClickFitCellsToCanvas={() => fitCellsToCanvas(cells)}
+            onClickFitCellsToCanvas={fitCellsToCanvas}
           />
           <Menu
             neighborhood={neighborhood}
