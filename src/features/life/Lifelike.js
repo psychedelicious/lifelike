@@ -114,25 +114,6 @@ export const Lifelike = () => {
   const canvasContainerRef = React.useRef(null);
   const canvasOverlayRef = React.useRef(null);
 
-  useGlobalKeyDown(
-    React.useCallback(
-      (e) => {
-        switch (e.key) {
-          case ' ':
-            e.preventDefault();
-            handleToggleIsRunning();
-            break;
-          case 'ArrowRight':
-            !isRunning && tick();
-            break;
-          default:
-            return;
-        }
-      },
-      [isRunning, cells]
-    )
-  );
-
   const handleToggleIsRunning = React.useCallback(() => {
     setIsRunning((isRunning) => !isRunning);
   }, []);
@@ -497,6 +478,60 @@ export const Lifelike = () => {
       cells: newCells,
     });
   };
+
+  useGlobalKeyDown((e) => {
+    switch (e.key) {
+      case ' ':
+        e.preventDefault();
+        handleToggleIsRunning();
+        break;
+      case 'c':
+        // e.preventDefault();
+        !isRunning && handleClearCells();
+        break;
+      case 'r':
+        // e.preventDefault();
+        !isRunning && handleRandomizeCells();
+        break;
+      case 'f':
+        // e.preventDefault();
+        !isRunning && fitCellsToCanvas(cells);
+        break;
+      case 'g':
+        // e.preventDefault();
+        handleToggleGridLines();
+        break;
+      case 'w':
+        // e.preventDefault();
+        handleWrapChange();
+        break;
+      case '8':
+        // e.preventDefault();
+        handleNeighborhoodChange('MOORE');
+        break;
+      case '4':
+        // e.preventDefault();
+        handleNeighborhoodChange('VONNEUMANN');
+        break;
+      case '6':
+        // e.preventDefault();
+        handleNeighborhoodChange('HEXAGONAL');
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        handleMaxFpsChange(maxFps + 1);
+        break;
+      case 'ArrowDown':
+        handleMaxFpsChange(maxFps - 1);
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        !isRunning && tick();
+        break;
+      default:
+        break;
+    }
+  });
 
   return (
     <Box w="100%" h="100%">
