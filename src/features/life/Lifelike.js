@@ -502,35 +502,27 @@ export const Lifelike = () => {
         handleToggleIsRunning();
         break;
       case 'c':
-        // e.preventDefault();
         !isRunning && handleClearCells();
         break;
       case 'r':
-        // e.preventDefault();
         !isRunning && handleRandomizeCells();
         break;
       case 'f':
-        // e.preventDefault();
         !isRunning && fitCellsToCanvas(cells);
         break;
       case 'g':
-        // e.preventDefault();
         handleToggleGridLines();
         break;
       case 'w':
-        // e.preventDefault();
         handleWrapChange();
         break;
       case '8':
-        // e.preventDefault();
         handleNeighborhoodChange('MOORE');
         break;
       case '4':
-        // e.preventDefault();
         handleNeighborhoodChange('VONNEUMANN');
         break;
       case '6':
-        // e.preventDefault();
         handleNeighborhoodChange('HEXAGONAL');
         break;
       case 'ArrowUp':
