@@ -27,7 +27,7 @@ export const NumberSlider = React.memo(
           <SliderTrack />
           <SliderFilledTrack />
           <Tooltip hasArrow label={tooltipLabel} placement="top" zIndex="2">
-            <SliderThumb size={6}>
+            <SliderThumb size={6} borderRadius="sm">
               <Box color="gray.800" as={icon} />
             </SliderThumb>
           </Tooltip>
@@ -36,7 +36,7 @@ export const NumberSlider = React.memo(
           <NumberInput
             size="sm"
             maxW="5rem"
-            ml="2rem"
+            ml="1.5rem"
             min={min}
             max={max}
             value={value}
