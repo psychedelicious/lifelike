@@ -2,7 +2,7 @@ import React from 'react';
 
 import { IconButton, Flex, useColorMode, Heading } from '@chakra-ui/core';
 
-export const Nav = () => {
+export const Nav = React.memo(() => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -25,4 +25,4 @@ export const Nav = () => {
       />
     </Flex>
   );
-};
+});
