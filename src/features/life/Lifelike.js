@@ -3,7 +3,7 @@ import { clamp } from 'lodash';
 import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
-import { Box, Flex } from '@chakra-ui/core';
+import { Box, Flex, useTheme } from '@chakra-ui/core';
 
 // Components
 import { Canvas } from './canvas/Canvas';
@@ -24,10 +24,9 @@ import { clearCanvas } from './canvas/clearCanvas';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 
-// theme
-import { lifelikeTheme } from '../../theme';
-
 export const Lifelike = () => {
+  const theme = useTheme();
+
   const [cells, setCells] = React.useState([]);
   const [neighborhood, setNeighborhood] = React.useState(Neighborhoods.MOORE);
   const [born, setBorn] = React.useState([
@@ -61,14 +60,17 @@ export const Lifelike = () => {
   const [lastConfigChange, setLastConfigChange] = React.useState(
     window.performance.now()
   );
+
   const [deadCellColor, setDeadCellColor] = React.useState(
-    lifelikeTheme.colors.gray['50']
+    theme.colors.gray['50']
   );
+
   const [aliveCellColor, setAliveCellColor] = React.useState(
-    lifelikeTheme.colors.gray['700']
+    theme.colors.gray['700']
   );
+
   const [gridLineColor, setGridLineColor] = React.useState(
-    lifelikeTheme.colors.gray['300']
+    theme.colors.gray['300']
   );
 
   const minMaxLimits = React.useRef({
