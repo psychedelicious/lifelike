@@ -102,7 +102,7 @@ export const Menu = React.memo(
             onChange={onToggleGridLines}
             mr="0.5rem"
           >
-            <Tooltip hasArrow label="toggle grid lines" placement="top">
+            <Tooltip hasArrow label="toggle grid lines [g]" placement="top">
               <Text fontSize="sm">grid lines</Text>
             </Tooltip>
           </Checkbox>
@@ -110,7 +110,7 @@ export const Menu = React.memo(
           <Checkbox isChecked={wrap} onChange={onWrapChange}>
             <Tooltip
               hasArrow
-              label="toggle edge wrapping"
+              label="toggle edge wrapping [w]"
               placement="top"
             >
               <Text fontSize="sm">wrap</Text>

@@ -21,7 +21,7 @@ export const Controls = React.memo(
   }) => {
     return (
       <Flex mb="2" justify="space-between">
-        <Tooltip hasArrow label={isRunning ? 'stop' : 'start'} placement="top">
+        <Tooltip hasArrow label="start/stop [spacebar]" placement="top">
           <IconButton
             icon={isRunning ? FaPause : FaPlay}
             variant="solid"
@@ -30,7 +30,7 @@ export const Controls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="tick" placement="top">
+        <Tooltip hasArrow label="tick [->]" placement="top">
           <IconButton
             isDisabled={isRunning}
             icon={FaForward}
@@ -40,8 +40,9 @@ export const Controls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="clear all cells" placement="top">
+        <Tooltip hasArrow label="clear all cells [c]" placement="top">
           <IconButton
+            isDisabled={isRunning}
             icon={FaTrash}
             variant="solid"
             aria-label="clear all cells"
@@ -49,8 +50,9 @@ export const Controls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="randomize all cells" placement="top">
+        <Tooltip hasArrow label="randomize all cells [r]" placement="top">
           <IconButton
+            isDisabled={isRunning}
             icon={FaRandom}
             variant="solid"
             aria-label="randomize all cells"
@@ -58,8 +60,9 @@ export const Controls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="expand/shrink grid to fit" placement="top">
+        <Tooltip hasArrow label="expand/shrink grid to fit [f]" placement="top">
           <IconButton
+            isDisabled={isRunning}
             icon={FaExpand}
             variant="solid"
             aria-label="expand/shrink grid to fit"
