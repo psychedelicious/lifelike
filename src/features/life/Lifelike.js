@@ -385,62 +385,58 @@ export const Lifelike = () => {
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]);
 
-  const fitCellsToCanvas = React.useCallback(
-    (currentCells) => {
-      // calculate 1 rem in px
-      const rem = parseFloat(
-        getComputedStyle(document.documentElement).fontSize
-      );
+  const fitCellsToCanvas = React.useCallback(() => {
+    // calculate 1 rem in px
+    console.log(cells);
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-      const canvasRect = canvasRef.current.getBoundingClientRect();
+    const canvasRect = canvasRef.current.getBoundingClientRect();
 
-      // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
-      const widthOffset = rem * 2 + 2;
-      const heightOffset = rem * 2 + 2;
+    // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
+    const widthOffset = rem * 2 + 2;
+    const heightOffset = rem * 2 + 2;
 
-      const newCellWidth = Math.trunc(
-        (window.innerWidth - canvasRect.left - widthOffset) / cellSize
-      );
+    const newCellWidth = Math.trunc(
+      (window.innerWidth - canvasRect.left - widthOffset) / cellSize
+    );
 
-      const newCellHeight = Math.trunc(
-        (window.innerHeight - canvasRect.top - heightOffset) / cellSize
-      );
+    const newCellHeight = Math.trunc(
+      (window.innerHeight - canvasRect.top - heightOffset) / cellSize
+    );
 
-      handleCanvasSizeChange({ newCellWidth, newCellHeight });
+    handleCanvasSizeChange({ newCellWidth, newCellHeight });
 
-      const newCells = createCells({
-        cellWidth: newCellWidth,
+    const newCells = createCells({
+      cellWidth: newCellWidth,
+      cellHeight: newCellHeight,
+      fill: cells.length ? cells : 'random',
+    });
+
+    setCells(newCells);
+
+    drawCells({
+      canvas: canvasRef.current,
+      cells: newCells,
+      cellSize: cellSize,
+      cellWidth: newCellWidth,
+      cellHeight: newCellHeight,
+      aliveCellColor,
+      deadCellColor,
+    });
+
+    clearCanvas({ canvas: canvasOverlayRef.current });
+
+    if (showGridLines) {
+      drawGridLines({
+        gridLineColor,
+        canvas: canvasOverlayRef.current,
         cellHeight: newCellHeight,
-        fill: currentCells ?? 'random',
-      });
-
-      setCells(newCells);
-
-      drawCells({
-        canvas: canvasRef.current,
-        cells: newCells,
+        cellWidth: newCellWidth,
         cellSize: cellSize,
-        cellWidth: newCellWidth,
-        cellHeight: newCellHeight,
-        aliveCellColor,
-        deadCellColor,
       });
-
-      clearCanvas({ canvas: canvasOverlayRef.current });
-
-      if (showGridLines) {
-        drawGridLines({
-          gridLineColor,
-          canvas: canvasOverlayRef.current,
-          cellHeight: newCellHeight,
-          cellWidth: newCellWidth,
-          cellSize: cellSize,
-        });
-      }
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
+    }
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleClickTick = React.useCallback(() => {
     tick();
