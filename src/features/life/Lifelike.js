@@ -1,17 +1,12 @@
 import React from 'react';
 import { clamp } from 'lodash';
-import useMousePosition from '@react-hook/mouse-position';
+// import useMousePosition from '@react-hook/mouse-position';
 import { useMediaQuery } from 'react-responsive';
 
 // Chakra UI
 import {
-  Box,
-  Flex,
   Grid,
   useTheme,
-  Checkbox,
-  Tooltip,
-  Text,
 } from '@chakra-ui/core';
 
 // Components
@@ -21,6 +16,7 @@ import { MainControls } from './menu/MainControls';
 import { SliderControls } from './menu/SliderControls';
 import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
 import { RuleCheckboxes } from './menu/RuleCheckboxes';
+import { TooltipCheckbox } from './menu/TooltipCheckbox';
 import { Monitor } from './menu/Monitor';
 
 // Functions
@@ -34,6 +30,32 @@ import { clearCanvas } from './canvas/clearCanvas';
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
+
+const gridTemplateRows = {
+  base: '2rem 1fr 3rem auto-fit 4rem 2rem 2rem 4rem',
+  md: '2rem 3rem auto-fit 4rem 2rem 2rem 4rem 1fr',
+};
+
+const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
+
+const gridTemplateAreas = {
+  base: `"header"
+    "canvas"
+    "maincontrols"
+    "slidercontrols"
+    "rulecheckboxes"
+    "neighborhoodradio"
+    "gridlineswrap"
+    "monitor"`,
+  md: `"header canvas"
+    "maincontrols canvas"
+    "slidercontrols canvas"
+    "rulecheckboxes canvas"
+    "neighborhoodradio canvas"
+    "gridlineswrap canvas"
+    "monitor canvas"
+    ". canvas"`,
+};
 
 export const Lifelike = () => {
   const theme = useTheme();
@@ -72,10 +94,10 @@ export const Lifelike = () => {
     window.performance.now()
   );
 
-  const [optionsOpen, setOptionsOpen] = React.useState(false);
+  const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
 
   const [deadCellColor, setDeadCellColor] = React.useState(
-    theme.colors.gray['50']
+    theme.colors.gray['100']
   );
 
   const [aliveCellColor, setAliveCellColor] = React.useState(
@@ -121,11 +143,11 @@ export const Lifelike = () => {
   const [previousFrameTime, setPreviousFrameTime] = React.useState(0);
   const [lastFpsUpdate, setLastFpsUpdate] = React.useState(0);
 
-  const [mousePosition, mousePositionRef] = useMousePosition(
-    0, // enterDelay
-    0, // leaveDelay
-    10 // fps
-  );
+  // const [mousePosition, mousePositionRef] = useMousePosition(
+  //   0, // enterDelay
+  //   0, // leaveDelay
+  //   10 // fps
+  // );
 
   const fpsLogRef = React.useRef([]);
   const canvasRef = React.useRef(null);
@@ -400,8 +422,13 @@ export const Lifelike = () => {
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]);
 
+  const handleToggleOptions = React.useCallback(() => {
+    setIsOptionsOpen((isOptionsOpen) => !isOptionsOpen);
+  }, []);
+
   const fitCellsToCanvas = React.useCallback(() => {
     // calculate 1 rem in px
+
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
     const canvasRect = canvasRef.current.getBoundingClientRect();
@@ -584,35 +611,9 @@ export const Lifelike = () => {
     }
   });
 
-  const gridTemplateRows = {
-    base: '2rem 1fr 3rem 10rem 4rem 2rem 2rem 4rem',
-    md: '2rem 3rem 10rem 4rem 2rem 2rem 4rem 1fr',
-  };
-
-  const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
-
-  const gridTemplateAreas = {
-    base: `"header"
-      "canvas"
-      "maincontrols"
-      "slidercontrols"
-      "rulecheckboxes"
-      "neighborhoodradio"
-      "gridlineswrap"
-      "monitor"`,
-    md: `"header canvas"
-      "maincontrols canvas"
-      "slidercontrols canvas"
-      "rulecheckboxes canvas"
-      "neighborhoodradio canvas"
-      "gridlineswrap canvas"
-      "monitor canvas"
-      ". canvas"`,
-  };
   return (
     <Grid
       w="100%"
-      h="100%"
       rowGap="0.5rem"
       columnGap="1rem"
       alignItems="center"
@@ -661,27 +662,28 @@ export const Lifelike = () => {
         onChange={handleNeighborhoodChange}
       />
 
-      <Flex gridArea="gridlineswrap" justify="left">
-        <Tooltip label="toggle grid lines [g]" placement="top" hasArrow>
-          <Box>
-            <Checkbox
-              isChecked={showGridLines}
-              onChange={handleToggleGridLines}
-              mr="0.5rem"
-            >
-              <Text fontSize="sm">grid lines</Text>
-            </Checkbox>
-          </Box>
-        </Tooltip>
+      <div
+        style={{
+          gridArea: 'gridlineswrap',
+          display: 'flex',
+          justifyContent: 'space-between',
+          direction: 'row',
+        }}
+      >
+        <TooltipCheckbox
+          label="grid lines"
+          tooltip="toggle grid lines [g]"
+          isChecked={showGridLines}
+          onChange={handleToggleGridLines}
+        />
 
-        <Tooltip label="toggle edge wrapping [w]" placement="top" hasArrow>
-          <Box>
-            <Checkbox isChecked={wrap} onChange={handleWrapChange}>
-              <Text fontSize="sm">wrap</Text>
-            </Checkbox>
-          </Box>
-        </Tooltip>
-      </Flex>
+        <TooltipCheckbox
+          label="edge wrap"
+          tooltip="toggle edge wrapping [w]"
+          isChecked={wrap}
+          onChange={handleWrapChange}
+        />
+      </div>
 
       <Monitor
         gridArea="monitor"

@@ -5,30 +5,9 @@ import { Text, Radio, Tooltip, Box, Stack } from '@chakra-ui/core';
 
 import { Neighborhoods } from '../neighborhoods';
 
-// The tooltip arrows are not where I want them to be when using a <RadioGroup />,
-// using a custom radio component allows me to put them where I want them.
-const CustomRadio = React.forwardRef((props, ref) => {
-  const { isChecked, value, text, tooltip, ...rest } = props;
-  return (
-    <Tooltip hasArrow label={tooltip} placement="top">
-      <Box>
-        <Radio
-          ref={ref}
-          value={value}
-          size="sm"
-          isChecked={isChecked}
-          {...rest}
-        >
-          <Text fontSize="sm">{text}</Text>
-        </Radio>
-      </Box>
-    </Tooltip>
-  );
-});
-
 export const NeighborhoodRadio = React.memo(
   ({ neighborhood, onChange, gridArea }) => {
-    const tooltipLabels = {
+    const tooltips = {
       MOORE: 'neighborhood == 8 directions [8]',
       VONNEUMANN: 'neighborhood == 4 directions [4]',
       HEXAGONAL: 'neighborhood == 6 directions [6]',
@@ -36,14 +15,19 @@ export const NeighborhoodRadio = React.memo(
     return (
       <Stack gridArea={gridArea} direction="row">
         {Neighborhoods.types.map((n) => (
-          <CustomRadio
-            key={n}
-            value={n}
-            text={Neighborhoods[n].name.toLowerCase()}
-            tooltip={tooltipLabels[n]}
-            isChecked={neighborhood.id === n}
-            onClick={() => onChange(n)}
-          />
+          <Tooltip hasArrow label={tooltips[n]} placement="top">
+            <Box>
+              <Radio
+                key={n}
+                value={n}
+                size="sm"
+                isChecked={neighborhood.id === n}
+                onClick={() => onChange(n)}
+              >
+                <Text fontSize="sm">{Neighborhoods[n].name.toLowerCase()}</Text>
+              </Radio>
+            </Box>
+          </Tooltip>
         ))}
       </Stack>
     );

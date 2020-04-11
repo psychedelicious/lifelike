@@ -23,7 +23,7 @@ export const MainControls = React.memo(
     onClickToggleOptions,
   }) => {
     return (
-      <Flex gridArea={gridArea} justify="space-between">
+      <Flex gridArea={gridArea} mt="0.5rem" justify="space-between">
         <Tooltip hasArrow label="start/stop [spacebar]" placement="top">
           <IconButton
             icon={isRunning ? FaPause : FaPlay}
