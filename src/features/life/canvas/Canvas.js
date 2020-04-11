@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Box } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/core';
 
 export const Canvas = ({
   canvasRef,
@@ -12,28 +12,31 @@ export const Canvas = ({
   canvasContainerHeight,
   canvasOverlayRef,
   isRunning,
-  mousePositionRef,
+  gridArea,
+  // mousePositionRef,
 }) => {
   return (
-    <Box
-      borderWidth="1px"
-      rounded="lg"
-      w={canvasContainerWidth || '100%'}
-      h={canvasContainerHeight || '100%'}
+    <Flex
+      gridArea={gridArea}
+      p={0}
+      m={0}
+      // w={canvasContainerWidth || '100%'}
+      // h={canvasContainerHeight || '100%'}
       ref={canvasContainerRef}
       position="relative"
+      justify="center"
     >
       <div
-        ref={!isRunning ? mousePositionRef : null}
+        // ref={!isRunning ? mousePositionRef : null}
         style={{ height: '100%', width: '100%', padding: '0', margin: '0' }}
       >
         <canvas
           ref={canvasRef}
           style={{
-            padding: '0.5rem',
             width: canvasWidth || '100%',
             height: canvasHeight || '100%',
-            boxSizing: 'content-box',
+            boxSizing: 'border-box',
+            borderRadius: '1px',
           }}
         ></canvas>
         <canvas
@@ -43,14 +46,14 @@ export const Canvas = ({
             top: '0',
             left: '0',
             zIndex: '1',
-            padding: '0.5rem',
             width: canvasWidth || '100%',
             height: canvasHeight || '100%',
-            boxSizing: 'initial',
+            boxSizing: 'border-box',
+            borderRadius: '1px',
           }}
         ></canvas>
       </div>
-    </Box>
+    </Flex>
   );
 };
 
@@ -63,5 +66,6 @@ Canvas.propTypes = {
   canvasContainerHeight: PropTypes.number,
   canvasOverlayRef: PropTypes.object.isRequired,
   isRunning: PropTypes.bool.isRequired,
-  mousePositionRef: PropTypes.object.isRequired,
+  gridArea: PropTypes.string.isRequired,
+  // mousePositionRef: PropTypes.object.isRequired,
 };

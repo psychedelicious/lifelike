@@ -26,29 +26,32 @@ const CustomRadio = React.forwardRef((props, ref) => {
   );
 });
 
-export const NeighborhoodRadio = React.memo(({ neighborhood, onChange }) => {
-  const tooltipLabels = {
-    MOORE: 'neighborhood == 8 directions [8]',
-    VONNEUMANN: 'neighborhood == 4 directions [4]',
-    HEXAGONAL: 'neighborhood == 6 directions [6]',
-  };
-  return (
-    <Stack direction="row">
-      {Neighborhoods.types.map((n) => (
-        <CustomRadio
-          key={n}
-          value={n}
-          text={Neighborhoods[n].name.toLowerCase()}
-          tooltip={tooltipLabels[n]}
-          isChecked={neighborhood.id === n}
-          onClick={() => onChange(n)}
-        />
-      ))}
-    </Stack>
-  );
-});
+export const NeighborhoodRadio = React.memo(
+  ({ neighborhood, onChange, gridArea }) => {
+    const tooltipLabels = {
+      MOORE: 'neighborhood == 8 directions [8]',
+      VONNEUMANN: 'neighborhood == 4 directions [4]',
+      HEXAGONAL: 'neighborhood == 6 directions [6]',
+    };
+    return (
+      <Stack gridArea={gridArea} direction="row">
+        {Neighborhoods.types.map((n) => (
+          <CustomRadio
+            key={n}
+            value={n}
+            text={Neighborhoods[n].name.toLowerCase()}
+            tooltip={tooltipLabels[n]}
+            isChecked={neighborhood.id === n}
+            onClick={() => onChange(n)}
+          />
+        ))}
+      </Stack>
+    );
+  }
+);
 
 NeighborhoodRadio.propTypes = {
   neighborhood: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  gridArea: PropTypes.string.isRequired,
 };

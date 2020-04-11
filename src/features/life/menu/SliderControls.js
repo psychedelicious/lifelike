@@ -20,52 +20,54 @@ export const SliderControls = ({
   maxFps,
   onMaxFpsChange,
   isRunning,
+  gridArea,
 }) => {
   return (
-    <Flex direction="column">
-      <NumberSlider
-        value={cellWidth}
-        min={minMaxLimits.current.cellWidth.min}
-        max={minMaxLimits.current.cellWidth.max}
-        onChange={onCellWidthChange}
-        isDisabled={isRunning}
-        icon={AiOutlineColumnWidth}
-        tooltipLabel="width (cells)"
-      />
+      <Flex gridArea={gridArea} direction="column">
+        <NumberSlider
+          value={cellWidth}
+          min={minMaxLimits.current.cellWidth.min}
+          max={minMaxLimits.current.cellWidth.max}
+          onChange={onCellWidthChange}
+          isDisabled={isRunning}
+          icon={AiOutlineColumnWidth}
+          tooltipLabel="width (cells)"
+        />
 
-      <NumberSlider
-        value={cellHeight}
-        min={minMaxLimits.current.cellHeight.min}
-        max={minMaxLimits.current.cellHeight.max}
-        onChange={onCellHeightChange}
-        isDisabled={isRunning}
-        icon={AiOutlineColumnHeight}
-        tooltipLabel="height (cells)"
-      />
+        <NumberSlider
+          value={cellHeight}
+          min={minMaxLimits.current.cellHeight.min}
+          max={minMaxLimits.current.cellHeight.max}
+          onChange={onCellHeightChange}
+          isDisabled={isRunning}
+          icon={AiOutlineColumnHeight}
+          tooltipLabel="height (cells)"
+        />
 
-      <NumberSlider
-        value={cellSize}
-        min={minMaxLimits.current.cellSize.min}
-        max={minMaxLimits.current.cellSize.max}
-        onChange={onCellSizeChange}
-        isDisabled={isRunning}
-        icon={GiResize}
-        tooltipLabel="cell size (px)"
-      />
+        <NumberSlider
+          value={cellSize}
+          min={minMaxLimits.current.cellSize.min}
+          max={minMaxLimits.current.cellSize.max}
+          onChange={onCellSizeChange}
+          isDisabled={isRunning}
+          icon={GiResize}
+          tooltipLabel="cell size (px)"
+        />
 
-      <NumberSlider
-        value={maxFps}
-        min={minMaxLimits.current.maxFps.min}
-        max={minMaxLimits.current.maxFps.max}
-        onChange={onMaxFpsChange}
-        icon={IoIosSpeedometer}
-        tooltipLabel="target ticks per second"
-      />
-    </Flex>
+        <NumberSlider
+          value={maxFps}
+          min={minMaxLimits.current.maxFps.min}
+          max={minMaxLimits.current.maxFps.max}
+          onChange={onMaxFpsChange}
+          icon={IoIosSpeedometer}
+          tooltipLabel="target ticks per second"
+        />
+      </Flex>
   );
 };
 
 SliderControls.propTypes = {
+  gridArea: PropTypes.string.isRequired,
   cellWidth: PropTypes.number.isRequired,
   onCellWidthChange: PropTypes.func.isRequired,
   cellHeight: PropTypes.number.isRequired,

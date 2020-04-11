@@ -7,12 +7,13 @@ import {
   FaTrash,
   FaRandom,
   FaExpandArrowsAlt,
-  FaWrench,
+  FaSlidersH,
 } from 'react-icons/fa';
 import { Flex, IconButton, Tooltip } from '@chakra-ui/core';
 
 export const MainControls = React.memo(
   ({
+    gridArea,
     isRunning,
     onClickStartStop,
     onClickTick,
@@ -22,7 +23,7 @@ export const MainControls = React.memo(
     onClickToggleOptions,
   }) => {
     return (
-      <Flex justify="space-between">
+      <Flex gridArea={gridArea} justify="space-between">
         <Tooltip hasArrow label="start/stop [spacebar]" placement="top">
           <IconButton
             icon={isRunning ? FaPause : FaPlay}
@@ -74,8 +75,8 @@ export const MainControls = React.memo(
 
         <Tooltip hasArrow label="show/hide options" placement="top">
           <IconButton
-            icon={FaWrench}
-            variant="solid"
+            icon={FaSlidersH}
+            variant="outline"
             aria-label="show/hide options"
             onClick={onClickToggleOptions}
           />
@@ -86,6 +87,7 @@ export const MainControls = React.memo(
 );
 
 MainControls.propTypes = {
+  gridArea: PropTypes.string.isRequired,
   isRunning: PropTypes.bool.isRequired,
   onClickStartStop: PropTypes.func.isRequired,
   onClickTick: PropTypes.func.isRequired,

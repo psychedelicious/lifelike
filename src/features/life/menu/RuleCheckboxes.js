@@ -47,9 +47,9 @@ RuleCheckboxRow.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export const RuleCheckboxes = ({ born, survive, onRuleChange }) => {
+export const RuleCheckboxes = ({ born, survive, onRuleChange, gridArea }) => {
   return (
-    <Flex direction="column">
+    <Flex gridArea={gridArea} direction="column">
       <RuleCheckboxRow
         ruleArray={born}
         ruleType="born"
@@ -69,4 +69,5 @@ RuleCheckboxes.propTypes = {
   born: PropTypes.array.isRequired,
   survive: PropTypes.array.isRequired,
   onRuleChange: PropTypes.func.isRequired,
+  gridArea: PropTypes.string.isRequired,
 };

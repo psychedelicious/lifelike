@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 import { Flex, Stat, StatLabel, StatNumber } from '@chakra-ui/core';
 
-export const Monitor = ({ generations, currentFps }) => {
+export const Monitor = ({ generations, currentFps, gridArea }) => {
   return (
-    <Flex justify="left">
+    <Flex gridArea={gridArea} justify="left">
       <Stat>
         <StatLabel>generation</StatLabel>
         <StatNumber>{generations ?? '...'}</StatNumber>
@@ -22,4 +22,5 @@ export const Monitor = ({ generations, currentFps }) => {
 Monitor.propTypes = {
   generations: PropTypes.number,
   currentFps: PropTypes.number,
+  gridArea: PropTypes.string.isRequired,
 };

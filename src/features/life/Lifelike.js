@@ -1,6 +1,7 @@
 import React from 'react';
 import { clamp } from 'lodash';
 import useMousePosition from '@react-hook/mouse-position';
+import { useMediaQuery } from 'react-responsive';
 
 // Chakra UI
 import {
@@ -130,6 +131,8 @@ export const Lifelike = () => {
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
   const canvasOverlayRef = React.useRef(null);
+
+  const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.md });
 
   const handleToggleIsRunning = React.useCallback(() => {
     setIsRunning((isRunning) => !isRunning);
@@ -404,8 +407,20 @@ export const Lifelike = () => {
     const canvasRect = canvasRef.current.getBoundingClientRect();
 
     // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
-    const widthOffset = rem * 2 + 2;
-    const heightOffset = rem * 2 + 2;
+    const widthOffset = rem * 1;
+    const heightOffset = rem * 1;
+
+    const mobileHeightOffset = isMobile
+      ? gridTemplateRows.base
+          .split(' ')
+          .reduce(
+            (total, val) =>
+              val.match(/rem/)
+                ? total + parseInt(val.replace('rem', '')) * rem
+                : total,
+            0
+          )
+      : 0;
 
     const newCellWidth = clamp(
       Math.trunc(
@@ -417,7 +432,11 @@ export const Lifelike = () => {
 
     const newCellHeight = clamp(
       Math.trunc(
-        (window.innerHeight - canvasRect.top - heightOffset) / cellSize
+        (window.innerHeight -
+          canvasRect.top -
+          heightOffset -
+          mobileHeightOffset) /
+          cellSize
       ),
       minMaxLimits.current.cellHeight.min,
       minMaxLimits.current.cellHeight.max
@@ -565,121 +584,123 @@ export const Lifelike = () => {
     }
   });
 
+  const gridTemplateRows = {
+    base: '2rem 1fr 3rem 10rem 4rem 2rem 2rem 4rem',
+    md: '2rem 3rem 10rem 4rem 2rem 2rem 4rem 1fr',
+  };
+
+  const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
+
+  const gridTemplateAreas = {
+    base: `"header"
+      "canvas"
+      "maincontrols"
+      "slidercontrols"
+      "rulecheckboxes"
+      "neighborhoodradio"
+      "gridlineswrap"
+      "monitor"`,
+    md: `"header canvas"
+      "maincontrols canvas"
+      "slidercontrols canvas"
+      "rulecheckboxes canvas"
+      "neighborhoodradio canvas"
+      "gridlineswrap canvas"
+      "monitor canvas"
+      ". canvas"`,
+  };
   return (
     <Grid
       w="100%"
-      // h="100%"
-      gridGap="0.5rem"
-      gridTemplateColumns={{ base: '1fr', md: '18.5rem 1fr' }}
-      gridTemplateRows={{
-        base: '2rem 1fr 3rem 10rem 4rem 2rem 2rem 4rem',
-        md: '2rem 3rem 10rem 4rem 2rem 2rem 4rem 1fr',
-      }}
-      gridTemplateAreas={{
-        base: `"header"
-          "canvas"
-          "maincontrols"
-          "slidercontrols"
-          "rulecheckboxes"
-          "neighborhoodradio"
-          "gridlineswrap"
-          "monitor"`,
-        md: `"header canvas"
-          "maincontrols canvas"
-          "slidercontrols canvas"
-          "rulecheckboxes canvas"
-          "neighborhoodradio canvas"
-          "gridlineswrap canvas"
-          "monitor canvas"
-          ". canvas"`,
-      }}
+      h="100%"
+      rowGap="0.5rem"
+      columnGap="1rem"
+      alignItems="center"
+      gridTemplateRows={gridTemplateRows}
+      gridTemplateColumns={gridTemplateColumns}
+      gridTemplateAreas={gridTemplateAreas}
     >
-      <Box gridArea="header">
-        <Header />
-      </Box>
+      <Header gridArea="header" />
 
-      <Box gridArea="maincontrols">
-        <MainControls
-          isRunning={isRunning}
-          onClickStartStop={handleToggleIsRunning}
-          onClickTick={handleClickTick}
-          onClickRandomizeCells={handleRandomizeCells}
-          onClickClearCells={handleClearCells}
-          onClickFitCellsToCanvas={fitCellsToCanvas}
-        />
-      </Box>
+      <MainControls
+        gridArea="maincontrols"
+        isRunning={isRunning}
+        onClickStartStop={handleToggleIsRunning}
+        onClickTick={handleClickTick}
+        onClickRandomizeCells={handleRandomizeCells}
+        onClickClearCells={handleClearCells}
+        onClickFitCellsToCanvas={fitCellsToCanvas}
+        onClickToggleOptions={handleToggleOptions}
+      />
 
-      <Box gridArea="slidercontrols">
-        <SliderControls
-          cellWidth={cellWidth}
-          onCellWidthChange={handleCellWidthChange}
-          cellHeight={cellHeight}
-          onCellHeightChange={handleCellSizeChange}
-          cellSize={cellSize}
-          onCellSizeChange={handleCellSizeChange}
-          minMaxLimits={minMaxLimits}
-          maxFps={maxFps}
-          onMaxFpsChange={handleMaxFpsChange}
-          isRunning={isRunning}
-        />
-      </Box>
+      <SliderControls
+        isOpen={isOptionsOpen}
+        gridArea="slidercontrols"
+        cellWidth={cellWidth}
+        onCellWidthChange={handleCellWidthChange}
+        cellHeight={cellHeight}
+        onCellHeightChange={handleCellSizeChange}
+        cellSize={cellSize}
+        onCellSizeChange={handleCellSizeChange}
+        minMaxLimits={minMaxLimits}
+        maxFps={maxFps}
+        onMaxFpsChange={handleMaxFpsChange}
+        isRunning={isRunning}
+      />
 
-      <Box gridArea="rulecheckboxes">
-        <RuleCheckboxes
-          born={born}
-          survive={survive}
-          onRuleChange={handleRuleChange}
-        />
-      </Box>
+      <RuleCheckboxes
+        gridArea="rulecheckboxes"
+        born={born}
+        survive={survive}
+        onRuleChange={handleRuleChange}
+      />
 
-      <Box gridArea="neighborhoodradio">
-        <NeighborhoodRadio
-          neighborhood={neighborhood}
-          onChange={handleNeighborhoodChange}
-        />
-      </Box>
+      <NeighborhoodRadio
+        gridArea="neighborhoodradio"
+        neighborhood={neighborhood}
+        onChange={handleNeighborhoodChange}
+      />
 
-      <Box gridArea="gridlineswrap">
-        <Flex justify="left">
-          <Tooltip label="toggle grid lines [g]" placement="top" hasArrow>
-            <Box>
-              <Checkbox
-                isChecked={showGridLines}
-                onChange={handleToggleGridLines}
-                mr="0.5rem"
-              >
-                <Text fontSize="sm">grid lines</Text>
-              </Checkbox>
-            </Box>
-          </Tooltip>
+      <Flex gridArea="gridlineswrap" justify="left">
+        <Tooltip label="toggle grid lines [g]" placement="top" hasArrow>
+          <Box>
+            <Checkbox
+              isChecked={showGridLines}
+              onChange={handleToggleGridLines}
+              mr="0.5rem"
+            >
+              <Text fontSize="sm">grid lines</Text>
+            </Checkbox>
+          </Box>
+        </Tooltip>
 
-          <Tooltip label="toggle edge wrapping [w]" placement="top" hasArrow>
-            <Box>
-              <Checkbox isChecked={wrap} onChange={handleWrapChange}>
-                <Text fontSize="sm">wrap</Text>
-              </Checkbox>
-            </Box>
-          </Tooltip>
-        </Flex>
-      </Box>
+        <Tooltip label="toggle edge wrapping [w]" placement="top" hasArrow>
+          <Box>
+            <Checkbox isChecked={wrap} onChange={handleWrapChange}>
+              <Text fontSize="sm">wrap</Text>
+            </Checkbox>
+          </Box>
+        </Tooltip>
+      </Flex>
 
-      <Box gridArea="monitor">
-        <Monitor generations={generations} currentFps={currentFps} />
-      </Box>
+      <Monitor
+        gridArea="monitor"
+        generations={generations}
+        currentFps={currentFps}
+      />
 
-      <Box gridArea="canvas">
-        <Canvas
-          canvasContainerRef={canvasContainerRef}
-          canvasContainerWidth={canvasContainerWidth}
-          canvasContainerHeight={canvasContainerHeight}
-          canvasRef={canvasRef}
-          canvasWidth={canvasWidth}
-          canvasHeight={canvasHeight}
-          canvasOverlayRef={canvasOverlayRef}
-          isRunning={isRunning}
-          mousePositionRef={mousePositionRef}
-        />
-      </Box>
+      <Canvas
+        gridArea="canvas"
+        canvasContainerRef={canvasContainerRef}
+        canvasContainerWidth={canvasContainerWidth}
+        canvasContainerHeight={canvasContainerHeight}
+        canvasRef={canvasRef}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
+        canvasOverlayRef={canvasOverlayRef}
+        isRunning={isRunning}
+        // mousePositionRef={mousePositionRef}
+      />
     </Grid>
   );
 };
