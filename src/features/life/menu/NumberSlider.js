@@ -52,6 +52,8 @@ export const NumberSlider = React.memo(
 
 NumberSlider.propTypes = {
   value: PropTypes.number.isRequired,
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
   icon: PropTypes.func.isRequired,
   tooltipLabel: PropTypes.string.isRequired,

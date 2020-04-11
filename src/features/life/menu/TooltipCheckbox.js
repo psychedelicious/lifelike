@@ -6,7 +6,7 @@ import { Box, Checkbox, Text, Tooltip } from '@chakra-ui/core';
 export const TooltipCheckbox = React.memo(
   ({ label, tooltip, isChecked, onChange }) => {
     return (
-      <Tooltip label={tooltip} placement="top" hasArrow>
+      <Tooltip label={tooltip} placement="top" hasArrow zIndex={2}>
         <Box>
           <Checkbox isChecked={isChecked} onChange={onChange} mr="0.5rem">
             <Text fontSize="sm">{label}</Text>

@@ -14,7 +14,7 @@ const RuleCheckboxRow = React.memo(({ ruleArray, ruleType, onChange }) => {
       : `neighbors == ${numberString} ~> survive`;
 
   return (
-    <Tooltip label={tooltipLabel} placement="top" zIndex={1}>
+    <Tooltip label={tooltipLabel} placement="top" zIndex={2}>
       <Flex my="1" align="center" justify="space-between">
         <Text fontWeight="300" fontSize="sm">
           {ruleType === 'born' ? 'b ~>' : 's ~>'}

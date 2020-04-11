@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Text, Radio, Tooltip, Box, Stack } from '@chakra-ui/core';
+import { Text, Radio, Tooltip, Box, Flex } from '@chakra-ui/core';
 
 import { Neighborhoods } from '../neighborhoods';
 
@@ -13,12 +13,17 @@ export const NeighborhoodRadio = React.memo(
       HEXAGONAL: 'neighborhood == 6 directions [6]',
     };
     return (
-      <Stack gridArea={gridArea} direction="row">
+      <Flex gridArea={gridArea} direction="row" justify="space-between">
         {Neighborhoods.types.map((n) => (
-          <Tooltip hasArrow label={tooltips[n]} placement="top">
+          <Tooltip
+            key={n}
+            zIndex={2}
+            hasArrow
+            label={tooltips[n]}
+            placement="top"
+          >
             <Box>
               <Radio
-                key={n}
                 value={n}
                 size="sm"
                 isChecked={neighborhood.id === n}
@@ -29,7 +34,7 @@ export const NeighborhoodRadio = React.memo(
             </Box>
           </Tooltip>
         ))}
-      </Stack>
+      </Flex>
     );
   }
 );

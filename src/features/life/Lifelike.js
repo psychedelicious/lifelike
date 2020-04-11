@@ -4,10 +4,7 @@ import { clamp } from 'lodash';
 import { useMediaQuery } from 'react-responsive';
 
 // Chakra UI
-import {
-  Grid,
-  useTheme,
-} from '@chakra-ui/core';
+import { Grid, useTheme } from '@chakra-ui/core';
 
 // Components
 import { Canvas } from './canvas/Canvas';
@@ -30,32 +27,8 @@ import { clearCanvas } from './canvas/clearCanvas';
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
-
-const gridTemplateRows = {
-  base: '2rem 1fr 3rem auto-fit 4rem 2rem 2rem 4rem',
-  md: '2rem 3rem auto-fit 4rem 2rem 2rem 4rem 1fr',
-};
-
-const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
-
-const gridTemplateAreas = {
-  base: `"header"
-    "canvas"
-    "maincontrols"
-    "slidercontrols"
-    "rulecheckboxes"
-    "neighborhoodradio"
-    "gridlineswrap"
-    "monitor"`,
-  md: `"header canvas"
-    "maincontrols canvas"
-    "slidercontrols canvas"
-    "rulecheckboxes canvas"
-    "neighborhoodradio canvas"
-    "gridlineswrap canvas"
-    "monitor canvas"
-    ". canvas"`,
-};
+import TooltipSlider from './menu/TooltipSlider';
+import SpeedSlider from './SpeedSlider';
 
 export const Lifelike = () => {
   const theme = useTheme();
@@ -121,9 +94,9 @@ export const Lifelike = () => {
       min: 1,
       max: 25,
     },
-    maxFps: {
-      min: 1,
-      max: 120,
+    interval: {
+      min: 0,
+      max: 100,
     },
   });
 
@@ -137,11 +110,15 @@ export const Lifelike = () => {
 
   const [generations, setGenerations] = React.useState(0);
   const [isRunning, setIsRunning] = React.useState(false);
-  const [maxFps, setMaxFps] = React.useState(60);
-  const [fpsInterval, setFpsInterval] = React.useState(1000 / 60);
+
   const [currentFps, setCurrentFps] = React.useState(0);
   const [previousFrameTime, setPreviousFrameTime] = React.useState(0);
   const [lastFpsUpdate, setLastFpsUpdate] = React.useState(0);
+
+  const [interval, setInterval] = React.useState(70);
+  const [fpsInterval, setFpsInterval] = React.useState(
+    Math.pow(100 - interval, 3) / 1000
+  );
 
   // const [mousePosition, mousePositionRef] = useMousePosition(
   //   0, // enterDelay
@@ -352,14 +329,14 @@ export const Lifelike = () => {
     [lastConfigChange]
   );
 
-  const handleMaxFpsChange = React.useCallback((val) => {
-    const newMaxFps = clamp(
+  const handleIntervalChange = React.useCallback((val) => {
+    const newInterval = clamp(
       val,
-      minMaxLimits.current.maxFps.min,
-      minMaxLimits.current.maxFps.max
+      minMaxLimits.current.interval.min,
+      minMaxLimits.current.interval.max
     );
-    setMaxFps(newMaxFps);
-    setFpsInterval(1000 / newMaxFps);
+    setInterval(newInterval);
+    setFpsInterval(Math.pow(100 - newInterval, 3) / 1000);
     fpsLogRef.current = [];
   }, []);
 
@@ -469,8 +446,6 @@ export const Lifelike = () => {
       minMaxLimits.current.cellHeight.max
     );
 
-    console.log(newCellWidth, newCellHeight);
-
     handleCanvasSizeChange({ newCellWidth, newCellHeight });
 
     const newCells = createCells({
@@ -532,7 +507,7 @@ export const Lifelike = () => {
         setLastFpsUpdate(window.performance.now());
       }
 
-      if (fpsLogRef.current.length > maxFps) fpsLogRef.current.shift();
+      if (fpsLogRef.current.length > currentFps) fpsLogRef.current.shift();
 
       setPreviousFrameTime(window.performance.now());
 
@@ -597,10 +572,11 @@ export const Lifelike = () => {
         break;
       case 'ArrowUp':
         e.preventDefault();
-        handleMaxFpsChange(maxFps + 1);
+        handleIntervalChange(interval + 1);
         break;
       case 'ArrowDown':
-        handleMaxFpsChange(maxFps - 1);
+        e.preventDefault();
+        handleIntervalChange(interval - 1);
         break;
       case 'ArrowRight':
         e.preventDefault();
@@ -610,6 +586,34 @@ export const Lifelike = () => {
         break;
     }
   });
+
+  const gridTemplateRows = {
+    base: '2rem 1fr 3rem auto-fit 2rem 4rem 2rem 2rem 4rem',
+    md: '2rem 3rem auto-fit 2rem 4rem 2rem 2rem 4rem 1fr',
+  };
+
+  const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
+
+  const gridTemplateAreas = {
+    base: `"header"
+      "canvas"
+      "maincontrols"
+      "slidercontrols"
+      "speedslider"
+      "rulecheckboxes"
+      "neighborhoodradio"
+      "gridlineswrap"
+      "monitor"`,
+    md: `"header canvas"
+      "maincontrols canvas"
+      "slidercontrols canvas"
+      "speedslider canvas"
+      "rulecheckboxes canvas"
+      "neighborhoodradio canvas"
+      "gridlineswrap canvas"
+      "monitor canvas"
+      ". canvas"`,
+  };
 
   return (
     <Grid
@@ -644,9 +648,21 @@ export const Lifelike = () => {
         cellSize={cellSize}
         onCellSizeChange={handleCellSizeChange}
         minMaxLimits={minMaxLimits}
-        maxFps={maxFps}
-        onMaxFpsChange={handleMaxFpsChange}
+        interval={interval}
+        fpsInterval={fpsInterval}
+        onIntervalChange={handleIntervalChange}
         isRunning={isRunning}
+      />
+
+      <SpeedSlider
+        gridArea={'speedslider'}
+        justifySelf="center"
+        w="calc(100% - 2rem)"
+        interval={interval}
+        fpsInterval={fpsInterval}
+        min={minMaxLimits.current.interval.min}
+        max={minMaxLimits.current.interval.max}
+        onChange={handleIntervalChange}
       />
 
       <RuleCheckboxes

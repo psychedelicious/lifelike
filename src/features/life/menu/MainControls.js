@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   FaPlay,
   FaPause,
-  FaForward,
+  FaStepForward,
   FaTrash,
   FaRandom,
   FaExpandArrowsAlt,
@@ -24,7 +24,7 @@ export const MainControls = React.memo(
   }) => {
     return (
       <Flex gridArea={gridArea} mt="0.5rem" justify="space-between">
-        <Tooltip hasArrow label="start/stop [spacebar]" placement="top">
+        <Tooltip  zIndex={2} hasArrow label="start/stop [spacebar]" placement="top">
           <IconButton
             icon={isRunning ? FaPause : FaPlay}
             variant="solid"
@@ -33,17 +33,17 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="tick [->]" placement="top">
+        <Tooltip  zIndex={2} hasArrow label="tick [->]" placement="top">
           <IconButton
             isDisabled={isRunning}
-            icon={FaForward}
+            icon={FaStepForward}
             variant="solid"
             aria-label="tick"
             onClick={onClickTick}
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="clear all cells [c]" placement="top">
+        <Tooltip  zIndex={2} hasArrow label="clear all cells [c]" placement="top">
           <IconButton
             isDisabled={isRunning}
             icon={FaTrash}
@@ -53,7 +53,7 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="randomize all cells [r]" placement="top">
+        <Tooltip  zIndex={2} hasArrow label="randomize all cells [r]" placement="top">
           <IconButton
             isDisabled={isRunning}
             icon={FaRandom}
@@ -63,7 +63,7 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="expand/shrink grid to fit [f]" placement="top">
+        <Tooltip  zIndex={2} hasArrow label="expand/shrink grid to fit [f]" placement="top">
           <IconButton
             isDisabled={isRunning}
             icon={FaExpandArrowsAlt}
@@ -73,7 +73,7 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="show/hide options" placement="top">
+        <Tooltip  zIndex={2} hasArrow label="show/hide options" placement="top">
           <IconButton
             icon={FaSlidersH}
             variant="outline"
