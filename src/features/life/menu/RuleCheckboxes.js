@@ -47,23 +47,25 @@ RuleCheckboxRow.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export const RuleCheckboxes = ({ born, survive, onRuleChange, gridArea }) => {
-  return (
-    <Flex gridArea={gridArea} direction="column">
-      <RuleCheckboxRow
-        ruleArray={born}
-        ruleType="born"
-        onChange={onRuleChange}
-      />
+export const RuleCheckboxes = React.memo(
+  ({ born, survive, onRuleChange, gridArea }) => {
+    return (
+      <Flex gridArea={gridArea} direction="column">
+        <RuleCheckboxRow
+          ruleArray={born}
+          ruleType="born"
+          onChange={onRuleChange}
+        />
 
-      <RuleCheckboxRow
-        ruleArray={survive}
-        ruleType="survive"
-        onChange={onRuleChange}
-      />
-    </Flex>
-  );
-};
+        <RuleCheckboxRow
+          ruleArray={survive}
+          ruleType="survive"
+          onChange={onRuleChange}
+        />
+      </Flex>
+    );
+  }
+);
 
 RuleCheckboxes.propTypes = {
   born: PropTypes.array.isRequired,
