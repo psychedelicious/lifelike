@@ -12,7 +12,6 @@ import { Header } from './menu/Header';
 import { MainControls } from './menu/MainControls';
 import { SliderControls } from './menu/SliderControls';
 import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
-import { RuleCheckboxes } from './menu/RuleCheckboxRow';
 import { RuleCheckboxRow } from './menu/RuleCheckboxRow';
 import { TooltipCheckbox } from './menu/TooltipCheckbox';
 import { Monitor } from './menu/Monitor';
