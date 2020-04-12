@@ -1,34 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { IconButton, Flex, useColorMode, Heading } from '@chakra-ui/core';
+import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 
-export const Header = React.memo(({ gridArea }) => {
+import { IconButton, Flex, useColorMode, Heading } from '@chakra-ui/core';
+import { HelpModal } from './HelpModal';
+
+export const Header = React.memo(({ toggleHelp, ...rest }) => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Flex gridArea={gridArea} justify="space-between" alignItems="center">
+    <Flex {...rest} justify="space-between">
       <Heading fontSize="1.25rem" fontWeight={400}>
         lifelike
       </Heading>
 
-      <IconButton
-        icon={colorMode === 'light' ? 'moon' : 'sun'}
-        size="sm"
-        fontSize="1.25rem"
-        p={0}
-        h="unset"
-        minW="unset"
-        mr='0.25rem'
-        mt='-0.5rem'
-        variant="unstyled"
-        aria-label="toggle dark mode"
-        onClick={toggleColorMode}
-      />
+      <Flex justify="right">
+        <HelpModal />
+
+        <IconButton
+          icon={colorMode === 'light' ? IoMdMoon : IoMdSunny}
+          fontSize="1.5rem"
+          p={0}
+          h="unset"
+          minW="unset"
+          variant="unstyled"
+          aria-label="toggle dark mode"
+          onClick={toggleColorMode}
+        />
+      </Flex>
     </Flex>
   );
 });
 
 Header.propTypes = {
-  gridArea: PropTypes.string.isRequired,
+  toggleHelp: PropTypes.func.isRequired,
+  toggleColorMode: PropTypes.func.isRequired,
 };

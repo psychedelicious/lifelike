@@ -18,12 +18,12 @@ export const SliderControls = React.memo(
     onCellSizeChange,
     minMaxLimits,
     isRunning,
-    gridArea,
     isOpen,
+    ...rest
   }) => {
     return (
       <Collapse isOpen={isOpen}>
-        <Flex gridArea={gridArea} direction="column">
+        <Flex {...rest} direction="column">
           <NumberSlider
             value={cellWidth}
             min={minMaxLimits.current.cellWidth.min}
@@ -60,7 +60,6 @@ export const SliderControls = React.memo(
 );
 
 SliderControls.propTypes = {
-  gridArea: PropTypes.string.isRequired,
   cellWidth: PropTypes.number.isRequired,
   onCellWidthChange: PropTypes.func.isRequired,
   cellHeight: PropTypes.number.isRequired,

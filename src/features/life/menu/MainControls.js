@@ -13,7 +13,6 @@ import { Flex, IconButton, Tooltip } from '@chakra-ui/core';
 
 export const MainControls = React.memo(
   ({
-    gridArea,
     isRunning,
     onClickStartStop,
     onClickTick,
@@ -21,10 +20,16 @@ export const MainControls = React.memo(
     onClickClearCells,
     onClickFitCellsToCanvas,
     onClickToggleOptions,
+    ...rest
   }) => {
     return (
-      <Flex gridArea={gridArea} mt="0.5rem" justify="space-between">
-        <Tooltip  zIndex={2} hasArrow label="start/stop [spacebar]" placement="top">
+      <Flex {...rest}>
+        <Tooltip
+          zIndex={2}
+          hasArrow
+          label="start/stop [spacebar]"
+          placement="top"
+        >
           <IconButton
             icon={isRunning ? FaPause : FaPlay}
             variant="solid"
@@ -33,7 +38,7 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip  zIndex={2} hasArrow label="tick [->]" placement="top">
+        <Tooltip zIndex={2} hasArrow label="tick [->]" placement="top">
           <IconButton
             isDisabled={isRunning}
             icon={FaStepForward}
@@ -43,7 +48,12 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip  zIndex={2} hasArrow label="clear all cells [c]" placement="top">
+        <Tooltip
+          zIndex={2}
+          hasArrow
+          label="clear all cells [c]"
+          placement="top"
+        >
           <IconButton
             isDisabled={isRunning}
             icon={FaTrash}
@@ -53,7 +63,12 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip  zIndex={2} hasArrow label="randomize all cells [r]" placement="top">
+        <Tooltip
+          zIndex={2}
+          hasArrow
+          label="randomize all cells [r]"
+          placement="top"
+        >
           <IconButton
             isDisabled={isRunning}
             icon={FaRandom}
@@ -63,7 +78,12 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip  zIndex={2} hasArrow label="expand/shrink grid to fit [f]" placement="top">
+        <Tooltip
+          zIndex={2}
+          hasArrow
+          label="expand/shrink grid to fit [f]"
+          placement="top"
+        >
           <IconButton
             isDisabled={isRunning}
             icon={FaExpandArrowsAlt}
@@ -73,7 +93,7 @@ export const MainControls = React.memo(
           />
         </Tooltip>
 
-        <Tooltip  zIndex={2} hasArrow label="show/hide options" placement="top">
+        <Tooltip zIndex={2} hasArrow label="show/hide options" placement="top">
           <IconButton
             icon={FaSlidersH}
             variant="outline"
@@ -87,7 +107,6 @@ export const MainControls = React.memo(
 );
 
 MainControls.propTypes = {
-  gridArea: PropTypes.string.isRequired,
   isRunning: PropTypes.bool.isRequired,
   onClickStartStop: PropTypes.func.isRequired,
   onClickTick: PropTypes.func.isRequired,

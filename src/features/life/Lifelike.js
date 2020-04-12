@@ -12,7 +12,8 @@ import { Header } from './menu/Header';
 import { MainControls } from './menu/MainControls';
 import { SliderControls } from './menu/SliderControls';
 import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
-import { RuleCheckboxes } from './menu/RuleCheckboxes';
+import { RuleCheckboxes } from './menu/RuleCheckboxRow';
+import { RuleCheckboxRow } from './menu/RuleCheckboxRow';
 import { TooltipCheckbox } from './menu/TooltipCheckbox';
 import { Monitor } from './menu/Monitor';
 import { SpeedSlider } from './menu/SpeedSlider';
@@ -30,8 +31,8 @@ import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 
 const gridTemplateRows = {
-  base: '2rem 1fr 3rem auto-fit 2rem 4rem 2rem 2rem 4rem',
-  md: '2rem 3rem auto-fit 2rem 4rem 2rem 2rem 4rem 1fr',
+  base: '2rem 1fr 3rem auto-fit 2rem 2rem 2rem 2rem 2rem 4rem',
+  md: '2rem 3rem auto-fit 2rem 2rem 2rem 2rem 4rem 1fr',
 };
 
 const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
@@ -42,7 +43,8 @@ const gridTemplateAreas = {
     "maincontrols"
     "slidercontrols"
     "speedslider"
-    "rulecheckboxes"
+    "bornrule"
+    "surviverule"
     "neighborhoodradio"
     "gridlineswrap"
     "monitor"`,
@@ -50,7 +52,8 @@ const gridTemplateAreas = {
     "maincontrols canvas"
     "slidercontrols canvas"
     "speedslider canvas"
-    "rulecheckboxes canvas"
+    "bornrule canvas"
+    "surviverule canvas"
     "neighborhoodradio canvas"
     "gridlineswrap canvas"
     "monitor canvas"
@@ -61,6 +64,7 @@ export const Lifelike = () => {
   const theme = useTheme();
 
   const [cells, setCells] = React.useState([]);
+  const [population, setPopulation] = React.useState(0);
   const [neighborhood, setNeighborhood] = React.useState(Neighborhoods.MOORE);
   const [born, setBorn] = React.useState([
     false,
@@ -127,6 +131,8 @@ export const Lifelike = () => {
     },
   });
 
+  const [showStats, setShowStats] = React.useState(true);
+
   const [canvasWidth, setCanvasWidth] = React.useState(0);
   const [canvasHeight, setCanvasHeight] = React.useState(0);
 
@@ -171,6 +177,14 @@ export const Lifelike = () => {
       setWrap(newWrap);
     },
     [wrap]
+  );
+
+  const handleToggleStats = React.useCallback(
+    (e) => {
+      const newShowStats = !showStats;
+      setShowStats(newShowStats);
+    },
+    [showStats]
   );
 
   const handleCanvasSizeChange = React.useCallback(
@@ -234,13 +248,14 @@ export const Lifelike = () => {
 
       handleCanvasSizeChange({ newCellWidth });
 
-      const newCells = createCells({
+      const [newCells, newPopulation] = createCells({
         cellHeight,
         cellWidth: newCellWidth,
         fill: cells,
       });
 
       setCells(newCells);
+      setPopulation(newPopulation);
 
       clearCanvas({ canvas: canvasOverlayRef.current });
 
@@ -280,13 +295,14 @@ export const Lifelike = () => {
 
       handleCanvasSizeChange({ newCellHeight });
 
-      const newCells = createCells({
+      const [newCells, newPopulation] = createCells({
         cellWidth,
         cellHeight: newCellHeight,
         fill: cells,
       });
 
       setCells(newCells);
+      setPopulation(newPopulation);
 
       clearCanvas({ canvas: canvasOverlayRef.current });
 
@@ -383,9 +399,14 @@ export const Lifelike = () => {
   );
 
   const handleClearCells = React.useCallback(() => {
-    const newCells = createCells({ cellHeight, cellWidth, fill: 0 });
+    const [newCells, newPopulation] = createCells({
+      cellHeight,
+      cellWidth,
+      fill: 0,
+    });
 
     setCells(newCells);
+    setPopulation(newPopulation);
     setGenerations(0);
     setCurrentFps(0);
     fpsLogRef.current = [];
@@ -405,9 +426,10 @@ export const Lifelike = () => {
   }, [lastConfigChange]);
 
   const handleRandomizeCells = React.useCallback(() => {
-    const newCells = createCells({ cellHeight, cellWidth });
+    const [newCells, newPopulation] = createCells({ cellHeight, cellWidth });
 
     setCells(newCells);
+    setPopulation(newPopulation);
     setGenerations(0);
     setCurrentFps(0);
     fpsLogRef.current = [];
@@ -475,13 +497,14 @@ export const Lifelike = () => {
 
     handleCanvasSizeChange({ newCellWidth, newCellHeight });
 
-    const newCells = createCells({
+    const [newCells, newPopulation] = createCells({
       cellWidth: newCellWidth,
       cellHeight: newCellHeight,
       fill: cells.length ? cells : 'random',
     });
 
     setCells(newCells);
+    setPopulation(newPopulation);
 
     drawCells({
       canvas: canvasRef.current,
@@ -527,9 +550,10 @@ export const Lifelike = () => {
       if (window.performance.now() - lastFpsUpdate > 200) {
         setCurrentFps(
           Math.round(
-            fpsLogRef.current.reduce((acc, val) => acc + val) /
-              fpsLogRef.current.length
-          )
+            (fpsLogRef.current.reduce((acc, val) => acc + val) /
+              fpsLogRef.current.length) *
+              10
+          ) / 10
         );
         setLastFpsUpdate(window.performance.now());
       }
@@ -543,7 +567,7 @@ export const Lifelike = () => {
   });
 
   const tick = () => {
-    const newCells = getNextCells({
+    const [newCells, newPopulation] = getNextCells({
       cells,
       cellWidth,
       cellHeight,
@@ -554,6 +578,7 @@ export const Lifelike = () => {
     });
 
     setCells(newCells);
+    setPopulation(newPopulation);
     setGenerations((generations) => generations + 1);
 
     drawCells({
@@ -624,10 +649,11 @@ export const Lifelike = () => {
       gridTemplateColumns={gridTemplateColumns}
       gridTemplateAreas={gridTemplateAreas}
     >
-      <Header gridArea="header" />
+      <Header gridArea="header" justify="space-between" alignItems="center" />
 
       <MainControls
-        gridArea="maincontrols"
+        mt="0.5rem"
+        justify="space-between"
         isRunning={isRunning}
         onClickStartStop={handleToggleIsRunning}
         onClickTick={handleClickTick}
@@ -638,18 +664,15 @@ export const Lifelike = () => {
       />
 
       <SliderControls
-        isOpen={isOptionsOpen}
         gridArea="slidercontrols"
+        isOpen={isOptionsOpen}
         cellWidth={cellWidth}
         onCellWidthChange={handleCellWidthChange}
         cellHeight={cellHeight}
-        onCellHeightChange={handleCellSizeChange}
+        onCellHeightChange={handleCellHeightChange}
         cellSize={cellSize}
         onCellSizeChange={handleCellSizeChange}
         minMaxLimits={minMaxLimits}
-        interval={interval}
-        fpsInterval={fpsInterval}
-        onIntervalChange={handleIntervalChange}
         isRunning={isRunning}
       />
 
@@ -664,14 +687,23 @@ export const Lifelike = () => {
         onChange={handleIntervalChange}
       />
 
-      <RuleCheckboxes
-        gridArea="rulecheckboxes"
-        born={born}
-        survive={survive}
-        onRuleChange={handleRuleChange}
+      <RuleCheckboxRow
+        gridArea="born"
+        ruleArray={born}
+        ruleType="born"
+        onChange={handleRuleChange}
+      />
+
+      <RuleCheckboxRow
+        gridArea="surive"
+        ruleArray={survive}
+        ruleType="survive"
+        onChange={handleRuleChange}
       />
 
       <NeighborhoodRadio
+        direction="row"
+        justify="space-between"
         gridArea="neighborhoodradio"
         neighborhood={neighborhood}
         onChange={handleNeighborhoodChange}
@@ -686,28 +718,41 @@ export const Lifelike = () => {
         }}
       >
         <TooltipCheckbox
-          label="grid lines"
+          label="gridlines"
           tooltip="toggle grid lines [g]"
           isChecked={showGridLines}
           onChange={handleToggleGridLines}
         />
 
         <TooltipCheckbox
-          label="edge wrap"
+          label="wrap"
           tooltip="toggle edge wrapping [w]"
           isChecked={wrap}
           onChange={handleWrapChange}
         />
+
+        <TooltipCheckbox
+          label="stats"
+          tooltip="show/hide stats"
+          isChecked={showStats}
+          onChange={handleToggleStats}
+        />
       </div>
 
-      <Monitor
-        gridArea="monitor"
-        generations={generations}
-        currentFps={currentFps}
-      />
+      {showStats && (
+        <Monitor
+          gridArea="monitor"
+          generations={generations}
+          currentFps={currentFps}
+          population={population}
+        />
+      )}
 
       <Canvas
         gridArea="canvas"
+        alignSelf="start"
+        p={0}
+        m={0}
         canvasContainerRef={canvasContainerRef}
         canvasContainerWidth={canvasContainerWidth}
         canvasContainerHeight={canvasContainerHeight}

@@ -6,12 +6,19 @@ import TooltipSlider from './TooltipSlider';
 
 export const SpeedSlider = React.memo(
   ({ interval, fpsInterval, min, max, onChange, ...rest }) => {
-    const delayString =
-      interval === 0
-        ? '1s'
-        : interval === 100
-        ? 'no'
-        : `${Math.round(fpsInterval * 100) / 100}ms`;
+    let delayString;
+
+    if (interval === 0) {
+      delayString = '1s';
+    } else if (interval === 100) {
+      delayString = 'no';
+    } else {
+      let delayFormatted = Math.round(fpsInterval * 100) / 100;
+      if (delayFormatted === 0) {
+        delayFormatted = Math.round(fpsInterval * 1000) / 1000;
+      }
+      delayString = `${delayFormatted}ms`;
+    }
 
     return (
       <TooltipSlider
@@ -21,7 +28,7 @@ export const SpeedSlider = React.memo(
         max={max}
         onChange={onChange}
         icon={IoIosSpeedometer}
-        tooltipLabel={`speed (${delayString} delay between ticks)`}
+        tooltipLabel={`${delayString} delay [↑|↓]`}
       />
     );
   }

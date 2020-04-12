@@ -26,7 +26,7 @@ export const Neighborhoods = {
   },
   HEXAGONAL: {
     id: 'HEXAGONAL',
-    name: 'Hexagonal',
+    name: 'hex',
     coords: [
       [-1, 0],
       [-1, 1],

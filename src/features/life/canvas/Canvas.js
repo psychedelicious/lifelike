@@ -11,22 +11,26 @@ export const Canvas = React.memo(
     canvasContainerRef,
     canvasOverlayRef,
     isRunning,
-    gridArea,
+    ...rest
     // mousePositionRef,
   }) => {
     return (
       <Flex
-        gridArea={gridArea}
-        alignSelf="start"
-        p={0}
-        m={0}
+        {...rest}
         ref={canvasContainerRef}
         position="relative"
         justify="center"
       >
         <div
           // ref={!isRunning ? mousePositionRef : null}
-          style={{ height: '100%', width: '100%', padding: '0', margin: '0' }}
+          style={{
+            height: '100%',
+            width: '100%',
+            padding: '0',
+            margin: '0',
+            display: 'flex',
+            justifyContent: 'stretch',
+          }}
         >
           <canvas
             ref={canvasRef}
@@ -65,6 +69,5 @@ Canvas.propTypes = {
   canvasContainerHeight: PropTypes.number,
   canvasOverlayRef: PropTypes.object.isRequired,
   isRunning: PropTypes.bool.isRequired,
-  gridArea: PropTypes.string.isRequired,
   // mousePositionRef: PropTypes.object.isRequired,
 };

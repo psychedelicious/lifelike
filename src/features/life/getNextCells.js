@@ -8,6 +8,7 @@ export const getNextCells = ({
   neighborhood,
 }) => {
   let newCells = Array.from(Array(cellWidth), () => new Array(cellHeight));
+  let population = 0;
 
   for (let x = 0; x < cellWidth; x++) {
     for (let y = 0; y < cellHeight; y++) {
@@ -50,7 +51,9 @@ export const getNextCells = ({
       } else {
         newCells[x][y] = cells[x][y];
       }
+
+      population += newCells[x][y];
     }
   }
-  return newCells;
+  return [newCells, population];
 };
