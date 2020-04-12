@@ -20,7 +20,6 @@ import {
   useDisclosure,
   Text,
   Link,
-  Divider,
 } from '@chakra-ui/core';
 
 const ExternalLink = ({ text, href }) => {
@@ -143,7 +142,7 @@ export const HelpModal = () => {
               .
             </Text>
 
-            <Collapsible
+            {/* <Collapsible
               label={
                 <span>
                   using <Oblique text="lifelike" />
@@ -151,7 +150,7 @@ export const HelpModal = () => {
               }
             >
               todo
-            </Collapsible>
+            </Collapsible> */}
 
             <Collapsible label="a brief intro to Life-like cellular automata">
               <Text>
