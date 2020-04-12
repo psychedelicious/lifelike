@@ -4,8 +4,6 @@ import { Box } from '@chakra-ui/core';
 import ThemedApp from './ThemedApp';
 import { Lifelike } from '../features/life/Lifelike';
 
-import '../index.css';
-
 export default function App() {
   return (
     <ThemedApp>

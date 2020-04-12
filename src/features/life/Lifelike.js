@@ -15,6 +15,7 @@ import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
 import { RuleCheckboxes } from './menu/RuleCheckboxes';
 import { TooltipCheckbox } from './menu/TooltipCheckbox';
 import { Monitor } from './menu/Monitor';
+import { SpeedSlider } from './menu/SpeedSlider';
 
 // Functions
 import { createCells } from './createCells';
@@ -27,8 +28,34 @@ import { clearCanvas } from './canvas/clearCanvas';
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
-import TooltipSlider from './menu/TooltipSlider';
-import SpeedSlider from './SpeedSlider';
+
+const gridTemplateRows = {
+  base: '2rem 1fr 3rem auto-fit 2rem 4rem 2rem 2rem 4rem',
+  md: '2rem 3rem auto-fit 2rem 4rem 2rem 2rem 4rem 1fr',
+};
+
+const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
+
+const gridTemplateAreas = {
+  base: `"header"
+    "canvas"
+    "maincontrols"
+    "slidercontrols"
+    "speedslider"
+    "rulecheckboxes"
+    "neighborhoodradio"
+    "gridlineswrap"
+    "monitor"`,
+  md: `"header canvas"
+    "maincontrols canvas"
+    "slidercontrols canvas"
+    "speedslider canvas"
+    "rulecheckboxes canvas"
+    "neighborhoodradio canvas"
+    "gridlineswrap canvas"
+    "monitor canvas"
+    ". canvas"`,
+};
 
 export const Lifelike = () => {
   const theme = useTheme();
@@ -586,34 +613,6 @@ export const Lifelike = () => {
         break;
     }
   });
-
-  const gridTemplateRows = {
-    base: '2rem 1fr 3rem auto-fit 2rem 4rem 2rem 2rem 4rem',
-    md: '2rem 3rem auto-fit 2rem 4rem 2rem 2rem 4rem 1fr',
-  };
-
-  const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
-
-  const gridTemplateAreas = {
-    base: `"header"
-      "canvas"
-      "maincontrols"
-      "slidercontrols"
-      "speedslider"
-      "rulecheckboxes"
-      "neighborhoodradio"
-      "gridlineswrap"
-      "monitor"`,
-    md: `"header canvas"
-      "maincontrols canvas"
-      "slidercontrols canvas"
-      "speedslider canvas"
-      "rulecheckboxes canvas"
-      "neighborhoodradio canvas"
-      "gridlineswrap canvas"
-      "monitor canvas"
-      ". canvas"`,
-  };
 
   return (
     <Grid

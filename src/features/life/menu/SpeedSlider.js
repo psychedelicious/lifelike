@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { IoIosSpeedometer } from 'react-icons/io';
 
-import TooltipSlider from './menu/TooltipSlider';
+import TooltipSlider from './TooltipSlider';
 
 export const SpeedSlider = React.memo(
   ({ interval, fpsInterval, min, max, onChange, ...rest }) => {
@@ -34,5 +34,3 @@ SpeedSlider.propTypes = {
   max: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
 };
-
-export default SpeedSlider;
