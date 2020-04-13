@@ -28,6 +28,11 @@ import { clearCanvas } from './canvas/clearCanvas';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 
+const gridTemplateRows = {
+  base: '2rem 1fr 3rem auto 2rem 2rem 2rem 2rem 2rem 4rem',
+  md: 'auto',
+};
+
 const gridTemplateColumns = { base: 'auto', md: '18.5rem auto' };
 
 const gridTemplateAreas = {
