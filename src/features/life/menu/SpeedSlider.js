@@ -2,7 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { IoIosSpeedometer } from 'react-icons/io';
 
-import TooltipSlider from './TooltipSlider';
+import {
+  Box,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  Tooltip,
+} from '@chakra-ui/core';
 
 export const SpeedSlider = React.memo(
   ({ interval, fpsInterval, min, max, onChange, ...rest }) => {
@@ -21,15 +28,27 @@ export const SpeedSlider = React.memo(
     }
 
     return (
-      <TooltipSlider
+      <Slider
         {...rest}
+        flex="1"
         value={interval}
         min={min}
         max={max}
         onChange={onChange}
-        icon={IoIosSpeedometer}
-        tooltipLabel={`${delayString} delay [↑|↓]`}
-      />
+      >
+        <SliderTrack />
+        <SliderFilledTrack />
+        <Tooltip
+          hasArrow
+          label={`${delayString} delay`}
+          placement="top"
+          zIndex="2"
+        >
+          <SliderThumb size={6} borderRadius="sm">
+            <Box color="gray.800" as={IoIosSpeedometer} />
+          </SliderThumb>
+        </Tooltip>
+      </Slider>
     );
   }
 );

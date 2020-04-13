@@ -1,7 +1,6 @@
 import React from 'react';
 import { clamp } from 'lodash';
 // import useMousePosition from '@react-hook/mouse-position';
-import { useMediaQuery } from 'react-responsive';
 
 // Chakra UI
 import { Grid, useTheme } from '@chakra-ui/core';
@@ -13,9 +12,9 @@ import { MainControls } from './menu/MainControls';
 import { SliderControls } from './menu/SliderControls';
 import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
 import { RuleCheckboxRow } from './menu/RuleCheckboxRow';
-import { TooltipCheckbox } from './menu/TooltipCheckbox';
 import { Monitor } from './menu/Monitor';
 import { SpeedSlider } from './menu/SpeedSlider';
+import { StyledCheckbox } from './menu/StyledCheckbox';
 
 // Functions
 import { createCells } from './createCells';
@@ -29,12 +28,7 @@ import { clearCanvas } from './canvas/clearCanvas';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 
-const gridTemplateRows = {
-  base: '2rem 1fr 3rem auto-fit 2rem 2rem 2rem 2rem 2rem 4rem',
-  md: '2rem 3rem auto-fit 2rem 2rem 2rem 2rem 4rem 1fr',
-};
-
-const gridTemplateColumns = { base: '1fr', md: '18.5rem 1fr' };
+const gridTemplateColumns = { base: 'auto', md: '18.5rem auto' };
 
 const gridTemplateAreas = {
   base: `"header"
@@ -59,7 +53,26 @@ const gridTemplateAreas = {
     ". canvas"`,
 };
 
-export const Lifelike = () => {
+const minMaxLimits = {
+  cellWidth: {
+    min: 1,
+    max: 2000,
+  },
+  cellHeight: {
+    min: 1,
+    max: 2000,
+  },
+  cellSize: {
+    min: 1,
+    max: 25,
+  },
+  interval: {
+    min: 0,
+    max: 100,
+  },
+};
+
+export const Lifelike = ({ isMobile }) => {
   const theme = useTheme();
 
   const [cells, setCells] = React.useState([]);
@@ -111,25 +124,6 @@ export const Lifelike = () => {
     theme.colors.gray['300']
   );
 
-  const minMaxLimits = React.useRef({
-    cellWidth: {
-      min: 1,
-      max: 2000,
-    },
-    cellHeight: {
-      min: 1,
-      max: 2000,
-    },
-    cellSize: {
-      min: 1,
-      max: 25,
-    },
-    interval: {
-      min: 0,
-      max: 100,
-    },
-  });
-
   const [showStats, setShowStats] = React.useState(true);
 
   const [canvasWidth, setCanvasWidth] = React.useState(0);
@@ -162,8 +156,6 @@ export const Lifelike = () => {
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
   const canvasOverlayRef = React.useRef(null);
-
-  const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.md });
 
   const handleToggleIsRunning = React.useCallback(() => {
     setIsRunning((isRunning) => !isRunning);
@@ -241,8 +233,8 @@ export const Lifelike = () => {
     (val) => {
       const newCellWidth = clamp(
         val,
-        minMaxLimits.current.cellWidth.min,
-        minMaxLimits.current.cellWidth.max
+        minMaxLimits.cellWidth.min,
+        minMaxLimits.cellWidth.max
       );
 
       handleCanvasSizeChange({ newCellWidth });
@@ -288,8 +280,8 @@ export const Lifelike = () => {
     (val) => {
       const newCellHeight = clamp(
         val,
-        minMaxLimits.current.cellHeight.min,
-        minMaxLimits.current.cellHeight.max
+        minMaxLimits.cellHeight.min,
+        minMaxLimits.cellHeight.max
       );
 
       handleCanvasSizeChange({ newCellHeight });
@@ -335,8 +327,8 @@ export const Lifelike = () => {
     (val) => {
       const newCellSize = clamp(
         val,
-        minMaxLimits.current.cellSize.min,
-        minMaxLimits.current.cellSize.max
+        minMaxLimits.cellSize.min,
+        minMaxLimits.cellSize.max
       );
 
       setCellSize(newCellSize);
@@ -374,8 +366,8 @@ export const Lifelike = () => {
   const handleIntervalChange = React.useCallback((val) => {
     const newInterval = clamp(
       val,
-      minMaxLimits.current.interval.min,
-      minMaxLimits.current.interval.max
+      minMaxLimits.interval.min,
+      minMaxLimits.interval.max
     );
     setInterval(newInterval);
     setFpsInterval(Math.pow(100 - newInterval, 3) / 1000);
@@ -453,7 +445,6 @@ export const Lifelike = () => {
 
   const fitCellsToCanvas = React.useCallback(() => {
     // calculate 1 rem in px
-
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
     const canvasRect = canvasRef.current.getBoundingClientRect();
@@ -478,8 +469,8 @@ export const Lifelike = () => {
       Math.trunc(
         (window.innerWidth - canvasRect.left - widthOffset) / cellSize
       ),
-      minMaxLimits.current.cellWidth.min,
-      minMaxLimits.current.cellWidth.max
+      minMaxLimits.cellWidth.min,
+      minMaxLimits.cellWidth.max
     );
 
     const newCellHeight = clamp(
@@ -490,8 +481,8 @@ export const Lifelike = () => {
           mobileHeightOffset) /
           cellSize
       ),
-      minMaxLimits.current.cellHeight.min,
-      minMaxLimits.current.cellHeight.max
+      minMaxLimits.cellHeight.min,
+      minMaxLimits.cellHeight.max
     );
 
     handleCanvasSizeChange({ newCellWidth, newCellHeight });
@@ -641,10 +632,10 @@ export const Lifelike = () => {
   return (
     <Grid
       w="100%"
+      h="100%"
       rowGap="0.5rem"
       columnGap="1rem"
       alignItems="center"
-      gridTemplateRows={gridTemplateRows}
       gridTemplateColumns={gridTemplateColumns}
       gridTemplateAreas={gridTemplateAreas}
     >
@@ -664,6 +655,7 @@ export const Lifelike = () => {
 
       <SliderControls
         gridArea="slidercontrols"
+        isMobile={isMobile}
         isOpen={isOptionsOpen}
         cellWidth={cellWidth}
         onCellWidthChange={handleCellWidthChange}
@@ -681,8 +673,8 @@ export const Lifelike = () => {
         w="calc(100% - 2rem)"
         interval={interval}
         fpsInterval={fpsInterval}
-        min={minMaxLimits.current.interval.min}
-        max={minMaxLimits.current.interval.max}
+        min={minMaxLimits.interval.min}
+        max={minMaxLimits.interval.max}
         onChange={handleIntervalChange}
       />
 
@@ -702,7 +694,6 @@ export const Lifelike = () => {
 
       <NeighborhoodRadio
         direction="row"
-        justify="space-between"
         gridArea="neighborhoodradio"
         neighborhood={neighborhood}
         onChange={handleNeighborhoodChange}
@@ -716,25 +707,22 @@ export const Lifelike = () => {
           direction: 'row',
         }}
       >
-        <TooltipCheckbox
-          label="gridlines"
-          tooltip="toggle grid lines [g]"
+        <StyledCheckbox
           isChecked={showGridLines}
           onChange={handleToggleGridLines}
+          label="gridlines"
         />
 
-        <TooltipCheckbox
-          label="wrap"
-          tooltip="toggle edge wrapping [w]"
+        <StyledCheckbox
           isChecked={wrap}
           onChange={handleWrapChange}
+          label="wrap"
         />
 
-        <TooltipCheckbox
-          label="stats"
-          tooltip="show/hide stats"
+        <StyledCheckbox
           isChecked={showStats}
           onChange={handleToggleStats}
+          label="stats"
         />
       </div>
 

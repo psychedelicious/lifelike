@@ -10,6 +10,7 @@ import { NumberSlider } from './NumberSlider';
 
 export const SliderControls = React.memo(
   ({
+    isMobile,
     cellWidth,
     onCellWidthChange,
     cellHeight,
@@ -24,34 +25,35 @@ export const SliderControls = React.memo(
     return (
       <Collapse isOpen={isOpen}>
         <Flex {...rest} direction="column">
-          <NumberSlider
-            value={cellWidth}
-            min={minMaxLimits.current.cellWidth.min}
-            max={minMaxLimits.current.cellWidth.max}
-            onChange={onCellWidthChange}
-            isDisabled={isRunning}
-            icon={AiOutlineColumnWidth}
-            tooltipLabel="width (cells)"
-          />
+          {!isMobile && (
+            <>
+              <NumberSlider
+                value={cellWidth}
+                min={minMaxLimits.cellWidth.min}
+                max={minMaxLimits.cellWidth.max}
+                onChange={onCellWidthChange}
+                isDisabled={isRunning}
+                icon={AiOutlineColumnWidth}
+              />
 
-          <NumberSlider
-            value={cellHeight}
-            min={minMaxLimits.current.cellHeight.min}
-            max={minMaxLimits.current.cellHeight.max}
-            onChange={onCellHeightChange}
-            isDisabled={isRunning}
-            icon={AiOutlineColumnHeight}
-            tooltipLabel="height (cells)"
-          />
+              <NumberSlider
+                value={cellHeight}
+                min={minMaxLimits.cellHeight.min}
+                max={minMaxLimits.cellHeight.max}
+                onChange={onCellHeightChange}
+                isDisabled={isRunning}
+                icon={AiOutlineColumnHeight}
+              />
+            </>
+          )}
 
           <NumberSlider
             value={cellSize}
-            min={minMaxLimits.current.cellSize.min}
-            max={minMaxLimits.current.cellSize.max}
+            min={minMaxLimits.cellSize.min}
+            max={minMaxLimits.cellSize.max}
             onChange={onCellSizeChange}
             isDisabled={isRunning}
             icon={GiResize}
-            tooltipLabel="cell size (px)"
           />
         </Flex>
       </Collapse>
