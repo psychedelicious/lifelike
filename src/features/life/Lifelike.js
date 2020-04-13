@@ -77,10 +77,57 @@ const minMaxLimits = {
   },
 };
 
+const CHANGE_CELLS = 'CHANGE_CELLS';
+const POPULATE_CELLS_RANDOM = 'POPULATE_CELLS_RANDOM';
+const CHANGE_CELLSIZE = 'CHANGE_CELLSIZE';
+const CHANGE_CELLHEIGHT = 'CHANGE_CELLHEIGHT';
+const CHANGE_CELLWIDTH = 'CHANGE_CELLWIDTH';
+
+const gridReducer = (state, action) => {
+  switch (action.type) {
+    case CHANGE_CELLSIZE:
+      return {
+        ...state,
+        px: action.payload.px,
+      };
+    case CHANGE_CELLHEIGHT:
+      return {
+        ...state,
+        height: action.payload.height,
+      };
+    case CHANGE_CELLWIDTH:
+      return {
+        ...state,
+        width: action.payload.width,
+      };
+    case CHANGE_CELLS:
+      return {
+        ...state,
+        cells: action.payload.cells,
+      };
+    case POPULATE_CELLS_RANDOM:
+      return {
+        ...state,
+        cells: createCells({
+          cellWidth: state.width,
+          cellHeight: state.height,
+        }),
+      };
+    default:
+      throw new Error(`Action type ${action.type} unrecognized`);
+  }
+};
+
 export const Lifelike = ({ isMobile }) => {
   const theme = useTheme();
 
-  const [cells, setCells] = React.useState([]);
+  const [state, dispatch] = React.useReducer(gridReducer, {
+    cells: [],
+    width: 0,
+    height: 0,
+    px: 5,
+  });
+
   const [population, setPopulation] = React.useState(0);
   const [neighborhood, setNeighborhood] = React.useState(Neighborhoods.MOORE);
   const [born, setBorn] = React.useState([
@@ -247,10 +294,13 @@ export const Lifelike = ({ isMobile }) => {
       const [newCells, newPopulation] = createCells({
         cellHeight,
         cellWidth: newCellWidth,
-        fill: cells,
+        fill: state.cells,
       });
 
-      setCells(newCells);
+      // setCells(newCells);
+
+      dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
+
       setPopulation(newPopulation);
 
       clearCanvas({ canvas: canvasOverlayRef.current });
@@ -294,10 +344,12 @@ export const Lifelike = ({ isMobile }) => {
       const [newCells, newPopulation] = createCells({
         cellWidth,
         cellHeight: newCellHeight,
-        fill: cells,
+        fill: state.cells,
       });
 
-      setCells(newCells);
+      // setCells(newCells);
+      dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
+
       setPopulation(newPopulation);
 
       clearCanvas({ canvas: canvasOverlayRef.current });
@@ -356,7 +408,7 @@ export const Lifelike = ({ isMobile }) => {
         drawCells({
           aliveCellColor,
           deadCellColor,
-          cells,
+          cells: state.cells,
           cellWidth,
           cellHeight,
           cellSize: newCellSize,
@@ -401,7 +453,9 @@ export const Lifelike = ({ isMobile }) => {
       fill: 0,
     });
 
-    setCells(newCells);
+    // setCells(newCells);
+    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
+
     setPopulation(newPopulation);
     setGenerations(0);
     setCurrentFps(0);
@@ -424,7 +478,9 @@ export const Lifelike = ({ isMobile }) => {
   const handleRandomizeCells = React.useCallback(() => {
     const [newCells, newPopulation] = createCells({ cellHeight, cellWidth });
 
-    setCells(newCells);
+    // setCells(newCells);
+    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
+
     setPopulation(newPopulation);
     setGenerations(0);
     setCurrentFps(0);
@@ -495,10 +551,12 @@ export const Lifelike = ({ isMobile }) => {
     const [newCells, newPopulation] = createCells({
       cellWidth: newCellWidth,
       cellHeight: newCellHeight,
-      fill: cells.length ? cells : 'random',
+      fill: state.cells.length ? state.cells : 'random',
     });
 
-    setCells(newCells);
+    // setCells(newCells);
+    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
+
     setPopulation(newPopulation);
 
     drawCells({
@@ -563,7 +621,7 @@ export const Lifelike = ({ isMobile }) => {
 
   const tick = () => {
     const [newCells, newPopulation] = getNextCells({
-      cells,
+      cells: state.cells,
       cellWidth,
       cellHeight,
       born,
@@ -572,7 +630,9 @@ export const Lifelike = ({ isMobile }) => {
       neighborhood,
     });
 
-    setCells(newCells);
+    // setCells(newCells);
+    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
+
     setPopulation(newPopulation);
     setGenerations((generations) => generations + 1);
 
