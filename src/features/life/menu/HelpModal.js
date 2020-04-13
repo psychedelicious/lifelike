@@ -36,8 +36,8 @@ const ExternalLink = ({ text, href }) => {
   );
 };
 
-const Oblique = ({ text }) => (
-  <span style={{ fontStyle: 'oblique' }}>{text}</span>
+const Oblique = ({ children, text }) => (
+  <span style={{ fontStyle: 'oblique' }}>{children || text}</span>
 );
 
 const Collapsible = ({ label, children }) => {
@@ -181,7 +181,7 @@ export const HelpModal = () => {
               </Text>
               <List styleType="square" pl="1rem">
                 <ListItem>
-                  if a dead cell has exactly 3 living neighbors, it will be
+                  if a dead cell has exactly 3 living neighbors, it will be{' '}
                   <Oblique>born</Oblique>.
                 </ListItem>
                 <ListItem>
