@@ -76,7 +76,7 @@ const minMaxLimits = {
     max: 100,
   },
 };
-
+//
 const CHANGE_CELLS = 'CHANGE_CELLS';
 const POPULATE_CELLS_RANDOM = 'POPULATE_CELLS_RANDOM';
 const CHANGE_CELLSIZE = 'CHANGE_CELLSIZE';
