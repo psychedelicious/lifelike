@@ -112,297 +112,6 @@ export const Lifelike = ({ isMobile }) => {
     getNextCells,
   } = useLife();
 
-  const [lastConfigChange, setLastConfigChange] = React.useState(0);
-
-  const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
-
-  // const [mousePosition, mousePositionRef] = useMousePosition(
-  //   0, // enterDelay
-  //   0, // leaveDelay
-  //   10 // fps
-  // );
-
-  const fpsLogRef = React.useRef([]);
-  const canvasRef = React.useRef(null);
-  const canvasContainerRef = React.useRef(null);
-  const canvasOverlayRef = React.useRef(null);
-
-  const handleToggleIsRunning = React.useCallback(() => {
-    // dispatch({ type: TOGGLE_ISRUNNING });
-    toggleIsRunning();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
-  const handleToggleWrap = React.useCallback(() => {
-    // dispatch({ type: TOGGLE_WRAP });
-    toggleWrap();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
-  const handleToggleShowStats = React.useCallback(() => {
-    // dispatch({ type: TOGGLE_SHOWSTATS });
-    toggleShowStats();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
-  const handleCanvasSizeChange = React.useCallback(
-    ({ newWidth = width, newHeight = height, newPx = px }) => {
-      const rem = parseFloat(
-        getComputedStyle(document.documentElement).fontSize
-      );
-
-      const newCanvasHeight = newHeight * newPx;
-      const newCanvasWidth = newWidth * newPx;
-
-      canvasRef.current.width = newCanvasWidth;
-      canvasRef.current.height = newCanvasHeight;
-
-      canvasOverlayRef.current.width = newCanvasWidth;
-      canvasOverlayRef.current.height = newCanvasHeight;
-
-      setGrid({
-        width: newWidth,
-        height: newHeight,
-        px: newPx,
-        canvasWidth: newCanvasWidth,
-        canvasHeight: newCanvasHeight,
-        canvasContainerWidth: newCanvasWidth + rem + 2,
-        canvasContainerHeight: newCanvasHeight + rem + 2,
-      });
-      // dispatch({
-      //   type: SET_GRID,
-      //   payload: {
-      //     width: newWidth,
-      //     height: newHeight,
-      //     px: newPx,
-      //     canvasWidth: newCanvasWidth,
-      //     canvasHeight: newCanvasHeight,
-      //     canvasContainerWidth: newCanvasWidth + rem + 2,
-      //     canvasContainerHeight: newCanvasHeight + rem + 2,
-      //   },
-      // });
-
-      drawGridlines({ canvas: canvasOverlayRef.current });
-
-      window.requestAnimationFrame(() =>
-        drawCells({ canvas: canvasRef.current })
-      );
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleToggleGridlines = React.useCallback(() => {
-    // dispatch({ type: TOGGLE_SHOWGRIDLINES });
-    toggleShowGridlines();
-    drawGridlines({ canvas: canvasOverlayRef.current });
-  }, []);
-
-  const handleWidthChange = React.useCallback(
-    (val) => {
-      const newWidth = clamp(
-        val,
-        minMaxLimits.cellWidth.min,
-        minMaxLimits.cellWidth.max
-      );
-
-      handleCanvasSizeChange({ newWidth });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleHeightChange = React.useCallback(
-    (val) => {
-      const newHeight = clamp(
-        val,
-        minMaxLimits.cellHeight.min,
-        minMaxLimits.cellHeight.max
-      );
-
-      handleCanvasSizeChange({ newHeight });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handlePxChange = React.useCallback(
-    (val) => {
-      const newPx = clamp(val, minMaxLimits.px.min, minMaxLimits.px.max);
-
-      handleCanvasSizeChange({ newPx });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleIntervalChange = React.useCallback(
-    (val) => {
-      const interval = clamp(
-        val,
-        minMaxLimits.interval.min,
-        minMaxLimits.interval.max
-      );
-
-      // dispatch({ type: SET_INTERVAL, interval: newInterval });
-      setInterval({ interval });
-      fpsLogRef.current = [];
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleNeighborhoodChange = React.useCallback(
-    (neighborhood) => {
-      // dispatch({ type: SET_NEIGHBORHOOD, neighborhood: val });
-      setNeighborhood(neighborhood);
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleRuleChange = React.useCallback(
-    (ruleType, index) => {
-      ruleType === 'born' ? setBorn({ index }) : setSurvive({ index });
-      // ? dispatch({ type: SET_BORN, index })
-      // : dispatch({ type: SET_SURVIVE, index });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleClearCells = React.useCallback(() => {
-    clearCells();
-    // dispatch({ type: CLEAR_CELLS });
-    fpsLogRef.current = [];
-
-    window.requestAnimationFrame(() =>
-      drawCells({
-        canvas: canvasRef.current,
-      })
-    );
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
-  const handleRandomizeCells = React.useCallback(() => {
-    randomizeCells();
-    // dispatch({ type: RANDOMIZE_CELLS });
-    fpsLogRef.current = [];
-
-    window.requestAnimationFrame(() =>
-      drawCells({
-        canvas: canvasRef.current,
-      })
-    );
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
-  const handleToggleOptions = React.useCallback(() => {
-    setIsOptionsOpen((isOptionsOpen) => !isOptionsOpen);
-  }, []);
-
-  const fitCellsToCanvas = React.useCallback(() => {
-    // calculate 1 rem in px
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-    const canvasRect = canvasRef.current.getBoundingClientRect();
-
-    // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
-    const widthOffset = rem * 1;
-    const heightOffset = rem * 1;
-
-    const mobileHeightOffset = isMobile
-      ? gridTemplateRows.base
-          .split(' ')
-          .reduce(
-            (total, val) =>
-              val.match(/rem/)
-                ? total + parseInt(val.replace('rem', '')) * rem
-                : total,
-            0
-          )
-      : 0;
-
-    const newWidth = clamp(
-      Math.trunc((window.innerWidth - canvasRect.left - widthOffset) / px),
-      minMaxLimits.cellWidth.min,
-      minMaxLimits.cellWidth.max
-    );
-
-    const newHeight = clamp(
-      Math.trunc(
-        (window.innerHeight -
-          canvasRect.top -
-          heightOffset -
-          mobileHeightOffset) /
-          px
-      ),
-      minMaxLimits.cellHeight.min,
-      minMaxLimits.cellHeight.max
-    );
-
-    handleCanvasSizeChange({ newWidth, newHeight });
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange, isMobile]);
-
-  React.useLayoutEffect(fitCellsToCanvas, []);
-
-  useAnimationFrame(() => {
-    if (
-      isRunning &&
-      window.performance.now() - previousFrameTime > fpsInterval
-    ) {
-      fpsLogRef.current.push(
-        1000 / (window.performance.now() - previousFrameTime)
-      );
-
-      if (window.performance.now() - lastFpsUpdate > 200) {
-        setFps({
-          fps:
-            Math.round(
-              (fpsLogRef.current.reduce((acc, val) => acc + val) /
-                fpsLogRef.current.length) *
-                10
-            ) / 10,
-        });
-        // dispatch({
-        //   type: SET_FPS,
-        //   fps:
-        //     Math.round(
-        //       (fpsLogRef.current.reduce((acc, val) => acc + val) /
-        //         fpsLogRef.current.length) *
-        //         10
-        //     ) / 10,
-        // });
-      }
-
-      if (fpsLogRef.current.length > fps) fpsLogRef.current.shift();
-
-      setPreviousFrameTime();
-      // dispatch({
-      //   type: SET_PREVIOUSFRAMETIME,
-      //   previousFrameTime: window.performance.now(),
-      // });
-
-      tick();
-    }
-  });
-
-  const tick = () => {
-    getNextCells();
-    // dispatch({ type: GET_NEXT_CELLS });
-    window.requestAnimationFrame(() =>
-      drawCells({
-        canvas: canvasRef.current,
-      })
-    );
-  };
-
-  const handleClickTick = React.useCallback(() => {
-    tick();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
   useGlobalKeyDown((e) => {
     switch (e.key) {
       case ' ':
@@ -449,6 +158,262 @@ export const Lifelike = ({ isMobile }) => {
         break;
     }
   });
+
+  const [lastConfigChange, setLastConfigChange] = React.useState(0);
+
+  const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
+
+  // const [mousePosition, mousePositionRef] = useMousePosition(
+  //   0, // enterDelay
+  //   0, // leaveDelay
+  //   10 // fps
+  // );
+
+  const fpsLogRef = React.useRef([]);
+  const canvasRef = React.useRef(null);
+  const canvasContainerRef = React.useRef(null);
+  const canvasOverlayRef = React.useRef(null);
+
+  const handleToggleIsRunning = React.useCallback(() => {
+    toggleIsRunning();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleToggleWrap = React.useCallback(() => {
+    toggleWrap();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleToggleShowStats = React.useCallback(() => {
+    toggleShowStats();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleCanvasSizeChange = React.useCallback(
+    ({ newWidth = width, newHeight = height, newPx = px }) => {
+      const rem = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
+
+      const newCanvasHeight = newHeight * newPx;
+      const newCanvasWidth = newWidth * newPx;
+
+      canvasRef.current.width = newCanvasWidth;
+      canvasRef.current.height = newCanvasHeight;
+
+      canvasOverlayRef.current.width = newCanvasWidth;
+      canvasOverlayRef.current.height = newCanvasHeight;
+
+      window.requestAnimationFrame(() => {
+        setGrid({
+          width: newWidth,
+          height: newHeight,
+          px: newPx,
+          canvasWidth: newCanvasWidth,
+          canvasHeight: newCanvasHeight,
+          canvasContainerWidth: newCanvasWidth + rem + 2,
+          canvasContainerHeight: newCanvasHeight + rem + 2,
+        });
+
+        drawGridlines({ canvas: canvasOverlayRef.current });
+
+        drawCells({ canvas: canvasRef.current });
+      });
+      setLastConfigChange(window.performance.now());
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleToggleGridlines = React.useCallback(() => {
+    // dispatch({ type: TOGGLE_SHOWGRIDLINES });
+    toggleShowGridlines();
+    drawGridlines({ canvas: canvasOverlayRef.current });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleWidthChange = React.useCallback(
+    (val) => {
+      const newWidth = clamp(
+        val,
+        minMaxLimits.cellWidth.min,
+        minMaxLimits.cellWidth.max
+      );
+
+      handleCanvasSizeChange({ newWidth });
+      setLastConfigChange(window.performance.now());
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleHeightChange = React.useCallback(
+    (val) => {
+      const newHeight = clamp(
+        val,
+        minMaxLimits.cellHeight.min,
+        minMaxLimits.cellHeight.max
+      );
+
+      handleCanvasSizeChange({ newHeight });
+      setLastConfigChange(window.performance.now());
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handlePxChange = React.useCallback(
+    (val) => {
+      const newPx = clamp(val, minMaxLimits.px.min, minMaxLimits.px.max);
+
+      handleCanvasSizeChange({ newPx });
+      setLastConfigChange(window.performance.now());
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleIntervalChange = React.useCallback(
+    (val) => {
+      const interval = clamp(
+        val,
+        minMaxLimits.interval.min,
+        minMaxLimits.interval.max
+      );
+
+      setInterval({ interval });
+      fpsLogRef.current = [];
+      setLastConfigChange(window.performance.now());
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleNeighborhoodChange = React.useCallback(
+    (neighborhood) => {
+      setNeighborhood({ neighborhood });
+      setLastConfigChange(window.performance.now());
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleRuleChange = React.useCallback(
+    (ruleType, index) => {
+      ruleType === 'born' ? setBorn({ index }) : setSurvive({ index });
+      setLastConfigChange(window.performance.now());
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleClearCells = React.useCallback(() => {
+    clearCells();
+    fpsLogRef.current = [];
+
+    window.requestAnimationFrame(() =>
+      drawCells({
+        canvas: canvasRef.current,
+      })
+    );
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleRandomizeCells = React.useCallback(() => {
+    randomizeCells();
+    fpsLogRef.current = [];
+
+    window.requestAnimationFrame(() =>
+      drawCells({
+        canvas: canvasRef.current,
+      })
+    );
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleToggleOptions = React.useCallback(() => {
+    setIsOptionsOpen((isOptionsOpen) => !isOptionsOpen);
+  }, []);
+
+  const handleClickTick = React.useCallback(() => {
+    tick();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fitCellsToCanvas = React.useCallback(() => {
+    // calculate 1 rem in px
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+    const canvasRect = canvasRef.current.getBoundingClientRect();
+
+    // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
+    const widthOffset = rem * 1;
+    const heightOffset = rem * 1;
+
+    const mobileHeightOffset = isMobile
+      ? gridTemplateRows.base
+          .split(' ')
+          .reduce(
+            (total, val) =>
+              val.match(/rem/)
+                ? total + parseInt(val.replace('rem', '')) * rem
+                : total,
+            0
+          )
+      : 0;
+
+    const newWidth = clamp(
+      Math.trunc((window.innerWidth - canvasRect.left - widthOffset) / px),
+      minMaxLimits.cellWidth.min,
+      minMaxLimits.cellWidth.max
+    );
+
+    const newHeight = clamp(
+      Math.trunc(
+        (window.innerHeight -
+          canvasRect.top -
+          heightOffset -
+          mobileHeightOffset) /
+          px
+      ),
+      minMaxLimits.cellHeight.min,
+      minMaxLimits.cellHeight.max
+    );
+
+    handleCanvasSizeChange({ newWidth, newHeight });
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useAnimationFrame(() => {
+    if (
+      isRunning &&
+      window.performance.now() - previousFrameTime > fpsInterval
+    ) {
+      fpsLogRef.current.push(
+        1000 / (window.performance.now() - previousFrameTime)
+      );
+
+      if (window.performance.now() - lastFpsUpdate > 200) {
+        setFps({
+          fps:
+            Math.round(
+              (fpsLogRef.current.reduce((acc, val) => acc + val) /
+                fpsLogRef.current.length) *
+                10
+            ) / 10,
+        });
+      }
+
+      if (fpsLogRef.current.length > fps) fpsLogRef.current.shift();
+
+      setPreviousFrameTime();
+
+      tick();
+    }
+  });
+
+  const tick = () => {
+    getNextCells();
+    window.requestAnimationFrame(() =>
+      drawCells({
+        canvas: canvasRef.current,
+      })
+    );
+  };
+
+  React.useLayoutEffect(fitCellsToCanvas, []);
 
   return (
     <Grid

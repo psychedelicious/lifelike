@@ -16,6 +16,7 @@ import {
   TOGGLE_SHOWSTATS,
   TOGGLE_WRAP,
 } from './store';
+import { Neighborhoods } from './features/life/neighborhoods';
 
 export const useLife = () => {
   const { state, dispatch } = useStore();
@@ -72,7 +73,10 @@ export const useLife = () => {
     toggleShowGridlines: () => dispatch({ type: TOGGLE_SHOWGRIDLINES }),
     setInterval: ({ interval }) => dispatch({ type: SET_INTERVAL, interval }),
     setNeighborhood: ({ neighborhood }) =>
-      dispatch({ type: SET_NEIGHBORHOOD, neighborhood }),
+      dispatch({
+        type: SET_NEIGHBORHOOD,
+        neighborhood: Neighborhoods[neighborhood],
+      }),
     setBorn: ({ index }) => dispatch({ type: SET_BORN, index }),
     setSurvive: ({ index }) => dispatch({ type: SET_SURVIVE, index }),
     clearCells: () => dispatch({ type: CLEAR_CELLS }),
