@@ -12,11 +12,11 @@ export const SliderControls = React.memo(
   ({
     isMobile,
     cellWidth,
-    onCellWidthChange,
+    onWidthChange,
     cellHeight,
-    onCellHeightChange,
-    cellSize,
-    onCellSizeChange,
+    onHeightChange,
+    px,
+    onPxChange,
     minMaxLimits,
     isRunning,
     isOpen,
@@ -31,7 +31,7 @@ export const SliderControls = React.memo(
                 value={cellWidth}
                 min={minMaxLimits.cellWidth.min}
                 max={minMaxLimits.cellWidth.max}
-                onChange={onCellWidthChange}
+                onChange={onWidthChange}
                 isDisabled={isRunning}
                 icon={AiOutlineColumnWidth}
               />
@@ -40,7 +40,7 @@ export const SliderControls = React.memo(
                 value={cellHeight}
                 min={minMaxLimits.cellHeight.min}
                 max={minMaxLimits.cellHeight.max}
-                onChange={onCellHeightChange}
+                onChange={onHeightChange}
                 isDisabled={isRunning}
                 icon={AiOutlineColumnHeight}
               />
@@ -48,10 +48,10 @@ export const SliderControls = React.memo(
           )}
 
           <NumberSlider
-            value={cellSize}
-            min={minMaxLimits.cellSize.min}
-            max={minMaxLimits.cellSize.max}
-            onChange={onCellSizeChange}
+            value={px}
+            min={minMaxLimits.px.min}
+            max={minMaxLimits.px.max}
+            onChange={onPxChange}
             isDisabled={isRunning}
             icon={GiResize}
           />
@@ -63,11 +63,11 @@ export const SliderControls = React.memo(
 
 SliderControls.propTypes = {
   cellWidth: PropTypes.number.isRequired,
-  onCellWidthChange: PropTypes.func.isRequired,
+  onWidthChange: PropTypes.func.isRequired,
   cellHeight: PropTypes.number.isRequired,
-  onCellHeightChange: PropTypes.func.isRequired,
-  cellSize: PropTypes.number.isRequired,
-  onCellSizeChange: PropTypes.func.isRequired,
+  onHeightChange: PropTypes.func.isRequired,
+  px: PropTypes.number.isRequired,
+  onPxChange: PropTypes.func.isRequired,
   minMaxLimits: PropTypes.object.isRequired,
   isRunning: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,

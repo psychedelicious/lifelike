@@ -19,26 +19,9 @@ import { StyledCheckbox } from './menu/StyledCheckbox';
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
-import { useLifeCanvas } from './canvas/useLifeCanvas';
+import { useCanvas } from './canvas/useCanvas';
 
-import {
-  useStore,
-  CLEAR_CELLS,
-  GET_NEXT_CELLS,
-  RANDOMIZE_CELLS,
-  SET_BORN,
-  SET_FPS,
-  SET_GRID,
-  SET_INTERVAL,
-  SET_NEIGHBORHOOD,
-  SET_PREVIOUSFRAMETIME,
-  SET_SURVIVE,
-  TOGGLE_ISRUNNING,
-  TOGGLE_SHOWGRIDLINES,
-  TOGGLE_SHOWSTATS,
-  TOGGLE_WRAP,
-  SET_LASTCONFIGCHANGE,
-} from '../../store';
+import { useLife } from '../../storeApi';
 
 const gridTemplateRows = {
   base: '2rem 1fr 3rem auto 2rem 2rem 2rem 2rem 2rem 4rem',
@@ -79,7 +62,7 @@ const minMaxLimits = {
     min: 1,
     max: 2000,
   },
-  cellSize: {
+  px: {
     min: 1,
     max: 25,
   },
@@ -90,9 +73,46 @@ const minMaxLimits = {
 };
 
 export const Lifelike = ({ isMobile }) => {
-  const { drawCells, drawGridlines } = useLifeCanvas();
+  const { drawCells, drawGridlines } = useCanvas();
 
-  const { state, dispatch } = useStore();
+  const {
+    width,
+    height,
+    px,
+    neighborhood,
+    born,
+    survive,
+    wrap,
+    showGridlines,
+    isRunning,
+    showStats,
+    generations,
+    canvasWidth,
+    canvasHeight,
+    canvasContainerWidth,
+    canvasContainerHeight,
+    fps,
+    previousFrameTime,
+    lastFpsUpdate,
+    interval,
+    fpsInterval,
+    toggleIsRunning,
+    toggleWrap,
+    toggleShowStats,
+    setGrid,
+    toggleShowGridlines,
+    setInterval,
+    setNeighborhood,
+    setBorn,
+    setSurvive,
+    clearCells,
+    randomizeCells,
+    setFps,
+    setPreviousFrameTime,
+    getNextCells,
+  } = useLife();
+
+  const [lastConfigChange, setLastConfigChange] = React.useState(0);
 
   const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
 
@@ -108,29 +128,31 @@ export const Lifelike = ({ isMobile }) => {
   const canvasOverlayRef = React.useRef(null);
 
   const handleToggleIsRunning = React.useCallback(() => {
-    dispatch({ type: TOGGLE_ISRUNNING });
-  }, [state.lastConfigChange]);
+    // dispatch({ type: TOGGLE_ISRUNNING });
+    toggleIsRunning();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleToggleWrap = React.useCallback(() => {
-    dispatch({ type: TOGGLE_WRAP });
-  }, [state.lastConfigChange]);
+    // dispatch({ type: TOGGLE_WRAP });
+    toggleWrap();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleToggleShowStats = React.useCallback(() => {
-    dispatch({ type: TOGGLE_SHOWSTATS });
-  }, [state.lastConfigChange]);
+    // dispatch({ type: TOGGLE_SHOWSTATS });
+    toggleShowStats();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleCanvasSizeChange = React.useCallback(
-    ({
-      newCellWidth = state.width,
-      newCellHeight = state.height,
-      newCellSize = state.px,
-    }) => {
+    ({ newWidth = width, newHeight = height, newPx = px }) => {
       const rem = parseFloat(
         getComputedStyle(document.documentElement).fontSize
       );
 
-      const newCanvasHeight = newCellHeight * newCellSize;
-      const newCanvasWidth = newCellWidth * newCellSize;
+      const newCanvasHeight = newHeight * newPx;
+      const newCanvasWidth = newWidth * newPx;
 
       canvasRef.current.width = newCanvasWidth;
       canvasRef.current.height = newCanvasHeight;
@@ -138,106 +160,120 @@ export const Lifelike = ({ isMobile }) => {
       canvasOverlayRef.current.width = newCanvasWidth;
       canvasOverlayRef.current.height = newCanvasHeight;
 
-      dispatch({
-        type: SET_GRID,
-        payload: {
-          width: newCellWidth,
-          height: newCellHeight,
-          px: newCellSize,
-          canvasWidth: newCanvasWidth,
-          canvasHeight: newCanvasHeight,
-          canvasContainerWidth: newCanvasWidth + rem + 2,
-          canvasContainerHeight: newCanvasHeight + rem + 2,
-        },
+      setGrid({
+        width: newWidth,
+        height: newHeight,
+        px: newPx,
+        canvasWidth: newCanvasWidth,
+        canvasHeight: newCanvasHeight,
+        canvasContainerWidth: newCanvasWidth + rem + 2,
+        canvasContainerHeight: newCanvasHeight + rem + 2,
       });
-
-      // clearCanvas({ canvas: canvasOverlayRef.current });
+      // dispatch({
+      //   type: SET_GRID,
+      //   payload: {
+      //     width: newWidth,
+      //     height: newHeight,
+      //     px: newPx,
+      //     canvasWidth: newCanvasWidth,
+      //     canvasHeight: newCanvasHeight,
+      //     canvasContainerWidth: newCanvasWidth + rem + 2,
+      //     canvasContainerHeight: newCanvasHeight + rem + 2,
+      //   },
+      // });
 
       drawGridlines({ canvas: canvasOverlayRef.current });
 
       window.requestAnimationFrame(() =>
         drawCells({ canvas: canvasRef.current })
       );
+      setLastConfigChange(window.performance.now());
     },
-    [state.lastConfigChange]
+    [lastConfigChange]
   );
 
   const handleToggleGridlines = React.useCallback(() => {
-    dispatch({ type: TOGGLE_SHOWGRIDLINES });
+    // dispatch({ type: TOGGLE_SHOWGRIDLINES });
+    toggleShowGridlines();
     drawGridlines({ canvas: canvasOverlayRef.current });
-  }, [dispatch, drawGridlines]);
+  }, []);
 
-  const handleCellWidthChange = React.useCallback(
+  const handleWidthChange = React.useCallback(
     (val) => {
-      const newCellWidth = clamp(
+      const newWidth = clamp(
         val,
         minMaxLimits.cellWidth.min,
         minMaxLimits.cellWidth.max
       );
 
-      handleCanvasSizeChange({ newCellWidth });
+      handleCanvasSizeChange({ newWidth });
+      setLastConfigChange(window.performance.now());
     },
-    [state.lastConfigChange]
+    [lastConfigChange]
   );
 
-  const handleCellHeightChange = React.useCallback(
+  const handleHeightChange = React.useCallback(
     (val) => {
-      const newCellHeight = clamp(
+      const newHeight = clamp(
         val,
         minMaxLimits.cellHeight.min,
         minMaxLimits.cellHeight.max
       );
 
-      handleCanvasSizeChange({ newCellHeight });
+      handleCanvasSizeChange({ newHeight });
+      setLastConfigChange(window.performance.now());
     },
-    [state.lastConfigChange]
+    [lastConfigChange]
   );
 
-  const handleCellSizeChange = React.useCallback(
+  const handlePxChange = React.useCallback(
     (val) => {
-      const newCellSize = clamp(
-        val,
-        minMaxLimits.cellSize.min,
-        minMaxLimits.cellSize.max
-      );
+      const newPx = clamp(val, minMaxLimits.px.min, minMaxLimits.px.max);
 
-      handleCanvasSizeChange({ newCellSize });
+      handleCanvasSizeChange({ newPx });
+      setLastConfigChange(window.performance.now());
     },
-    [state.lastConfigChange]
+    [lastConfigChange]
   );
 
   const handleIntervalChange = React.useCallback(
     (val) => {
-      const newInterval = clamp(
+      const interval = clamp(
         val,
         minMaxLimits.interval.min,
         minMaxLimits.interval.max
       );
 
-      dispatch({ type: SET_INTERVAL, interval: newInterval });
+      // dispatch({ type: SET_INTERVAL, interval: newInterval });
+      setInterval({ interval });
       fpsLogRef.current = [];
+      setLastConfigChange(window.performance.now());
     },
-    [state.lastConfigChange]
+    [lastConfigChange]
   );
 
   const handleNeighborhoodChange = React.useCallback(
-    (val) => {
-      dispatch({ type: SET_NEIGHBORHOOD, neighborhood: val });
+    (neighborhood) => {
+      // dispatch({ type: SET_NEIGHBORHOOD, neighborhood: val });
+      setNeighborhood(neighborhood);
+      setLastConfigChange(window.performance.now());
     },
-    [state.lastConfigChange]
+    [lastConfigChange]
   );
 
   const handleRuleChange = React.useCallback(
     (ruleType, index) => {
-      ruleType === 'born'
-        ? dispatch({ type: SET_BORN, index })
-        : dispatch({ type: SET_SURVIVE, index });
+      ruleType === 'born' ? setBorn({ index }) : setSurvive({ index });
+      // ? dispatch({ type: SET_BORN, index })
+      // : dispatch({ type: SET_SURVIVE, index });
+      setLastConfigChange(window.performance.now());
     },
-    [state.lastConfigChange]
+    [lastConfigChange]
   );
 
   const handleClearCells = React.useCallback(() => {
-    dispatch({ type: CLEAR_CELLS });
+    clearCells();
+    // dispatch({ type: CLEAR_CELLS });
     fpsLogRef.current = [];
 
     window.requestAnimationFrame(() =>
@@ -245,10 +281,12 @@ export const Lifelike = ({ isMobile }) => {
         canvas: canvasRef.current,
       })
     );
-  }, [state.lastConfigChange]);
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleRandomizeCells = React.useCallback(() => {
-    dispatch({ type: RANDOMIZE_CELLS });
+    randomizeCells();
+    // dispatch({ type: RANDOMIZE_CELLS });
     fpsLogRef.current = [];
 
     window.requestAnimationFrame(() =>
@@ -256,7 +294,8 @@ export const Lifelike = ({ isMobile }) => {
         canvas: canvasRef.current,
       })
     );
-  }, [state.lastConfigChange]);
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleToggleOptions = React.useCallback(() => {
     setIsOptionsOpen((isOptionsOpen) => !isOptionsOpen);
@@ -284,43 +323,41 @@ export const Lifelike = ({ isMobile }) => {
           )
       : 0;
 
-    const newCellWidth = clamp(
-      Math.trunc(
-        (window.innerWidth - canvasRect.left - widthOffset) / state.px
-      ),
+    const newWidth = clamp(
+      Math.trunc((window.innerWidth - canvasRect.left - widthOffset) / px),
       minMaxLimits.cellWidth.min,
       minMaxLimits.cellWidth.max
     );
 
-    const newCellHeight = clamp(
+    const newHeight = clamp(
       Math.trunc(
         (window.innerHeight -
           canvasRect.top -
           heightOffset -
           mobileHeightOffset) /
-          state.px
+          px
       ),
       minMaxLimits.cellHeight.min,
       minMaxLimits.cellHeight.max
     );
 
-    handleCanvasSizeChange({ newCellWidth, newCellHeight });
-  }, [state.lastConfigChange, isMobile]);
+    handleCanvasSizeChange({ newWidth, newHeight });
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange, isMobile]);
 
   React.useLayoutEffect(fitCellsToCanvas, []);
 
   useAnimationFrame(() => {
     if (
-      state.isRunning &&
-      window.performance.now() - state.previousFrameTime > state.fpsInterval
+      isRunning &&
+      window.performance.now() - previousFrameTime > fpsInterval
     ) {
       fpsLogRef.current.push(
-        1000 / (window.performance.now() - state.previousFrameTime)
+        1000 / (window.performance.now() - previousFrameTime)
       );
 
-      if (window.performance.now() - state.lastFpsUpdate > 200) {
-        dispatch({
-          type: SET_FPS,
+      if (window.performance.now() - lastFpsUpdate > 200) {
+        setFps({
           fps:
             Math.round(
               (fpsLogRef.current.reduce((acc, val) => acc + val) /
@@ -328,21 +365,32 @@ export const Lifelike = ({ isMobile }) => {
                 10
             ) / 10,
         });
+        // dispatch({
+        //   type: SET_FPS,
+        //   fps:
+        //     Math.round(
+        //       (fpsLogRef.current.reduce((acc, val) => acc + val) /
+        //         fpsLogRef.current.length) *
+        //         10
+        //     ) / 10,
+        // });
       }
 
-      if (fpsLogRef.current.length > state.fps) fpsLogRef.current.shift();
+      if (fpsLogRef.current.length > fps) fpsLogRef.current.shift();
 
-      dispatch({
-        type: SET_PREVIOUSFRAMETIME,
-        previousFrameTime: window.performance.now(),
-      });
+      setPreviousFrameTime();
+      // dispatch({
+      //   type: SET_PREVIOUSFRAMETIME,
+      //   previousFrameTime: window.performance.now(),
+      // });
 
       tick();
     }
   });
 
   const tick = () => {
-    dispatch({ type: GET_NEXT_CELLS });
+    getNextCells();
+    // dispatch({ type: GET_NEXT_CELLS });
     window.requestAnimationFrame(() =>
       drawCells({
         canvas: canvasRef.current,
@@ -352,7 +400,8 @@ export const Lifelike = ({ isMobile }) => {
 
   const handleClickTick = React.useCallback(() => {
     tick();
-  }, [state.lastConfigChange]);
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   useGlobalKeyDown((e) => {
     switch (e.key) {
@@ -361,13 +410,13 @@ export const Lifelike = ({ isMobile }) => {
         handleToggleIsRunning();
         break;
       case 'c':
-        !state.isRunning && handleClearCells();
+        !isRunning && handleClearCells();
         break;
       case 'r':
-        !state.isRunning && handleRandomizeCells();
+        !isRunning && handleRandomizeCells();
         break;
       case 'f':
-        !state.isRunning && fitCellsToCanvas();
+        !isRunning && fitCellsToCanvas();
         break;
       case 'g':
         handleToggleGridlines();
@@ -386,15 +435,15 @@ export const Lifelike = ({ isMobile }) => {
         break;
       case 'ArrowUp':
         e.preventDefault();
-        handleIntervalChange(state.interval + 1);
+        handleIntervalChange(interval + 1);
         break;
       case 'ArrowDown':
         e.preventDefault();
-        handleIntervalChange(state.interval - 1);
+        handleIntervalChange(interval - 1);
         break;
       case 'ArrowRight':
         e.preventDefault();
-        !state.isRunning && handleClickTick(); 
+        !isRunning && handleClickTick();
         break;
       default:
         break;
@@ -416,7 +465,7 @@ export const Lifelike = ({ isMobile }) => {
       <MainControls
         mt="0.5rem"
         justify="space-between"
-        isRunning={state.isRunning}
+        isRunning={isRunning}
         onClickStartStop={handleToggleIsRunning}
         onClickTick={handleClickTick}
         onClickRandomizeCells={handleRandomizeCells}
@@ -429,22 +478,22 @@ export const Lifelike = ({ isMobile }) => {
         gridArea="slidercontrols"
         isMobile={isMobile}
         isOpen={isOptionsOpen}
-        cellWidth={state.width}
-        onCellWidthChange={handleCellWidthChange}
-        cellHeight={state.height}
-        onCellHeightChange={handleCellHeightChange}
-        cellSize={state.px}
-        onCellSizeChange={handleCellSizeChange}
+        cellWidth={width}
+        onWidthChange={handleWidthChange}
+        cellHeight={height}
+        onHeightChange={handleHeightChange}
+        px={px}
+        onPxChange={handlePxChange}
         minMaxLimits={minMaxLimits}
-        isRunning={state.isRunning}
+        isRunning={isRunning}
       />
 
       <SpeedSlider
         gridArea={'speedslider'}
         justifySelf="center"
         w="calc(100% - 2rem)"
-        interval={state.interval}
-        fpsInterval={state.fpsInterval}
+        interval={interval}
+        fpsInterval={fpsInterval}
         min={minMaxLimits.interval.min}
         max={minMaxLimits.interval.max}
         onChange={handleIntervalChange}
@@ -452,14 +501,14 @@ export const Lifelike = ({ isMobile }) => {
 
       <RuleCheckboxRow
         gridArea="born"
-        ruleArray={state.born}
+        ruleArray={born}
         ruleType="born"
         onChange={handleRuleChange}
       />
 
       <RuleCheckboxRow
         gridArea="surive"
-        ruleArray={state.survive}
+        ruleArray={survive}
         ruleType="survive"
         onChange={handleRuleChange}
       />
@@ -467,7 +516,7 @@ export const Lifelike = ({ isMobile }) => {
       <NeighborhoodRadio
         direction="row"
         gridArea="neighborhoodradio"
-        neighborhood={state.neighborhood}
+        neighborhood={neighborhood}
         onChange={handleNeighborhoodChange}
       />
 
@@ -480,29 +529,29 @@ export const Lifelike = ({ isMobile }) => {
         }}
       >
         <StyledCheckbox
-          isChecked={state.showGridlines}
+          isChecked={showGridlines}
           onChange={handleToggleGridlines}
           label="gridlines"
         />
 
         <StyledCheckbox
-          isChecked={state.wrap}
+          isChecked={wrap}
           onChange={handleToggleWrap}
           label="wrap"
         />
 
         <StyledCheckbox
-          isChecked={state.showStats}
+          isChecked={showStats}
           onChange={handleToggleShowStats}
           label="stats"
         />
       </div>
 
-      {state.showStats && (
+      {showStats && (
         <Monitor
           gridArea="monitor"
-          generations={state.generations}
-          fps={state.fps}
+          generations={generations}
+          fps={fps}
           // population={population}
         />
       )}
@@ -513,13 +562,13 @@ export const Lifelike = ({ isMobile }) => {
         p={0}
         m={0}
         canvasContainerRef={canvasContainerRef}
-        canvasContainerWidth={state.canvasContainerWidth}
-        canvasContainerHeight={state.canvasContainerHeight}
+        canvasContainerWidth={canvasContainerWidth}
+        canvasContainerHeight={canvasContainerHeight}
         canvasRef={canvasRef}
-        canvasWidth={state.canvasWidth}
-        canvasHeight={state.canvasHeight}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
         canvasOverlayRef={canvasOverlayRef}
-        isRunning={state.isRunning}
+        isRunning={isRunning}
         // mousePositionRef={mousePositionRef}
       />
     </Grid>
