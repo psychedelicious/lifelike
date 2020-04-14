@@ -394,7 +394,7 @@ export const Lifelike = ({ isMobile }) => {
         break;
       case 'ArrowRight':
         e.preventDefault();
-        !state.isRunning && handleClickTick();
+        !state.isRunning && handleClickTick(); 
         break;
       default:
         break;
