@@ -1,17 +1,18 @@
 export const drawGridLines = ({
   canvas,
-  cellWidth,
-  cellHeight,
-  cellSize,
+  width,
+  height,
+  px,
   gridLineColor,
   thickness = 0.5,
 }) => {
   const context = canvas.getContext('2d');
   context.fillStyle = gridLineColor;
-  for (let cellX = 1; cellX < cellWidth; cellX++) {
-    context.fillRect(cellX * cellSize, 0, thickness, cellHeight * cellSize);
+
+  for (let cellX = 1; cellX < width; cellX++) {
+    context.fillRect(cellX * px, 0, thickness, height * px);
   }
-  for (let cellY = 1; cellY < cellHeight; cellY++) {
-    context.fillRect(0, cellY * cellSize, cellWidth * cellSize, thickness);
+  for (let cellY = 1; cellY < height; cellY++) {
+    context.fillRect(0, cellY * px, width * px, thickness);
   }
 };

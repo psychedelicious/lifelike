@@ -38,14 +38,14 @@ export const MainControls = React.memo(
           onClick={onClickTick}
         />
         <IconButton
-          isDisabled={isRunning}
+          // isDisabled={isRunning}
           icon={FaTrash}
           variant="solid"
           aria-label="clear all cells"
           onClick={onClickClearCells}
         />
         <IconButton
-          isDisabled={isRunning}
+          // isDisabled={isRunning}
           icon={FaRandom}
           variant="solid"
           aria-label="randomize all cells"

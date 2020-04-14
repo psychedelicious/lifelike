@@ -7,14 +7,18 @@ import { useMediaQuery } from 'react-responsive';
 
 import { lifelikeTheme } from '../theme';
 
+import { StoreProvider } from '../store';
+
 export default function App() {
   const isMobile = useMediaQuery({ maxWidth: lifelikeTheme.breakpoints.md });
 
   return (
     <ThemedApp>
-      <Box w="100%" p="1rem">
-        <Lifelike isMobile={isMobile} />
-      </Box>
+      <StoreProvider>
+        <Box w="100%" p="1rem">
+          <Lifelike isMobile={isMobile} />
+        </Box>
+      </StoreProvider>
     </ThemedApp>
   );
 }

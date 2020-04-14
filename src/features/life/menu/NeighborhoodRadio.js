@@ -11,13 +11,13 @@ export const NeighborhoodRadio = React.memo(
       <Flex {...rest} fontSize="sm">
         <Text>n ~></Text>
         <Flex px="0.5rem" justify="space-between" flex="1 1 auto">
-          {Neighborhoods.types.map((n) => (
-            <Box>
+          {Neighborhoods.types.map((n, i) => (
+            <Box key={`neighborhood${i}`}>
               <Radio
                 value={n}
                 size="sm"
                 isChecked={neighborhood.id === n}
-                onClick={() => onChange(n)}
+                onChange={() => onChange(n)}
               >
                 <Text>{Neighborhoods[n].name}</Text>
               </Radio>

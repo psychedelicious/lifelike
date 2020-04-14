@@ -1,12 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 
 import { IconButton, Flex, useColorMode, Heading } from '@chakra-ui/core';
 import { HelpModal } from './HelpModal';
 
-export const Header = React.memo(({ toggleHelp, ...rest }) => {
+export const Header = React.memo(({ ...rest }) => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -32,8 +31,3 @@ export const Header = React.memo(({ toggleHelp, ...rest }) => {
     </Flex>
   );
 });
-
-Header.propTypes = {
-  toggleHelp: PropTypes.func.isRequired,
-  toggleColorMode: PropTypes.func.isRequired,
-};

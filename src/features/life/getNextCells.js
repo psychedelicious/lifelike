@@ -1,17 +1,17 @@
 export const getNextCells = ({
   cells,
-  cellWidth,
-  cellHeight,
+  width,
+  height,
   born,
   survive,
   wrap,
   neighborhood,
 }) => {
-  let newCells = Array.from(Array(cellWidth), () => new Array(cellHeight));
-  let population = 0;
+  let newCells = Array.from(Array(width), () => new Array(height));
+  // let population = 0;
 
-  for (let x = 0; x < cellWidth; x++) {
-    for (let y = 0; y < cellHeight; y++) {
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
       let neighborCount = 0;
 
       for (let coord of neighborhood.coords) {
@@ -21,21 +21,21 @@ export const getNextCells = ({
         if (wrap) {
           if (_x < 0) {
             // wrap to the west
-            _x = cellWidth + _x;
-          } else if (_x >= cellWidth) {
+            _x = width + _x;
+          } else if (_x >= width) {
             // wrap to the east
-            _x = cellWidth - _x;
+            _x = width - _x;
           }
 
           if (_y < 0) {
             // wrap to the north
-            _y = cellHeight + _y;
-          } else if (_y >= cellHeight) {
+            _y = height + _y;
+          } else if (_y >= height) {
             // wrap to the south
-            _y = cellHeight - _y;
+            _y = height - _y;
           }
         } else {
-          if (_x < 0 || _x >= cellWidth || _y < 0 || _y >= cellHeight) {
+          if (_x < 0 || _x >= width || _y < 0 || _y >= height) {
             // ignore this neighbor
             continue;
           }
@@ -52,8 +52,9 @@ export const getNextCells = ({
         newCells[x][y] = cells[x][y];
       }
 
-      population += newCells[x][y];
+      // population += newCells[x][y];
     }
   }
-  return [newCells, population];
+  return newCells;
+  // return [newCells, population];
 };

@@ -202,9 +202,9 @@ export const HelpModal = () => {
             </Collapsible>
 
             <Collapsible label="keyboard shortcuts">
-              {keyboardShortcuts.map((k) => {
+              {keyboardShortcuts.map((k, i) => {
                 return (
-                  <Flex direction="row">
+                  <Flex direction="row" key={`shortcut${i}`}>
                     <Text w="6rem" textAlign="right" mr=".5rem">
                       [{k.shortcut}]
                     </Text>

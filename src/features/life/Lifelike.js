@@ -3,30 +3,42 @@ import { clamp } from 'lodash';
 // import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
-import { Grid, useTheme } from '@chakra-ui/core';
+import { Grid } from '@chakra-ui/core';
 
 // Components
 import { Canvas } from './canvas/Canvas';
 import { Header } from './menu/Header';
 import { MainControls } from './menu/MainControls';
-import { SliderControls } from './menu/SliderControls';
+import { Monitor } from './menu/Monitor';
 import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
 import { RuleCheckboxRow } from './menu/RuleCheckboxRow';
-import { Monitor } from './menu/Monitor';
+import { SliderControls } from './menu/SliderControls';
 import { SpeedSlider } from './menu/SpeedSlider';
 import { StyledCheckbox } from './menu/StyledCheckbox';
-
-// Functions
-import { createCells } from './createCells';
-import { getNextCells } from './getNextCells';
-import { Neighborhoods } from './neighborhoods';
-import { drawCells } from './canvas/drawCells';
-import { drawGridLines } from './canvas/drawGridLines';
-import { clearCanvas } from './canvas/clearCanvas';
 
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
+import { useLifeCanvas } from './canvas/useLifeCanvas';
+
+import {
+  useStore,
+  CLEAR_CELLS,
+  GET_NEXT_CELLS,
+  RANDOMIZE_CELLS,
+  SET_BORN,
+  SET_FPS,
+  SET_GRID,
+  SET_INTERVAL,
+  SET_NEIGHBORHOOD,
+  SET_PREVIOUSFRAMETIME,
+  SET_SURVIVE,
+  TOGGLE_ISRUNNING,
+  TOGGLE_SHOWGRIDLINES,
+  TOGGLE_SHOWSTATS,
+  TOGGLE_WRAP,
+  SET_LASTCONFIGCHANGE,
+} from '../../store';
 
 const gridTemplateRows = {
   base: '2rem 1fr 3rem auto 2rem 2rem 2rem 2rem 2rem 4rem',
@@ -76,127 +88,13 @@ const minMaxLimits = {
     max: 100,
   },
 };
-//
-const CHANGE_CELLS = 'CHANGE_CELLS';
-const POPULATE_CELLS_RANDOM = 'POPULATE_CELLS_RANDOM';
-const CHANGE_CELLSIZE = 'CHANGE_CELLSIZE';
-const CHANGE_CELLHEIGHT = 'CHANGE_CELLHEIGHT';
-const CHANGE_CELLWIDTH = 'CHANGE_CELLWIDTH';
-
-const gridReducer = (state, action) => {
-  switch (action.type) {
-    case CHANGE_CELLSIZE:
-      return {
-        ...state,
-        px: action.payload.px,
-      };
-    case CHANGE_CELLHEIGHT:
-      return {
-        ...state,
-        height: action.payload.height,
-      };
-    case CHANGE_CELLWIDTH:
-      return {
-        ...state,
-        width: action.payload.width,
-      };
-    case CHANGE_CELLS:
-      return {
-        ...state,
-        cells: action.payload.cells,
-      };
-    case POPULATE_CELLS_RANDOM:
-      return {
-        ...state,
-        cells: createCells({
-          cellWidth: state.width,
-          cellHeight: state.height,
-        }),
-      };
-    default:
-      throw new Error(`Action type ${action.type} unrecognized`);
-  }
-};
 
 export const Lifelike = ({ isMobile }) => {
-  const theme = useTheme();
+  const { drawCells, drawGridlines } = useLifeCanvas();
 
-  const [state, dispatch] = React.useReducer(gridReducer, {
-    cells: [],
-    width: 0,
-    height: 0,
-    px: 5,
-  });
-
-  const [population, setPopulation] = React.useState(0);
-  const [neighborhood, setNeighborhood] = React.useState(Neighborhoods.MOORE);
-  const [born, setBorn] = React.useState([
-    false,
-    false,
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
-  const [survive, setSurvive] = React.useState([
-    false,
-    false,
-    true,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
-  const [wrap, setWrap] = React.useState(true);
-
-  const [cellWidth, setCellWidth] = React.useState(1);
-  const [cellHeight, setCellHeight] = React.useState(1);
-  const [cellSize, setCellSize] = React.useState(5);
-
-  const [lastConfigChange, setLastConfigChange] = React.useState(
-    window.performance.now()
-  );
+  const { state, dispatch } = useStore();
 
   const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
-
-  const [deadCellColor, setDeadCellColor] = React.useState(
-    theme.colors.gray['100']
-  );
-
-  const [aliveCellColor, setAliveCellColor] = React.useState(
-    theme.colors.gray['700']
-  );
-
-  const [gridLineColor, setGridLineColor] = React.useState(
-    theme.colors.gray['300']
-  );
-
-  const [showStats, setShowStats] = React.useState(true);
-
-  const [canvasWidth, setCanvasWidth] = React.useState(0);
-  const [canvasHeight, setCanvasHeight] = React.useState(0);
-
-  const [canvasContainerWidth, setCanvasContainerWidth] = React.useState(0);
-  const [canvasContainerHeight, setCanvasContainerHeight] = React.useState(0);
-
-  const [showGridLines, setShowGridLines] = React.useState(false);
-
-  const [generations, setGenerations] = React.useState(0);
-  const [isRunning, setIsRunning] = React.useState(false);
-
-  const [currentFps, setCurrentFps] = React.useState(0);
-  const [previousFrameTime, setPreviousFrameTime] = React.useState(0);
-  const [lastFpsUpdate, setLastFpsUpdate] = React.useState(0);
-
-  const [interval, setInterval] = React.useState(70);
-  const [fpsInterval, setFpsInterval] = React.useState(
-    Math.pow(100 - interval, 3) / 1000
-  );
 
   // const [mousePosition, mousePositionRef] = useMousePosition(
   //   0, // enterDelay
@@ -210,31 +108,22 @@ export const Lifelike = ({ isMobile }) => {
   const canvasOverlayRef = React.useRef(null);
 
   const handleToggleIsRunning = React.useCallback(() => {
-    setIsRunning((isRunning) => !isRunning);
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
+    dispatch({ type: TOGGLE_ISRUNNING });
+  }, [state.lastConfigChange]);
 
-  const handleWrapChange = React.useCallback(
-    (e) => {
-      const newWrap = !wrap;
-      setWrap(newWrap);
-    },
-    [wrap]
-  );
+  const handleToggleWrap = React.useCallback(() => {
+    dispatch({ type: TOGGLE_WRAP });
+  }, [state.lastConfigChange]);
 
-  const handleToggleStats = React.useCallback(
-    (e) => {
-      const newShowStats = !showStats;
-      setShowStats(newShowStats);
-    },
-    [showStats]
-  );
+  const handleToggleShowStats = React.useCallback(() => {
+    dispatch({ type: TOGGLE_SHOWSTATS });
+  }, [state.lastConfigChange]);
 
   const handleCanvasSizeChange = React.useCallback(
     ({
-      newCellWidth = cellWidth,
-      newCellHeight = cellHeight,
-      newCellSize = cellSize,
+      newCellWidth = state.width,
+      newCellHeight = state.height,
+      newCellSize = state.px,
     }) => {
       const rem = parseFloat(
         getComputedStyle(document.documentElement).fontSize
@@ -243,43 +132,40 @@ export const Lifelike = ({ isMobile }) => {
       const newCanvasHeight = newCellHeight * newCellSize;
       const newCanvasWidth = newCellWidth * newCellSize;
 
-      setCellSize(newCellSize);
-      setCellWidth(newCellWidth);
-      setCellHeight(newCellHeight);
-      setCanvasWidth(newCanvasWidth);
-      setCanvasHeight(newCanvasHeight);
-
       canvasRef.current.width = newCanvasWidth;
       canvasRef.current.height = newCanvasHeight;
 
       canvasOverlayRef.current.width = newCanvasWidth;
       canvasOverlayRef.current.height = newCanvasHeight;
 
-      setCanvasContainerWidth(newCanvasWidth + rem + 2);
-      setCanvasContainerHeight(newCanvasHeight + rem + 2);
+      dispatch({
+        type: SET_GRID,
+        payload: {
+          width: newCellWidth,
+          height: newCellHeight,
+          px: newCellSize,
+          canvasWidth: newCanvasWidth,
+          canvasHeight: newCanvasHeight,
+          canvasContainerWidth: newCanvasWidth + rem + 2,
+          canvasContainerHeight: newCanvasHeight + rem + 2,
+        },
+      });
 
-      setLastConfigChange(window.performance.now());
+      // clearCanvas({ canvas: canvasOverlayRef.current });
+
+      drawGridlines({ canvas: canvasOverlayRef.current });
+
+      window.requestAnimationFrame(() =>
+        drawCells({ canvas: canvasRef.current })
+      );
     },
-    [lastConfigChange]
+    [state.lastConfigChange]
   );
 
-  const handleToggleGridLines = React.useCallback(() => {
-    const newShowGridLines = !showGridLines;
-
-    setShowGridLines(newShowGridLines);
-    clearCanvas({ canvas: canvasOverlayRef.current });
-
-    if (newShowGridLines) {
-      drawGridLines({
-        gridLineColor,
-        canvas: canvasOverlayRef.current,
-        cellHeight,
-        cellWidth,
-        cellSize,
-      });
-    }
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
+  const handleToggleGridlines = React.useCallback(() => {
+    dispatch({ type: TOGGLE_SHOWGRIDLINES });
+    drawGridlines({ canvas: canvasOverlayRef.current });
+  }, [dispatch, drawGridlines]);
 
   const handleCellWidthChange = React.useCallback(
     (val) => {
@@ -290,45 +176,8 @@ export const Lifelike = ({ isMobile }) => {
       );
 
       handleCanvasSizeChange({ newCellWidth });
-
-      const [newCells, newPopulation] = createCells({
-        cellHeight,
-        cellWidth: newCellWidth,
-        fill: state.cells,
-      });
-
-      // setCells(newCells);
-
-      dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
-
-      setPopulation(newPopulation);
-
-      clearCanvas({ canvas: canvasOverlayRef.current });
-
-      if (showGridLines) {
-        drawGridLines({
-          gridLineColor,
-          canvas: canvasOverlayRef.current,
-          cellHeight,
-          cellWidth: newCellWidth,
-          cellSize,
-        });
-      }
-
-      window.requestAnimationFrame(() =>
-        drawCells({
-          aliveCellColor,
-          deadCellColor,
-          cellSize,
-          cellHeight,
-          canvas: canvasRef.current,
-          cells: newCells,
-          cellWidth: newCellWidth,
-        })
-      );
-      setLastConfigChange(window.performance.now());
     },
-    [lastConfigChange]
+    [state.lastConfigChange]
   );
 
   const handleCellHeightChange = React.useCallback(
@@ -340,44 +189,8 @@ export const Lifelike = ({ isMobile }) => {
       );
 
       handleCanvasSizeChange({ newCellHeight });
-
-      const [newCells, newPopulation] = createCells({
-        cellWidth,
-        cellHeight: newCellHeight,
-        fill: state.cells,
-      });
-
-      // setCells(newCells);
-      dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
-
-      setPopulation(newPopulation);
-
-      clearCanvas({ canvas: canvasOverlayRef.current });
-
-      if (showGridLines) {
-        drawGridLines({
-          gridLineColor,
-          canvas: canvasOverlayRef.current,
-          cellHeight: newCellHeight,
-          cellWidth,
-          cellSize,
-        });
-      }
-
-      window.requestAnimationFrame(() =>
-        drawCells({
-          aliveCellColor,
-          deadCellColor,
-          cellSize,
-          cellWidth,
-          canvas: canvasRef.current,
-          cells: newCells,
-          cellHeight: newCellHeight,
-        })
-      );
-      setLastConfigChange(window.performance.now());
     },
-    [lastConfigChange]
+    [state.lastConfigChange]
   );
 
   const handleCellSizeChange = React.useCallback(
@@ -388,117 +201,62 @@ export const Lifelike = ({ isMobile }) => {
         minMaxLimits.cellSize.max
       );
 
-      setCellSize(newCellSize);
-
       handleCanvasSizeChange({ newCellSize });
-
-      clearCanvas({ canvas: canvasOverlayRef.current });
-
-      if (showGridLines) {
-        drawGridLines({
-          gridLineColor,
-          canvas: canvasOverlayRef.current,
-          cellHeight,
-          cellWidth,
-          cellSize: newCellSize,
-        });
-      }
-
-      window.requestAnimationFrame(() =>
-        drawCells({
-          aliveCellColor,
-          deadCellColor,
-          cells: state.cells,
-          cellWidth,
-          cellHeight,
-          cellSize: newCellSize,
-          canvas: canvasRef.current,
-        })
-      );
-      setLastConfigChange(window.performance.now());
     },
-    [lastConfigChange]
+    [state.lastConfigChange]
   );
 
-  const handleIntervalChange = React.useCallback((val) => {
-    const newInterval = clamp(
-      val,
-      minMaxLimits.interval.min,
-      minMaxLimits.interval.max
-    );
-    setInterval(newInterval);
-    setFpsInterval(Math.pow(100 - newInterval, 3) / 1000);
-    fpsLogRef.current = [];
-  }, []);
+  const handleIntervalChange = React.useCallback(
+    (val) => {
+      const newInterval = clamp(
+        val,
+        minMaxLimits.interval.min,
+        minMaxLimits.interval.max
+      );
 
-  const handleNeighborhoodChange = React.useCallback((val) => {
-    const newNeighborhood = Neighborhoods[val];
-    setNeighborhood(newNeighborhood);
-  }, []);
+      dispatch({ type: SET_INTERVAL, interval: newInterval });
+      fpsLogRef.current = [];
+    },
+    [state.lastConfigChange]
+  );
+
+  const handleNeighborhoodChange = React.useCallback(
+    (val) => {
+      dispatch({ type: SET_NEIGHBORHOOD, neighborhood: val });
+    },
+    [state.lastConfigChange]
+  );
 
   const handleRuleChange = React.useCallback(
     (ruleType, index) => {
       ruleType === 'born'
-        ? setBorn(born.map((val, i) => (i === index ? !val : val)))
-        : setSurvive(survive.map((val, i) => (i === index ? !val : val)));
-      setLastConfigChange(window.performance.now());
+        ? dispatch({ type: SET_BORN, index })
+        : dispatch({ type: SET_SURVIVE, index });
     },
-    [lastConfigChange]
+    [state.lastConfigChange]
   );
 
   const handleClearCells = React.useCallback(() => {
-    const [newCells, newPopulation] = createCells({
-      cellHeight,
-      cellWidth,
-      fill: 0,
-    });
-
-    // setCells(newCells);
-    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
-
-    setPopulation(newPopulation);
-    setGenerations(0);
-    setCurrentFps(0);
+    dispatch({ type: CLEAR_CELLS });
     fpsLogRef.current = [];
 
     window.requestAnimationFrame(() =>
       drawCells({
-        aliveCellColor,
-        deadCellColor,
-        cellSize,
-        cellWidth,
-        cellHeight,
         canvas: canvasRef.current,
-        cells: newCells,
       })
     );
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
+  }, [state.lastConfigChange]);
 
   const handleRandomizeCells = React.useCallback(() => {
-    const [newCells, newPopulation] = createCells({ cellHeight, cellWidth });
-
-    // setCells(newCells);
-    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
-
-    setPopulation(newPopulation);
-    setGenerations(0);
-    setCurrentFps(0);
+    dispatch({ type: RANDOMIZE_CELLS });
     fpsLogRef.current = [];
 
     window.requestAnimationFrame(() =>
       drawCells({
-        aliveCellColor,
-        deadCellColor,
-        cellSize,
-        cellWidth,
-        cellHeight,
         canvas: canvasRef.current,
-        cells: newCells,
       })
     );
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
+  }, [state.lastConfigChange]);
 
   const handleToggleOptions = React.useCallback(() => {
     setIsOptionsOpen((isOptionsOpen) => !isOptionsOpen);
@@ -528,7 +286,7 @@ export const Lifelike = ({ isMobile }) => {
 
     const newCellWidth = clamp(
       Math.trunc(
-        (window.innerWidth - canvasRect.left - widthOffset) / cellSize
+        (window.innerWidth - canvasRect.left - widthOffset) / state.px
       ),
       minMaxLimits.cellWidth.min,
       minMaxLimits.cellWidth.max
@@ -540,112 +298,61 @@ export const Lifelike = ({ isMobile }) => {
           canvasRect.top -
           heightOffset -
           mobileHeightOffset) /
-          cellSize
+          state.px
       ),
       minMaxLimits.cellHeight.min,
       minMaxLimits.cellHeight.max
     );
 
     handleCanvasSizeChange({ newCellWidth, newCellHeight });
-
-    const [newCells, newPopulation] = createCells({
-      cellWidth: newCellWidth,
-      cellHeight: newCellHeight,
-      fill: state.cells.length ? state.cells : 'random',
-    });
-
-    // setCells(newCells);
-    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
-
-    setPopulation(newPopulation);
-
-    drawCells({
-      canvas: canvasRef.current,
-      cells: newCells,
-      cellSize: cellSize,
-      cellWidth: newCellWidth,
-      cellHeight: newCellHeight,
-      aliveCellColor,
-      deadCellColor,
-    });
-
-    clearCanvas({ canvas: canvasOverlayRef.current });
-
-    if (showGridLines) {
-      drawGridLines({
-        gridLineColor,
-        canvas: canvasOverlayRef.current,
-        cellHeight: newCellHeight,
-        cellWidth: newCellWidth,
-        cellSize: cellSize,
-      });
-    }
-
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
-  const handleClickTick = React.useCallback(() => {
-    tick();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
+  }, [state.lastConfigChange, isMobile]);
 
   React.useLayoutEffect(fitCellsToCanvas, []);
 
   useAnimationFrame(() => {
     if (
-      isRunning &&
-      window.performance.now() - previousFrameTime > fpsInterval
+      state.isRunning &&
+      window.performance.now() - state.previousFrameTime > state.fpsInterval
     ) {
       fpsLogRef.current.push(
-        1000 / (window.performance.now() - previousFrameTime)
+        1000 / (window.performance.now() - state.previousFrameTime)
       );
 
-      if (window.performance.now() - lastFpsUpdate > 200) {
-        setCurrentFps(
-          Math.round(
-            (fpsLogRef.current.reduce((acc, val) => acc + val) /
-              fpsLogRef.current.length) *
-              10
-          ) / 10
-        );
-        setLastFpsUpdate(window.performance.now());
+      if (window.performance.now() - state.lastFpsUpdate > 200) {
+        dispatch({
+          type: SET_FPS,
+          fps:
+            Math.round(
+              (fpsLogRef.current.reduce((acc, val) => acc + val) /
+                fpsLogRef.current.length) *
+                10
+            ) / 10,
+        });
       }
 
-      if (fpsLogRef.current.length > currentFps) fpsLogRef.current.shift();
+      if (fpsLogRef.current.length > state.fps) fpsLogRef.current.shift();
 
-      setPreviousFrameTime(window.performance.now());
+      dispatch({
+        type: SET_PREVIOUSFRAMETIME,
+        previousFrameTime: window.performance.now(),
+      });
 
       tick();
     }
   });
 
   const tick = () => {
-    const [newCells, newPopulation] = getNextCells({
-      cells: state.cells,
-      cellWidth,
-      cellHeight,
-      born,
-      survive,
-      wrap,
-      neighborhood,
-    });
-
-    // setCells(newCells);
-    dispatch({ type: CHANGE_CELLS, payload: { cells: newCells } });
-
-    setPopulation(newPopulation);
-    setGenerations((generations) => generations + 1);
-
-    drawCells({
-      aliveCellColor,
-      deadCellColor,
-      cellSize,
-      cellWidth,
-      cellHeight,
-      canvas: canvasRef.current,
-      cells: newCells,
-    });
+    dispatch({ type: GET_NEXT_CELLS });
+    window.requestAnimationFrame(() =>
+      drawCells({
+        canvas: canvasRef.current,
+      })
+    );
   };
+
+  const handleClickTick = React.useCallback(() => {
+    tick();
+  }, [state.lastConfigChange]);
 
   useGlobalKeyDown((e) => {
     switch (e.key) {
@@ -654,19 +361,19 @@ export const Lifelike = ({ isMobile }) => {
         handleToggleIsRunning();
         break;
       case 'c':
-        !isRunning && handleClearCells();
+        !state.isRunning && handleClearCells();
         break;
       case 'r':
-        !isRunning && handleRandomizeCells();
+        !state.isRunning && handleRandomizeCells();
         break;
       case 'f':
-        !isRunning && fitCellsToCanvas();
+        !state.isRunning && fitCellsToCanvas();
         break;
       case 'g':
-        handleToggleGridLines();
+        handleToggleGridlines();
         break;
       case 'w':
-        handleWrapChange();
+        handleToggleWrap();
         break;
       case '8':
         handleNeighborhoodChange('MOORE');
@@ -679,15 +386,15 @@ export const Lifelike = ({ isMobile }) => {
         break;
       case 'ArrowUp':
         e.preventDefault();
-        handleIntervalChange(interval + 1);
+        handleIntervalChange(state.interval + 1);
         break;
       case 'ArrowDown':
         e.preventDefault();
-        handleIntervalChange(interval - 1);
+        handleIntervalChange(state.interval - 1);
         break;
       case 'ArrowRight':
         e.preventDefault();
-        !isRunning && handleClickTick();
+        !state.isRunning && handleClickTick();
         break;
       default:
         break;
@@ -709,7 +416,7 @@ export const Lifelike = ({ isMobile }) => {
       <MainControls
         mt="0.5rem"
         justify="space-between"
-        isRunning={isRunning}
+        isRunning={state.isRunning}
         onClickStartStop={handleToggleIsRunning}
         onClickTick={handleClickTick}
         onClickRandomizeCells={handleRandomizeCells}
@@ -722,22 +429,22 @@ export const Lifelike = ({ isMobile }) => {
         gridArea="slidercontrols"
         isMobile={isMobile}
         isOpen={isOptionsOpen}
-        cellWidth={cellWidth}
+        cellWidth={state.width}
         onCellWidthChange={handleCellWidthChange}
-        cellHeight={cellHeight}
+        cellHeight={state.height}
         onCellHeightChange={handleCellHeightChange}
-        cellSize={cellSize}
+        cellSize={state.px}
         onCellSizeChange={handleCellSizeChange}
         minMaxLimits={minMaxLimits}
-        isRunning={isRunning}
+        isRunning={state.isRunning}
       />
 
       <SpeedSlider
         gridArea={'speedslider'}
         justifySelf="center"
         w="calc(100% - 2rem)"
-        interval={interval}
-        fpsInterval={fpsInterval}
+        interval={state.interval}
+        fpsInterval={state.fpsInterval}
         min={minMaxLimits.interval.min}
         max={minMaxLimits.interval.max}
         onChange={handleIntervalChange}
@@ -745,14 +452,14 @@ export const Lifelike = ({ isMobile }) => {
 
       <RuleCheckboxRow
         gridArea="born"
-        ruleArray={born}
+        ruleArray={state.born}
         ruleType="born"
         onChange={handleRuleChange}
       />
 
       <RuleCheckboxRow
         gridArea="surive"
-        ruleArray={survive}
+        ruleArray={state.survive}
         ruleType="survive"
         onChange={handleRuleChange}
       />
@@ -760,7 +467,7 @@ export const Lifelike = ({ isMobile }) => {
       <NeighborhoodRadio
         direction="row"
         gridArea="neighborhoodradio"
-        neighborhood={neighborhood}
+        neighborhood={state.neighborhood}
         onChange={handleNeighborhoodChange}
       />
 
@@ -773,30 +480,30 @@ export const Lifelike = ({ isMobile }) => {
         }}
       >
         <StyledCheckbox
-          isChecked={showGridLines}
-          onChange={handleToggleGridLines}
+          isChecked={state.showGridlines}
+          onChange={handleToggleGridlines}
           label="gridlines"
         />
 
         <StyledCheckbox
-          isChecked={wrap}
-          onChange={handleWrapChange}
+          isChecked={state.wrap}
+          onChange={handleToggleWrap}
           label="wrap"
         />
 
         <StyledCheckbox
-          isChecked={showStats}
-          onChange={handleToggleStats}
+          isChecked={state.showStats}
+          onChange={handleToggleShowStats}
           label="stats"
         />
       </div>
 
-      {showStats && (
+      {state.showStats && (
         <Monitor
           gridArea="monitor"
-          generations={generations}
-          currentFps={currentFps}
-          population={population}
+          generations={state.generations}
+          fps={state.fps}
+          // population={population}
         />
       )}
 
@@ -806,13 +513,13 @@ export const Lifelike = ({ isMobile }) => {
         p={0}
         m={0}
         canvasContainerRef={canvasContainerRef}
-        canvasContainerWidth={canvasContainerWidth}
-        canvasContainerHeight={canvasContainerHeight}
+        canvasContainerWidth={state.canvasContainerWidth}
+        canvasContainerHeight={state.canvasContainerHeight}
         canvasRef={canvasRef}
-        canvasWidth={canvasWidth}
-        canvasHeight={canvasHeight}
+        canvasWidth={state.canvasWidth}
+        canvasHeight={state.canvasHeight}
         canvasOverlayRef={canvasOverlayRef}
-        isRunning={isRunning}
+        isRunning={state.isRunning}
         // mousePositionRef={mousePositionRef}
       />
     </Grid>
