@@ -39,7 +39,7 @@ export const initialState = {
   showGridlines: false,
   isRunning: false,
   showStats: true,
-  generations: 0,
+  generation: 0,
   population: 0,
   density: 0,
   canvasWidth: 0,
@@ -92,7 +92,7 @@ const reducer = (state, action) => {
       });
       return {
         ...state,
-        generations: 0,
+        generation: 0,
         cells: randomizedCells,
         population: randomizedCellsPopulation,
         density:
@@ -108,7 +108,7 @@ const reducer = (state, action) => {
       });
       return {
         ...state,
-        generations: 0,
+        generation: 0,
         cells: clearedCells,
         population: clearedCellsPopulation,
         density:
@@ -166,7 +166,7 @@ const reducer = (state, action) => {
       );
       return {
         ...state,
-        generations: state.generations + 1,
+        generation: state.generation + 1,
         cells: nextCells,
         population: nextPopulation,
         density:

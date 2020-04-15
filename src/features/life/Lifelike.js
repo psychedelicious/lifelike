@@ -117,7 +117,7 @@ export const Lifelike = ({ isMobile }) => {
     showGridlines,
     isRunning,
     showStats,
-    generations,
+    generation,
     population,
     density,
     canvasWidth,
@@ -564,7 +564,7 @@ export const Lifelike = ({ isMobile }) => {
       {showStats && (
         <Monitor
           gridArea="monitor"
-          generations={generations}
+          generation={generation}
           population={population}
           density={density}
         />

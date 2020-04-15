@@ -32,7 +32,7 @@ export const useLife = () => {
     showGridlines: state.showGridlines,
     isRunning: state.isRunning,
     showStats: state.showStats,
-    generations: state.generations,
+    generation: state.generation,
     population: state.population,
     density: state.density,
     canvasWidth: state.canvasWidth,

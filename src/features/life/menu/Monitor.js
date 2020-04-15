@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 import { Flex, Stat, StatLabel, StatNumber } from '@chakra-ui/core';
 
-export const Monitor = ({ generations, population, density, ...rest }) => {
+export const Monitor = ({ generation, population, density, ...rest }) => {
   return (
     <Flex {...rest} justify="left">
       <Stat>
         <StatLabel>generation</StatLabel>
-        <StatNumber>{generations}</StatNumber>
+        <StatNumber>{generation}</StatNumber>
       </Stat>
 
       <Stat>
@@ -25,7 +25,7 @@ export const Monitor = ({ generations, population, density, ...rest }) => {
 };
 
 Monitor.propTypes = {
-  generations: PropTypes.number,
+  generation: PropTypes.number,
   population: PropTypes.number,
   density: PropTypes.number,
 };
