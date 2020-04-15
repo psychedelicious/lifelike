@@ -10,13 +10,11 @@ import {
   SliderThumb,
   Tooltip,
   useColorMode,
-  useTheme,
 } from '@chakra-ui/core';
 
 export const SpeedSlider = React.memo(
   ({ speed, msDelay, min, max, onChange, ...rest }) => {
     const { colorMode } = useColorMode();
-    const theme = useTheme();
 
     let delayString;
 
