@@ -43,7 +43,6 @@ export const MainControls = React.memo(
         />
         <IconButton
           style={style}
-          // isDisabled={isRunning}
           icon={FaTrash}
           variant="solid"
           aria-label="clear all cells"
@@ -51,7 +50,6 @@ export const MainControls = React.memo(
         />
         <IconButton
           style={style}
-          // isDisabled={isRunning}
           icon={FaRandom}
           variant="solid"
           aria-label="randomize all cells"
