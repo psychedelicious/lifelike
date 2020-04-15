@@ -3,7 +3,7 @@ import React from 'react';
 import { IoMdSunny, IoMdMoon, IoMdSwap } from 'react-icons/io';
 
 import { IconButton, Flex, Heading } from '@chakra-ui/core';
-import { HelpModal } from './HelpModal';
+import { InfoModal } from './InfoModal';
 
 export const Header = React.memo(
   ({
@@ -34,7 +34,7 @@ export const Header = React.memo(
             />
           )}
 
-          <HelpModal />
+          <InfoModal />
 
           <IconButton
             icon={colorMode === 'light' ? IoMdMoon : IoMdSunny}

@@ -86,9 +86,10 @@ const keyboardShortcuts = [
   },
   { shortcut: 'g', description: 'toggle gridlines' },
   { shortcut: 's', description: 'toggle stats' },
+  { shortcut: 'd', description: 'toggle dark mode' },
 ];
 
-export const HelpModal = () => {
+export const InfoModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
