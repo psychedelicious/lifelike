@@ -41,6 +41,7 @@ export const RuleCheckboxRow = React.memo(
               />
 
               <ControlBox
+                userSelect="none"
                 borderWidth="1px"
                 size="1.5rem"
                 rounded="sm"
