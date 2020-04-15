@@ -246,7 +246,7 @@ export const Lifelike = ({ isMobile }) => {
   const handleToggleLayout = React.useCallback(() => {
     toggleLayout();
     setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggleIsRunning = React.useCallback(() => {
     toggleIsRunning();
