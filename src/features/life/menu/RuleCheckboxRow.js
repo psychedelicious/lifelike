@@ -47,6 +47,8 @@ export const RuleCheckboxRow = React.memo(
                 color={
                   colorMode === 'light' ? 'blackAlpha.600' : 'whiteAlpha.600'
                 }
+                bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.100'}
+                cursor="pointer"
                 borderColor="transparent"
                 _child={{ opacity: 100 }}
                 _checked={

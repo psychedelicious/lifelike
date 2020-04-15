@@ -22,15 +22,19 @@ export const MainControls = React.memo(
     onClickToggleOptions,
     ...rest
   }) => {
+    const style = { touchAction: 'manipulation' };
+
     return (
       <Flex {...rest}>
         <IconButton
+          style={style}
           icon={isRunning ? FaPause : FaPlay}
           variant="solid"
           aria-label="start/stop"
           onClick={onClickStartStop}
         />
         <IconButton
+          style={style}
           isDisabled={isRunning}
           icon={FaStepForward}
           variant="solid"
@@ -38,6 +42,7 @@ export const MainControls = React.memo(
           onClick={onClickTick}
         />
         <IconButton
+          style={style}
           // isDisabled={isRunning}
           icon={FaTrash}
           variant="solid"
@@ -45,6 +50,7 @@ export const MainControls = React.memo(
           onClick={onClickClearCells}
         />
         <IconButton
+          style={style}
           // isDisabled={isRunning}
           icon={FaRandom}
           variant="solid"
@@ -52,6 +58,7 @@ export const MainControls = React.memo(
           onClick={onClickRandomizeCells}
         />
         <IconButton
+          style={style}
           isDisabled={isRunning}
           icon={FaExpandArrowsAlt}
           variant="solid"
@@ -59,6 +66,7 @@ export const MainControls = React.memo(
           onClick={onClickFitCellsToCanvas}
         />
         <IconButton
+          style={style}
           icon={FaSlidersH}
           variant="ghost"
           aria-label="show/hide options"
