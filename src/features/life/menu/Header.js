@@ -1,12 +1,18 @@
 import React from 'react';
 
-import { IoMdSunny, IoMdMoon } from 'react-icons/io';
+import { IoMdSunny, IoMdMoon, IoMdSwap } from 'react-icons/io';
 
 import { IconButton, Flex, Heading } from '@chakra-ui/core';
 import { HelpModal } from './HelpModal';
 
 export const Header = React.memo(
-  ({ colorMode, handleToggleColorMode, ...rest }) => {
+  ({
+    colorMode,
+    isMobile,
+    handleToggleColorMode,
+    handleToggleLayout,
+    ...rest
+  }) => {
     return (
       <Flex {...rest} justify="space-between">
         <Heading fontSize="1.25rem" fontWeight={400}>
@@ -14,6 +20,20 @@ export const Header = React.memo(
         </Heading>
 
         <Flex justify="right">
+          {!isMobile && (
+            <IconButton
+              icon={IoMdSwap}
+              fontSize="1.5rem"
+              p={0}
+              h="unset"
+              minW="unset"
+              mr="0.5rem"
+              variant="unstyled"
+              aria-label="swap menu side"
+              onClick={handleToggleLayout}
+            />
+          )}
+
           <HelpModal />
 
           <IconButton

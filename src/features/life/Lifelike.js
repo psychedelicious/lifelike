@@ -27,19 +27,30 @@ const gridTemplateRows = {
   md: 'auto',
 };
 
-const gridTemplateColumns = { base: 'auto', md: '18.5rem auto' };
+const gridTemplateColumnsBase = 'auto';
 
-const gridTemplateAreas = {
-  base: `"header"
-    "canvas"
-    "maincontrols"
-    "slidercontrols"
-    "speedslider"
-    "bornrule"
-    "surviverule"
-    "neighborhoodradio"
-    "gridlineswrap"
-    "monitor"`,
+const gridTemplateColumnsLeft = {
+  base: gridTemplateColumnsBase,
+  md: '18.5rem auto',
+};
+const gridTemplateColumnsRight = {
+  base: gridTemplateColumnsBase,
+  md: 'auto 18.5rem',
+};
+
+const gridTemplateAreasBase = `"header"
+  "canvas"
+  "maincontrols"
+  "slidercontrols"
+  "speedslider"
+  "bornrule"
+  "surviverule"
+  "neighborhoodradio"
+  "gridlineswrap"
+  "monitor"`;
+
+const gridTemplateAreasLeft = {
+  base: gridTemplateAreasBase,
   md: `"header canvas"
     "maincontrols canvas"
     "slidercontrols canvas"
@@ -50,6 +61,20 @@ const gridTemplateAreas = {
     "gridlineswrap canvas"
     "monitor canvas"
     ". canvas"`,
+};
+
+const gridTemplateAreasRight = {
+  base: gridTemplateAreasBase,
+  md: `"canvas header"
+    "canvas maincontrols"
+    "canvas slidercontrols"
+    "canvas speedslider"
+    "canvas bornrule"
+    "canvas surviverule"
+    "canvas neighborhoodradio"
+    "canvas gridlineswrap"
+    "canvas monitor"
+    "canvas ."`,
 };
 
 const minMaxLimits = {
@@ -104,6 +129,7 @@ export const Lifelike = ({ isMobile }) => {
     msDelay,
     lightModeColors,
     darkModeColors,
+    layout,
     // state setters
     toggleIsRunning,
     toggleWrap,
@@ -119,6 +145,7 @@ export const Lifelike = ({ isMobile }) => {
     setPreviousFrameTime,
     getNextCells,
     setColors,
+    toggleLayout,
   } = useLife();
 
   useGlobalKeyDown((e) => {
@@ -215,6 +242,11 @@ export const Lifelike = ({ isMobile }) => {
   const handleToggleColorMode = React.useCallback(() => {
     toggleColorMode();
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleToggleLayout = React.useCallback(() => {
+    toggleLayout();
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]);
 
   const handleToggleIsRunning = React.useCallback(() => {
     toggleIsRunning();
@@ -427,12 +459,18 @@ export const Lifelike = ({ isMobile }) => {
       rowGap="0.5rem"
       columnGap="1rem"
       alignItems="center"
-      gridTemplateColumns={gridTemplateColumns}
-      gridTemplateAreas={gridTemplateAreas}
+      gridTemplateColumns={
+        layout === 'left' ? gridTemplateColumnsLeft : gridTemplateColumnsRight
+      }
+      gridTemplateAreas={
+        layout === 'left' ? gridTemplateAreasLeft : gridTemplateAreasRight
+      }
     >
       <Header
+        isMobile={isMobile}
         colorMode={colorMode}
         handleToggleColorMode={handleToggleColorMode}
+        handleToggleLayout={handleToggleLayout}
         gridArea="header"
         justify="space-between"
         alignItems="center"

@@ -21,6 +21,7 @@ export const TOGGLE_SHOWGRIDLINES = 'TOGGLE_SHOWGRIDLINES';
 export const TOGGLE_SHOWSTATS = 'TOGGLE_SHOWSTATS';
 export const TOGGLE_WRAP = 'TOGGLE_WRAP';
 export const SET_COLORS = 'SET_COLORS';
+export const TOGGLE_LAYOUT = 'TOGGLE_LAYOUT';
 
 const StoreContext = createContext();
 
@@ -48,6 +49,7 @@ export const initialState = {
   previousFrameTime: 0,
   speed: 70,
   msDelay: Math.pow(100 - 70, 3) / 1000,
+  layout: 'left',
   lightModeColors: {
     deadCellColor: lifelikeTheme.colors.gray['50'],
     aliveCellColor: lifelikeTheme.colors.gray['700'],
@@ -202,6 +204,12 @@ const reducer = (state, action) => {
         aliveCellColor: action.payload.aliveCellColor ?? state.aliveCellColor,
         deadCellColor: action.payload.deadCellColor ?? state.deadCellColor,
         gridlinesColor: action.payload.gridlinesColor ?? state.gridlinesColor,
+      };
+    }
+    case TOGGLE_LAYOUT: {
+      return {
+        ...state,
+        layout: state.layout === 'left' ? 'right' : 'left',
       };
     }
     default:

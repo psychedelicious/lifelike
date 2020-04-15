@@ -15,6 +15,7 @@ import {
   TOGGLE_SHOWSTATS,
   TOGGLE_WRAP,
   SET_COLORS,
+  TOGGLE_LAYOUT,
 } from './store';
 
 export const useLife = () => {
@@ -46,6 +47,7 @@ export const useLife = () => {
     deadCellColor: state.deadCellColor,
     aliveCellColor: state.aliveCellColor,
     gridlinesColor: state.gridlinesColor,
+    layout: state.layout,
     toggleIsRunning: () => dispatch({ type: TOGGLE_ISRUNNING }),
     toggleWrap: () => dispatch({ type: TOGGLE_WRAP }),
     toggleShowStats: () => dispatch({ type: TOGGLE_SHOWSTATS }),
@@ -92,5 +94,6 @@ export const useLife = () => {
         type: SET_COLORS,
         payload: { aliveCellColor, deadCellColor, gridlinesColor },
       }),
+    toggleLayout: () => dispatch({ type: TOGGLE_LAYOUT }),
   };
 };
