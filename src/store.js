@@ -75,17 +75,18 @@ const reducer = (state, action) => {
       return {
         ...state,
         population: 0,
-        generation: 0,
+        generations: 0,
         cells: createCells({
           width: state.width,
           height: state.height,
+          fill: 'random',
         }),
       };
     case CLEAR_CELLS:
       return {
         ...state,
         population: 0,
-        generation: 0,
+        generations: 0,
         cells: createCells({
           width: state.width,
           height: state.height,
@@ -167,7 +168,7 @@ const reducer = (state, action) => {
         cells: createCells({
           width: action.payload.width,
           height: action.payload.height,
-          fill: state.cells,
+          fill: state.cells.length ? state.cells : 'random',
         }),
       };
     }
