@@ -12,13 +12,13 @@ export const Monitor = ({ generations, population, density, ...rest }) => {
       </Stat>
 
       <Stat>
-        <StatLabel>density %</StatLabel>
-        <StatNumber>{density}</StatNumber>
+        <StatLabel>population</StatLabel>
+        <StatNumber>{population}</StatNumber>
       </Stat>
 
       <Stat>
-        <StatLabel>population</StatLabel>
-        <StatNumber>{population}</StatNumber>
+        <StatLabel>density %</StatLabel>
+        <StatNumber>{density}</StatNumber>
       </Stat>
     </Flex>
   );
