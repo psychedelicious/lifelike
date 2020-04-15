@@ -11,9 +11,9 @@ import { NumberSlider } from './NumberSlider';
 export const SliderControls = React.memo(
   ({
     isMobile,
-    cellWidth,
+    width,
     onWidthChange,
-    cellHeight,
+    height,
     onHeightChange,
     px,
     onPxChange,
@@ -28,18 +28,18 @@ export const SliderControls = React.memo(
           {!isMobile && (
             <>
               <NumberSlider
-                value={cellWidth}
-                min={minMaxLimits.cellWidth.min}
-                max={minMaxLimits.cellWidth.max}
+                value={width}
+                min={minMaxLimits.width.min}
+                max={minMaxLimits.width.max}
                 onChange={onWidthChange}
                 isDisabled={isRunning}
                 icon={AiOutlineColumnWidth}
               />
 
               <NumberSlider
-                value={cellHeight}
-                min={minMaxLimits.cellHeight.min}
-                max={minMaxLimits.cellHeight.max}
+                value={height}
+                min={minMaxLimits.height.min}
+                max={minMaxLimits.height.max}
                 onChange={onHeightChange}
                 isDisabled={isRunning}
                 icon={AiOutlineColumnHeight}
@@ -62,9 +62,9 @@ export const SliderControls = React.memo(
 );
 
 SliderControls.propTypes = {
-  cellWidth: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
   onWidthChange: PropTypes.func.isRequired,
-  cellHeight: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
   onHeightChange: PropTypes.func.isRequired,
   px: PropTypes.number.isRequired,
   onPxChange: PropTypes.func.isRequired,

@@ -20,7 +20,6 @@ import { StyledCheckbox } from './menu/StyledCheckbox';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { useCanvas } from './canvas/useCanvas';
-
 import { useLife } from '../../storeApi';
 
 const gridTemplateRows = {
@@ -54,11 +53,11 @@ const gridTemplateAreas = {
 };
 
 const minMaxLimits = {
-  cellWidth: {
+  width: {
     min: 1,
     max: 2000,
   },
-  cellHeight: {
+  height: {
     min: 1,
     max: 2000,
   },
@@ -260,8 +259,8 @@ export const Lifelike = ({ isMobile }) => {
     (val) => {
       const newWidth = clamp(
         val,
-        minMaxLimits.cellWidth.min,
-        minMaxLimits.cellWidth.max
+        minMaxLimits.width.min,
+        minMaxLimits.width.max
       );
 
       handleCanvasSizeChange({ newWidth });
@@ -273,8 +272,8 @@ export const Lifelike = ({ isMobile }) => {
     (val) => {
       const newHeight = clamp(
         val,
-        minMaxLimits.cellHeight.min,
-        minMaxLimits.cellHeight.max
+        minMaxLimits.height.min,
+        minMaxLimits.height.max
       );
 
       handleCanvasSizeChange({ newHeight });
@@ -359,8 +358,8 @@ export const Lifelike = ({ isMobile }) => {
 
     const newWidth = clamp(
       Math.trunc((window.innerWidth - canvasRect.left - widthOffset) / px),
-      minMaxLimits.cellWidth.min,
-      minMaxLimits.cellWidth.max
+      minMaxLimits.width.min,
+      minMaxLimits.width.max
     );
 
     const newHeight = clamp(
@@ -371,8 +370,8 @@ export const Lifelike = ({ isMobile }) => {
           mobileHeightOffset) /
           px
       ),
-      minMaxLimits.cellHeight.min,
-      minMaxLimits.cellHeight.max
+      minMaxLimits.height.min,
+      minMaxLimits.height.max
     );
 
     handleCanvasSizeChange({ newWidth, newHeight });
@@ -426,9 +425,9 @@ export const Lifelike = ({ isMobile }) => {
         gridArea="slidercontrols"
         isMobile={isMobile}
         isOpen={isOptionsOpen}
-        cellWidth={width}
+        width={width}
         onWidthChange={handleWidthChange}
-        cellHeight={height}
+        height={height}
         onHeightChange={handleHeightChange}
         px={px}
         onPxChange={handlePxChange}
