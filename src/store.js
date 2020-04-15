@@ -138,18 +138,20 @@ const reducer = (state, action) => {
       };
     }
     case GET_NEXT_CELLS: {
+      const [cells, population] = getNextCells(
+        state.cells,
+        state.width,
+        state.height,
+        state.born,
+        state.survive,
+        state.wrap,
+        state.neighborhood
+      );
       return {
         ...state,
         generations: state.generations + 1,
-        cells: getNextCells({
-          cells: state.cells,
-          width: state.width,
-          height: state.height,
-          born: state.born,
-          survive: state.survive,
-          wrap: state.wrap,
-          neighborhood: state.neighborhood,
-        }),
+        cells: cells,
+        population,
       };
     }
     case SET_GRID: {

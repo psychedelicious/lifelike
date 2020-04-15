@@ -87,6 +87,7 @@ export const Lifelike = ({ isMobile }) => {
     showGridlines,
     isRunning,
     showStats,
+    population,
     generations,
     canvasWidth,
     canvasHeight,
@@ -386,13 +387,13 @@ export const Lifelike = ({ isMobile }) => {
     }
   });
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     drawCells({
       canvas: canvasRef.current,
     });
   }, [cells, lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     clearCanvas({ canvas: canvasOverlayRef.current });
     showGridlines && drawGridlines({ canvas: canvasOverlayRef.current });
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -501,7 +502,7 @@ export const Lifelike = ({ isMobile }) => {
           gridArea="monitor"
           generations={generations}
           fps={fps}
-          // population={population}
+          population={population}
         />
       )}
 
