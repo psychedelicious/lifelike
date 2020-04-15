@@ -9,10 +9,15 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Tooltip,
+  useColorMode,
+  useTheme,
 } from '@chakra-ui/core';
 
 export const SpeedSlider = React.memo(
   ({ speed, msDelay, min, max, onChange, ...rest }) => {
+    const { colorMode } = useColorMode();
+    const theme = useTheme();
+
     let delayString;
 
     if (speed === 0) {
@@ -43,9 +48,19 @@ export const SpeedSlider = React.memo(
           label={`${delayString} delay`}
           placement="top"
           zIndex="2"
+          bg={colorMode === 'light' ? 'gray.50' : 'blue.100'}
+          color={colorMode === 'light' ? 'blue.600' : 'blue.800'}
         >
-          <SliderThumb size={6} borderRadius="sm">
-            <Box color="gray.800" as={IoIosSpeedometer} />
+          <SliderThumb
+            size={6}
+            borderRadius="sm"
+            border="1px "
+            bg={colorMode === 'light' ? 'gray.50' : 'blue.100'}
+          >
+            <Box
+              as={IoIosSpeedometer}
+              color={colorMode === 'light' ? 'blue.600' : 'blue.800'}
+            />
           </SliderThumb>
         </Tooltip>
       </Slider>

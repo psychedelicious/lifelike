@@ -3,7 +3,7 @@ import { clamp } from 'lodash';
 // import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
-import { Grid } from '@chakra-ui/core';
+import { Grid, useColorMode } from '@chakra-ui/core';
 
 // Components
 import { Canvas } from './canvas/Canvas';
@@ -77,8 +77,10 @@ const withModifiers = (e) => {
 
 export const Lifelike = ({ isMobile }) => {
   const { drawCells, drawGridlines, clearCanvas } = useCanvas();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const {
+    // state values
     cells,
     width,
     height,
@@ -100,6 +102,9 @@ export const Lifelike = ({ isMobile }) => {
     previousFrameTime,
     speed,
     msDelay,
+    lightModeColors,
+    darkModeColors,
+    // state setters
     toggleIsRunning,
     toggleWrap,
     toggleShowStats,
@@ -113,6 +118,7 @@ export const Lifelike = ({ isMobile }) => {
     randomizeCells,
     setPreviousFrameTime,
     getNextCells,
+    setColors,
   } = useLife();
 
   useGlobalKeyDown((e) => {
@@ -169,6 +175,12 @@ export const Lifelike = ({ isMobile }) => {
           handleSpeedChange(speed + 1);
         }
         break;
+      case 'd':
+        if (!withModifiers(e)) {
+          e.preventDefault();
+          handleToggleColorMode();
+        }
+        break;
       case 'ArrowDown':
         if (!withModifiers(e)) {
           e.preventDefault();
@@ -199,6 +211,10 @@ export const Lifelike = ({ isMobile }) => {
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
   const canvasOverlayRef = React.useRef(null);
+
+  const handleToggleColorMode = React.useCallback(() => {
+    toggleColorMode();
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggleIsRunning = React.useCallback(() => {
     toggleIsRunning();
@@ -385,6 +401,13 @@ export const Lifelike = ({ isMobile }) => {
   });
 
   React.useEffect(() => {
+    colorMode === 'light'
+      ? setColors(lightModeColors)
+      : setColors(darkModeColors);
+    setLastConfigChange(window.performance.now());
+  }, [colorMode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  React.useEffect(() => {
     drawCells({
       canvas: canvasRef.current,
     });
@@ -407,7 +430,13 @@ export const Lifelike = ({ isMobile }) => {
       gridTemplateColumns={gridTemplateColumns}
       gridTemplateAreas={gridTemplateAreas}
     >
-      <Header gridArea="header" justify="space-between" alignItems="center" />
+      <Header
+        colorMode={colorMode}
+        handleToggleColorMode={handleToggleColorMode}
+        gridArea="header"
+        justify="space-between"
+        alignItems="center"
+      />
 
       <MainControls
         mt="0.5rem"

@@ -20,6 +20,7 @@ export const TOGGLE_ISRUNNING = 'TOGGLE_ISRUNNING';
 export const TOGGLE_SHOWGRIDLINES = 'TOGGLE_SHOWGRIDLINES';
 export const TOGGLE_SHOWSTATS = 'TOGGLE_SHOWSTATS';
 export const TOGGLE_WRAP = 'TOGGLE_WRAP';
+export const SET_COLORS = 'SET_COLORS';
 
 const StoreContext = createContext();
 
@@ -27,7 +28,9 @@ export const initialState = {
   cells: [],
   width: 0,
   height: 0,
-  px: 5,
+  px: window.matchMedia(`(max-width: ${lifelikeTheme.breakpoints.md})`).matches
+    ? 3
+    : 5,
   neighborhood: Neighborhoods.MOORE,
   born: [false, false, false, true, false, false, false, false, false],
   survive: [false, false, true, true, false, false, false, false, false],
@@ -45,9 +48,19 @@ export const initialState = {
   previousFrameTime: 0,
   speed: 70,
   msDelay: Math.pow(100 - 70, 3) / 1000,
-  deadCellColor: lifelikeTheme.colors.gray['100'],
-  aliveCellColor: lifelikeTheme.colors.gray['700'],
-  gridlineColor: lifelikeTheme.colors.gray['300'],
+  lightModeColors: {
+    deadCellColor: lifelikeTheme.colors.gray['50'],
+    aliveCellColor: lifelikeTheme.colors.gray['700'],
+    gridlinesColor: lifelikeTheme.colors.blackAlpha[400],
+  },
+  darkModeColors: {
+    deadCellColor: lifelikeTheme.colors.blue['50'],
+    aliveCellColor: lifelikeTheme.colors.blue['600'],
+    gridlinesColor: lifelikeTheme.colors.blackAlpha[400],
+  },
+  deadCellColor: null,
+  aliveCellColor: null,
+  gridlinesColor: null,
 };
 
 const reducer = (state, action) => {
@@ -181,6 +194,14 @@ const reducer = (state, action) => {
             (setGridPopulation * 1000) /
               (action.payload.width * action.payload.height)
           ) / 10,
+      };
+    }
+    case SET_COLORS: {
+      return {
+        ...state,
+        aliveCellColor: action.payload.aliveCellColor ?? state.aliveCellColor,
+        deadCellColor: action.payload.deadCellColor ?? state.deadCellColor,
+        gridlinesColor: action.payload.gridlinesColor ?? state.gridlinesColor,
       };
     }
     default:

@@ -14,6 +14,7 @@ import {
   TOGGLE_SHOWGRIDLINES,
   TOGGLE_SHOWSTATS,
   TOGGLE_WRAP,
+  SET_COLORS,
 } from './store';
 
 export const useLife = () => {
@@ -40,9 +41,11 @@ export const useLife = () => {
     previousFrameTime: state.previousFrameTime,
     speed: state.speed,
     msDelay: state.msDelay,
+    lightModeColors: state.lightModeColors,
+    darkModeColors: state.darkModeColors,
     deadCellColor: state.deadCellColor,
     aliveCellColor: state.aliveCellColor,
-    gridlineColor: state.gridlineColor,
+    gridlinesColor: state.gridlinesColor,
     toggleIsRunning: () => dispatch({ type: TOGGLE_ISRUNNING }),
     toggleWrap: () => dispatch({ type: TOGGLE_WRAP }),
     toggleShowStats: () => dispatch({ type: TOGGLE_SHOWSTATS }),
@@ -84,5 +87,10 @@ export const useLife = () => {
         previousFrameTime: window.performance.now(),
       }),
     getNextCells: () => dispatch({ type: GET_NEXT_CELLS }),
+    setColors: ({ aliveCellColor, deadCellColor, gridlinesColor }) =>
+      dispatch({
+        type: SET_COLORS,
+        payload: { aliveCellColor, deadCellColor, gridlinesColor },
+      }),
   };
 };

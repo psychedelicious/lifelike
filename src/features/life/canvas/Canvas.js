@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Flex } from '@chakra-ui/core';
+import { Flex, useTheme, useColorMode } from '@chakra-ui/core';
 
 export const Canvas = React.memo(
   ({
@@ -14,6 +14,9 @@ export const Canvas = React.memo(
     ...rest
     // mousePositionRef,
   }) => {
+    const theme = useTheme();
+    const { colorMode } = useColorMode();
+
     return (
       <Flex
         {...rest}
@@ -39,6 +42,11 @@ export const Canvas = React.memo(
               height: canvasHeight || '100%',
               boxSizing: 'border-box',
               borderRadius: '1px',
+              border: `1px solid ${
+                colorMode === 'light'
+                  ? theme.colors.blackAlpha[300]
+                  : theme.colors.whiteAlpha[300]
+              }`,
             }}
           ></canvas>
           <canvas

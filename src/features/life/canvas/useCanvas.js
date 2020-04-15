@@ -8,7 +8,7 @@ export const useCanvas = () => {
     height,
     cells,
     px,
-    gridlineColor,
+    gridlinesColor,
   } = useLife();
 
   const drawCells = ({ canvas }) => {
@@ -33,7 +33,7 @@ export const useCanvas = () => {
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    context.fillStyle = gridlineColor;
+    context.fillStyle = gridlinesColor;
 
     for (let cellX = 1; cellX < width; cellX++) {
       context.fillRect(cellX * px, 0, 0.5, height * px);
