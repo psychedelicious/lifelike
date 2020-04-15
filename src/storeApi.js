@@ -5,9 +5,8 @@ import {
   GET_NEXT_CELLS,
   RANDOMIZE_CELLS,
   SET_BORN,
-  SET_FPS,
   SET_GRID,
-  SET_INTERVAL,
+  SET_SPEED,
   SET_NEIGHBORHOOD,
   SET_PREVIOUSFRAMETIME,
   SET_SURVIVE,
@@ -31,17 +30,16 @@ export const useLife = () => {
     showGridlines: state.showGridlines,
     isRunning: state.isRunning,
     showStats: state.showStats,
-    population: state.population,
     generations: state.generations,
+    population: state.population,
+    density: state.density,
     canvasWidth: state.canvasWidth,
     canvasHeight: state.canvasHeight,
     canvasContainerWidth: state.canvasContainerWidth,
     canvasContainerHeight: state.canvasContainerHeight,
-    fps: state.fps,
     previousFrameTime: state.previousFrameTime,
-    lastFpsUpdate: state.lastFpsUpdate,
-    interval: state.interval,
-    fpsInterval: state.fpsInterval,
+    speed: state.speed,
+    msDelay: state.msDelay,
     deadCellColor: state.deadCellColor,
     aliveCellColor: state.aliveCellColor,
     gridlineColor: state.gridlineColor,
@@ -70,7 +68,7 @@ export const useLife = () => {
         },
       }),
     toggleShowGridlines: () => dispatch({ type: TOGGLE_SHOWGRIDLINES }),
-    setInterval: ({ interval }) => dispatch({ type: SET_INTERVAL, interval }),
+    setSpeed: ({ speed }) => dispatch({ type: SET_SPEED, speed }),
     setNeighborhood: ({ neighborhood }) =>
       dispatch({
         type: SET_NEIGHBORHOOD,
@@ -80,11 +78,6 @@ export const useLife = () => {
     setSurvive: ({ index }) => dispatch({ type: SET_SURVIVE, index }),
     clearCells: () => dispatch({ type: CLEAR_CELLS }),
     randomizeCells: () => dispatch({ type: RANDOMIZE_CELLS }),
-    setFps: ({ fps }) =>
-      dispatch({
-        type: SET_FPS,
-        fps,
-      }),
     setPreviousFrameTime: () =>
       dispatch({
         type: SET_PREVIOUSFRAMETIME,

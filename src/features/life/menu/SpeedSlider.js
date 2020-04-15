@@ -12,17 +12,17 @@ import {
 } from '@chakra-ui/core';
 
 export const SpeedSlider = React.memo(
-  ({ interval, fpsInterval, min, max, onChange, ...rest }) => {
+  ({ speed, msDelay, min, max, onChange, ...rest }) => {
     let delayString;
 
-    if (interval === 0) {
+    if (speed === 0) {
       delayString = '1s';
-    } else if (interval === 100) {
+    } else if (speed === 100) {
       delayString = 'no';
     } else {
-      let delayFormatted = Math.round(fpsInterval * 100) / 100;
+      let delayFormatted = Math.round(msDelay * 100) / 100;
       if (delayFormatted === 0) {
-        delayFormatted = Math.round(fpsInterval * 1000) / 1000;
+        delayFormatted = Math.round(msDelay * 1000) / 1000;
       }
       delayString = `${delayFormatted}ms`;
     }
@@ -31,7 +31,7 @@ export const SpeedSlider = React.memo(
       <Slider
         {...rest}
         flex="1"
-        value={interval}
+        value={speed}
         min={min}
         max={max}
         onChange={onChange}
@@ -54,8 +54,8 @@ export const SpeedSlider = React.memo(
 );
 
 SpeedSlider.propTypes = {
-  interval: PropTypes.number.isRequired,
-  fpsInterval: PropTypes.number.isRequired,
+  speed: PropTypes.number.isRequired,
+  msDelay: PropTypes.number.isRequired,
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,

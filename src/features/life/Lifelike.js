@@ -66,10 +66,14 @@ const minMaxLimits = {
     min: 1,
     max: 25,
   },
-  interval: {
+  speed: {
     min: 0,
     max: 100,
   },
+};
+
+const withModifiers = (e) => {
+  return e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
 };
 
 export const Lifelike = ({ isMobile }) => {
@@ -87,29 +91,27 @@ export const Lifelike = ({ isMobile }) => {
     showGridlines,
     isRunning,
     showStats,
-    population,
     generations,
+    population,
+    density,
     canvasWidth,
     canvasHeight,
     canvasContainerWidth,
     canvasContainerHeight,
-    fps,
     previousFrameTime,
-    lastFpsUpdate,
-    interval,
-    fpsInterval,
+    speed,
+    msDelay,
     toggleIsRunning,
     toggleWrap,
     toggleShowStats,
     setGrid,
     toggleShowGridlines,
-    setInterval,
+    setSpeed,
     setNeighborhood,
     setBorn,
     setSurvive,
     clearCells,
     randomizeCells,
-    setFps,
     setPreviousFrameTime,
     getNextCells,
   } = useLife();
@@ -117,44 +119,68 @@ export const Lifelike = ({ isMobile }) => {
   useGlobalKeyDown((e) => {
     switch (e.key) {
       case ' ':
-        e.preventDefault();
-        handleToggleIsRunning();
+        if (!withModifiers(e)) {
+          e.preventDefault();
+          handleToggleIsRunning();
+        }
         break;
       case 'c':
-        handleClearCells();
+        if (!withModifiers(e)) {
+          handleClearCells();
+        }
         break;
       case 'r':
-        handleRandomizeCells();
+        if (!withModifiers(e)) {
+          handleRandomizeCells();
+        }
         break;
       case 'f':
-        !isRunning && fitCellsToCanvas();
+        if (!isRunning && !withModifiers(e)) {
+          fitCellsToCanvas();
+        }
         break;
       case 'g':
-        handleToggleGridlines();
+        if (!withModifiers(e)) {
+          handleToggleGridlines();
+        }
         break;
       case 'w':
-        handleToggleWrap();
+        if (!withModifiers(e)) {
+          handleToggleWrap();
+        }
         break;
       case '8':
-        handleNeighborhoodChange('MOORE');
+        if (!withModifiers(e)) {
+          handleNeighborhoodChange('MOORE');
+        }
         break;
       case '4':
-        handleNeighborhoodChange('VONNEUMANN');
+        if (!withModifiers(e)) {
+          handleNeighborhoodChange('VONNEUMANN');
+        }
         break;
       case '6':
-        handleNeighborhoodChange('HEXAGONAL');
+        if (!withModifiers(e)) {
+          handleNeighborhoodChange('HEXAGONAL');
+        }
         break;
       case 'ArrowUp':
-        e.preventDefault();
-        handleIntervalChange(interval + 1);
+        if (!withModifiers(e)) {
+          e.preventDefault();
+          handleSpeedChange(speed + 1);
+        }
         break;
       case 'ArrowDown':
-        e.preventDefault();
-        handleIntervalChange(interval - 1);
+        if (!withModifiers(e)) {
+          e.preventDefault();
+          handleSpeedChange(speed - 1);
+        }
         break;
       case 'ArrowRight':
-        e.preventDefault();
-        !isRunning && handleClickTick();
+        if (!withModifiers(e) && !isRunning) {
+          e.preventDefault();
+          handleClickTick();
+        }
         break;
       default:
         break;
@@ -171,7 +197,6 @@ export const Lifelike = ({ isMobile }) => {
   //   10 // fps
   // );
 
-  const fpsLogRef = React.useRef([]);
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
   const canvasOverlayRef = React.useRef(null);
@@ -266,16 +291,11 @@ export const Lifelike = ({ isMobile }) => {
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  const handleIntervalChange = React.useCallback(
+  const handleSpeedChange = React.useCallback(
     (val) => {
-      const interval = clamp(
-        val,
-        minMaxLimits.interval.min,
-        minMaxLimits.interval.max
-      );
+      const speed = clamp(val, minMaxLimits.speed.min, minMaxLimits.speed.max);
 
-      setInterval({ interval });
-      fpsLogRef.current = [];
+      setSpeed({ speed });
       setLastConfigChange(window.performance.now());
     },
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
@@ -299,13 +319,11 @@ export const Lifelike = ({ isMobile }) => {
 
   const handleClearCells = React.useCallback(() => {
     clearCells();
-    fpsLogRef.current = [];
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRandomizeCells = React.useCallback(() => {
     randomizeCells();
-    fpsLogRef.current = [];
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -361,27 +379,7 @@ export const Lifelike = ({ isMobile }) => {
   }, [lastConfigChange, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useAnimationFrame(() => {
-    if (
-      isRunning &&
-      window.performance.now() - previousFrameTime > fpsInterval
-    ) {
-      fpsLogRef.current.push(
-        1000 / (window.performance.now() - previousFrameTime)
-      );
-
-      if (window.performance.now() - lastFpsUpdate > 200) {
-        setFps({
-          fps:
-            Math.round(
-              (fpsLogRef.current.reduce((acc, val) => acc + val) /
-                fpsLogRef.current.length) *
-                10
-            ) / 10,
-        });
-      }
-
-      if (fpsLogRef.current.length > fps) fpsLogRef.current.shift();
-
+    if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
       setPreviousFrameTime();
       getNextCells();
     }
@@ -442,11 +440,11 @@ export const Lifelike = ({ isMobile }) => {
         gridArea={'speedslider'}
         justifySelf="center"
         w="calc(100% - 2rem)"
-        interval={interval}
-        fpsInterval={fpsInterval}
-        min={minMaxLimits.interval.min}
-        max={minMaxLimits.interval.max}
-        onChange={handleIntervalChange}
+        speed={speed}
+        msDelay={msDelay}
+        min={minMaxLimits.speed.min}
+        max={minMaxLimits.speed.max}
+        onChange={handleSpeedChange}
       />
 
       <RuleCheckboxRow
@@ -501,8 +499,8 @@ export const Lifelike = ({ isMobile }) => {
         <Monitor
           gridArea="monitor"
           generations={generations}
-          fps={fps}
           population={population}
+          density={density}
         />
       )}
 

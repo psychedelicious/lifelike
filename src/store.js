@@ -10,10 +10,9 @@ export const CLEAR_CELLS = 'CLEAR_CELLS';
 export const GET_NEXT_CELLS = 'GET_NEXT_CELLS';
 export const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
 export const SET_BORN = 'SET_BORN';
-export const SET_FPS = 'SET_FPS';
 export const SET_GRID = 'SET_GRID';
 export const SET_HEIGHT = 'SET_HEIGHT';
-export const SET_INTERVAL = 'SET_INTERVAL';
+export const SET_SPEED = 'SET_SPEED';
 export const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 export const SET_PREVIOUSFRAMETIME = 'SET_PREVIOUSFRAMETIME';
 export const SET_SURVIVE = 'SET_SURVIVE';
@@ -36,17 +35,16 @@ export const initialState = {
   showGridlines: false,
   isRunning: false,
   showStats: true,
-  population: 0,
   generations: 0,
+  population: 0,
+  density: 0,
   canvasWidth: 0,
   canvasHeight: 0,
   canvasContainerWidth: 0,
   canvasContainerHeight: 0,
-  fps: 0,
   previousFrameTime: 0,
-  lastFpsUpdate: 0,
-  interval: 70,
-  fpsInterval: Math.pow(100 - 70, 3) / 1000,
+  speed: 70,
+  msDelay: Math.pow(100 - 70, 3) / 1000,
   deadCellColor: lifelikeTheme.colors.gray['100'],
   aliveCellColor: lifelikeTheme.colors.gray['700'],
   gridlineColor: lifelikeTheme.colors.gray['300'],
@@ -82,6 +80,10 @@ const reducer = (state, action) => {
         generations: 0,
         cells: randomizedCells,
         population: randomizedCellsPopulation,
+        density:
+          Math.round(
+            (randomizedCellsPopulation * 1000) / (state.width * state.height)
+          ) / 10,
       };
     case CLEAR_CELLS:
       const [clearedCells, clearedCellsPopulation] = createCells({
@@ -94,6 +96,10 @@ const reducer = (state, action) => {
         generations: 0,
         cells: clearedCells,
         population: clearedCellsPopulation,
+        density:
+          Math.round(
+            (clearedCellsPopulation * 1000) / (state.width * state.height)
+          ) / 10,
       };
     case TOGGLE_ISRUNNING:
       return {
@@ -120,24 +126,17 @@ const reducer = (state, action) => {
         ...state,
         neighborhood: Neighborhoods[action.neighborhood],
       };
-    case SET_FPS: {
-      return {
-        ...state,
-        lastFpsUpdate: window.performance.now(),
-        fps: action.fps,
-      };
-    }
     case SET_PREVIOUSFRAMETIME: {
       return {
         ...state,
         previousFrameTime: action.previousFrameTime,
       };
     }
-    case SET_INTERVAL: {
+    case SET_SPEED: {
       return {
         ...state,
-        interval: action.interval,
-        fpsInterval: Math.pow(100 - action.interval, 3) / 1000,
+        speed: action.speed,
+        msDelay: Math.pow(100 - action.speed, 3) / 1000,
       };
     }
     case GET_NEXT_CELLS: {
@@ -155,6 +154,9 @@ const reducer = (state, action) => {
         generations: state.generations + 1,
         cells: nextCells,
         population: nextPopulation,
+        density:
+          Math.round((nextPopulation * 1000) / (state.width * state.height)) /
+          10,
       };
     }
     case SET_GRID: {
@@ -174,6 +176,11 @@ const reducer = (state, action) => {
         canvasContainerHeight: action.payload.canvasContainerHeight,
         cells: setGridCells,
         population: setGridPopulation,
+        density:
+          Math.round(
+            (setGridPopulation * 1000) /
+              (action.payload.width * action.payload.height)
+          ) / 10,
       };
     }
     default:
