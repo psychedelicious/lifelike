@@ -52,13 +52,13 @@ export const initialState = {
   layout: 'left',
   lightModeColors: {
     deadCellColor: lifelikeTheme.colors.gray['50'],
-    aliveCellColor: lifelikeTheme.colors.gray['700'],
-    gridlinesColor: lifelikeTheme.colors.blackAlpha[400],
+    aliveCellColor: lifelikeTheme.colors.blue['700'],
+    gridlinesColor: lifelikeTheme.colors.blackAlpha['500'],
   },
   darkModeColors: {
-    deadCellColor: lifelikeTheme.colors.blue['50'],
-    aliveCellColor: lifelikeTheme.colors.blue['600'],
-    gridlinesColor: lifelikeTheme.colors.blackAlpha[400],
+    deadCellColor: lifelikeTheme.colors.blue['100'],
+    aliveCellColor: lifelikeTheme.colors.gray['800'],
+    gridlinesColor: lifelikeTheme.colors.blackAlpha['500'],
   },
   deadCellColor: null,
   aliveCellColor: null,
