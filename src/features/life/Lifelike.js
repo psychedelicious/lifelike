@@ -390,12 +390,12 @@ export const Lifelike = ({ isMobile }) => {
     drawCells({
       canvas: canvasRef.current,
     });
-  }, [cells, lastConfigChange]);
+  }, [cells, lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useLayoutEffect(() => {
     clearCanvas({ canvas: canvasOverlayRef.current });
     showGridlines && drawGridlines({ canvas: canvasOverlayRef.current });
-  }, [lastConfigChange]);
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useLayoutEffect(fitCellsToCanvas, []);
 
