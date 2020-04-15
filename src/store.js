@@ -72,26 +72,28 @@ const reducer = (state, action) => {
         ),
       };
     case RANDOMIZE_CELLS:
+      const [randomizedCells, randomizedCellsPopulation] = createCells({
+        width: state.width,
+        height: state.height,
+        fill: 'random',
+      });
       return {
         ...state,
-        population: 0,
         generations: 0,
-        cells: createCells({
-          width: state.width,
-          height: state.height,
-          fill: 'random',
-        }),
+        cells: randomizedCells,
+        population: randomizedCellsPopulation,
       };
     case CLEAR_CELLS:
+      const [clearedCells, clearedCellsPopulation] = createCells({
+        width: state.width,
+        height: state.height,
+        fill: 0,
+      });
       return {
         ...state,
-        population: 0,
         generations: 0,
-        cells: createCells({
-          width: state.width,
-          height: state.height,
-          fill: 0,
-        }),
+        cells: clearedCells,
+        population: clearedCellsPopulation,
       };
     case TOGGLE_ISRUNNING:
       return {
@@ -139,7 +141,7 @@ const reducer = (state, action) => {
       };
     }
     case GET_NEXT_CELLS: {
-      const [cells, population] = getNextCells(
+      const [nextCells, nextPopulation] = getNextCells(
         state.cells,
         state.width,
         state.height,
@@ -151,11 +153,16 @@ const reducer = (state, action) => {
       return {
         ...state,
         generations: state.generations + 1,
-        cells: cells,
-        population,
+        cells: nextCells,
+        population: nextPopulation,
       };
     }
     case SET_GRID: {
+      const [setGridCells, setGridPopulation] = createCells({
+        width: action.payload.width,
+        height: action.payload.height,
+        fill: state.cells.length ? state.cells : 'random',
+      });
       return {
         ...state,
         width: action.payload.width,
@@ -165,11 +172,8 @@ const reducer = (state, action) => {
         canvasHeight: action.payload.canvasHeight,
         canvasContainerWidth: action.payload.canvasContainerWidth,
         canvasContainerHeight: action.payload.canvasContainerHeight,
-        cells: createCells({
-          width: action.payload.width,
-          height: action.payload.height,
-          fill: state.cells.length ? state.cells : 'random',
-        }),
+        cells: setGridCells,
+        population: setGridPopulation,
       };
     }
     default:
