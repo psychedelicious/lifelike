@@ -60,6 +60,7 @@ export const Canvas = React.memo(
               height: canvasHeight || '100%',
               boxSizing: 'border-box',
               borderRadius: '1px',
+              border: '1px solid transparent',
             }}
           ></canvas>
         </div>
