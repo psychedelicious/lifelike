@@ -121,10 +121,10 @@ export const Lifelike = ({ isMobile }) => {
         handleToggleIsRunning();
         break;
       case 'c':
-        !isRunning && handleClearCells();
+        handleClearCells();
         break;
       case 'r':
-        !isRunning && handleRandomizeCells();
+        handleRandomizeCells();
         break;
       case 'f':
         !isRunning && fitCellsToCanvas();
