@@ -73,9 +73,10 @@ const minMaxLimits = {
 };
 
 export const Lifelike = ({ isMobile }) => {
-  const { drawCells, drawGridlines } = useCanvas();
+  const { drawCells, drawGridlines, clearCanvas } = useCanvas();
 
   const {
+    cells,
     width,
     height,
     px,
@@ -204,31 +205,30 @@ export const Lifelike = ({ isMobile }) => {
       canvasOverlayRef.current.width = newCanvasWidth;
       canvasOverlayRef.current.height = newCanvasHeight;
 
-      window.requestAnimationFrame(() => {
-        setGrid({
-          width: newWidth,
-          height: newHeight,
-          px: newPx,
-          canvasWidth: newCanvasWidth,
-          canvasHeight: newCanvasHeight,
-          canvasContainerWidth: newCanvasWidth + rem + 2,
-          canvasContainerHeight: newCanvasHeight + rem + 2,
-        });
-
-        drawGridlines({ canvas: canvasOverlayRef.current });
-
-        drawCells({ canvas: canvasRef.current });
+      setGrid({
+        width: newWidth,
+        height: newHeight,
+        px: newPx,
+        canvasWidth: newCanvasWidth,
+        canvasHeight: newCanvasHeight,
+        canvasContainerWidth: newCanvasWidth + rem + 2,
+        canvasContainerHeight: newCanvasHeight + rem + 2,
       });
+
       setLastConfigChange(window.performance.now());
     },
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleToggleGridlines = React.useCallback(() => {
-    // dispatch({ type: TOGGLE_SHOWGRIDLINES });
     toggleShowGridlines();
-    drawGridlines({ canvas: canvasOverlayRef.current });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    !showGridlines
+      ? drawGridlines({ canvas: canvasOverlayRef.current })
+      : clearCanvas({ canvas: canvasOverlayRef.current });
+
+    setLastConfigChange(window.performance.now());
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleWidthChange = React.useCallback(
     (val) => {
@@ -239,7 +239,6 @@ export const Lifelike = ({ isMobile }) => {
       );
 
       handleCanvasSizeChange({ newWidth });
-      setLastConfigChange(window.performance.now());
     },
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
@@ -253,7 +252,6 @@ export const Lifelike = ({ isMobile }) => {
       );
 
       handleCanvasSizeChange({ newHeight });
-      setLastConfigChange(window.performance.now());
     },
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
@@ -263,7 +261,6 @@ export const Lifelike = ({ isMobile }) => {
       const newPx = clamp(val, minMaxLimits.px.min, minMaxLimits.px.max);
 
       handleCanvasSizeChange({ newPx });
-      setLastConfigChange(window.performance.now());
     },
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
@@ -302,24 +299,12 @@ export const Lifelike = ({ isMobile }) => {
   const handleClearCells = React.useCallback(() => {
     clearCells();
     fpsLogRef.current = [];
-
-    window.requestAnimationFrame(() =>
-      drawCells({
-        canvas: canvasRef.current,
-      })
-    );
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRandomizeCells = React.useCallback(() => {
     randomizeCells();
     fpsLogRef.current = [];
-
-    window.requestAnimationFrame(() =>
-      drawCells({
-        canvas: canvasRef.current,
-      })
-    );
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -328,8 +313,7 @@ export const Lifelike = ({ isMobile }) => {
   }, []);
 
   const handleClickTick = React.useCallback(() => {
-    tick();
-    setLastConfigChange(window.performance.now());
+    getNextCells();
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fitCellsToCanvas = React.useCallback(() => {
@@ -373,7 +357,6 @@ export const Lifelike = ({ isMobile }) => {
     );
 
     handleCanvasSizeChange({ newWidth, newHeight });
-    setLastConfigChange(window.performance.now());
   }, [lastConfigChange, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useAnimationFrame(() => {
@@ -399,19 +382,20 @@ export const Lifelike = ({ isMobile }) => {
       if (fpsLogRef.current.length > fps) fpsLogRef.current.shift();
 
       setPreviousFrameTime();
-
-      tick();
+      getNextCells();
     }
   });
 
-  const tick = () => {
-    getNextCells();
-    window.requestAnimationFrame(() =>
-      drawCells({
-        canvas: canvasRef.current,
-      })
-    );
-  };
+  React.useLayoutEffect(() => {
+    drawCells({
+      canvas: canvasRef.current,
+    });
+  }, [cells, lastConfigChange]);
+
+  React.useLayoutEffect(() => {
+    clearCanvas({ canvas: canvasOverlayRef.current });
+    showGridlines && drawGridlines({ canvas: canvasOverlayRef.current });
+  }, [lastConfigChange]);
 
   React.useLayoutEffect(fitCellsToCanvas, []);
 

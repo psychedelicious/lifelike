@@ -76,7 +76,10 @@ const reducer = (state, action) => {
         ...state,
         population: 0,
         generation: 0,
-        cells: createCells({ width: state.width, height: state.height }),
+        cells: createCells({
+          width: state.width,
+          height: state.height,
+        }),
       };
     case CLEAR_CELLS:
       return {
