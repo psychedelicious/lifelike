@@ -46,7 +46,7 @@ export const useLife = () => {
     darkModeColors: state.darkModeColors,
     deadCellColor: state.deadCellColor,
     aliveCellColor: state.aliveCellColor,
-    gridlinesColor: state.gridlinesColor,
+    gridlineColor: state.gridlineColor,
     layout: state.layout,
     toggleIsRunning: () => dispatch({ type: TOGGLE_ISRUNNING }),
     toggleWrap: () => dispatch({ type: TOGGLE_WRAP }),
@@ -89,10 +89,10 @@ export const useLife = () => {
         previousFrameTime: window.performance.now(),
       }),
     getNextCells: () => dispatch({ type: GET_NEXT_CELLS }),
-    setColors: ({ aliveCellColor, deadCellColor, gridlinesColor }) =>
+    setColors: ({ aliveCellColor, deadCellColor, gridlineColor }) =>
       dispatch({
         type: SET_COLORS,
-        payload: { aliveCellColor, deadCellColor, gridlinesColor },
+        payload: { aliveCellColor, deadCellColor, gridlineColor },
       }),
     toggleLayout: () => dispatch({ type: TOGGLE_LAYOUT }),
   };

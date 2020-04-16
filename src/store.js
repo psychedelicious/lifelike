@@ -52,16 +52,16 @@ export const initialState = {
   lightModeColors: {
     deadCellColor: lifelikeTheme.colors.gray['50'],
     aliveCellColor: lifelikeTheme.colors.blue['700'],
-    gridlinesColor: lifelikeTheme.colors.blackAlpha['500'],
+    gridlineColor: `${lifelikeTheme.colors.gray['500']}80`,
   },
   darkModeColors: {
     deadCellColor: lifelikeTheme.colors.blue['100'],
     aliveCellColor: lifelikeTheme.colors.gray['800'],
-    gridlinesColor: lifelikeTheme.colors.blackAlpha['500'],
+    gridlineColor: `${lifelikeTheme.colors.gray['600']}80`,
   },
   deadCellColor: null,
   aliveCellColor: null,
-  gridlinesColor: null,
+  gridlineColor: null,
 };
 
 const reducer = (state, action) => {
@@ -197,7 +197,7 @@ const reducer = (state, action) => {
         ...state,
         aliveCellColor: action.payload.aliveCellColor ?? state.aliveCellColor,
         deadCellColor: action.payload.deadCellColor ?? state.deadCellColor,
-        gridlinesColor: action.payload.gridlinesColor ?? state.gridlinesColor,
+        gridlineColor: action.payload.gridlineColor ?? state.gridlineColor,
       };
     }
     case TOGGLE_LAYOUT: {
