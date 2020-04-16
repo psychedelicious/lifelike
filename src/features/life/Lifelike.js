@@ -293,6 +293,8 @@ export const Lifelike = ({ isMobile }) => {
     !showGridlines
       ? drawGridlines({ canvas: canvasOverlayRef.current })
       : clearCanvas({ canvas: canvasOverlayRef.current });
+
+    setLastConfigChange(window.performance.now());
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleWidthChange = React.useCallback(
@@ -435,23 +437,23 @@ export const Lifelike = ({ isMobile }) => {
     }
   });
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     colorMode === 'light'
       ? setColors(lightModeColors)
       : setColors(darkModeColors);
     setLastConfigChange(window.performance.now());
   }, [colorMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     drawCells({
       canvas: canvasRef.current,
     });
   }, [cells, lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     clearCanvas({ canvas: canvasOverlayRef.current });
     showGridlines && drawGridlines({ canvas: canvasOverlayRef.current });
-  }, [showGridlines]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useLayoutEffect(fitCellsToCanvas, []);
 
