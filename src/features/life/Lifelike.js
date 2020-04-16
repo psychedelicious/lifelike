@@ -21,6 +21,7 @@ import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { useCanvas } from './canvas/useCanvas';
 import { useLife } from '../../storeApi';
+import { Context } from 'react-responsive';
 
 const gridTemplateColumnsLeft = {
   base: 'auto',
@@ -237,7 +238,8 @@ export const Lifelike = ({ isMobile }) => {
 
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
-  const canvasOverlayRef = React.useRef(null);
+  const canvasGridOverlayRef = React.useRef(null);
+  const canvasDrawOverlayRef = React.useRef(null);
 
   const handleSaveImage = React.useCallback(() => {
     const tempCanvas = document.createElement('canvas');
@@ -247,7 +249,7 @@ export const Lifelike = ({ isMobile }) => {
     const tempContext = tempCanvas.getContext('2d');
 
     tempContext.drawImage(canvasRef.current, 0, 0);
-    tempContext.drawImage(canvasOverlayRef.current, 0, 0);
+    tempContext.drawImage(canvasGridOverlayRef.current, 0, 0);
 
     const id = Math.random().toString(36).substr(2, 9);
 
@@ -306,8 +308,11 @@ export const Lifelike = ({ isMobile }) => {
       canvasRef.current.width = newCanvasWidth;
       canvasRef.current.height = newCanvasHeight;
 
-      canvasOverlayRef.current.width = newCanvasWidth;
-      canvasOverlayRef.current.height = newCanvasHeight;
+      canvasGridOverlayRef.current.width = newCanvasWidth;
+      canvasGridOverlayRef.current.height = newCanvasHeight;
+
+      canvasDrawOverlayRef.current.width = newCanvasWidth;
+      canvasDrawOverlayRef.current.height = newCanvasHeight;
 
       setGrid({
         width: newWidth,
@@ -328,8 +333,8 @@ export const Lifelike = ({ isMobile }) => {
     toggleShowGridlines();
 
     !showGridlines
-      ? drawGridlines({ canvas: canvasOverlayRef.current })
-      : clearCanvas({ canvas: canvasOverlayRef.current });
+      ? drawGridlines({ canvas: canvasGridOverlayRef.current })
+      : clearCanvas({ canvas: canvasGridOverlayRef.current });
 
     setLastConfigChange(window.performance.now());
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -488,12 +493,41 @@ export const Lifelike = ({ isMobile }) => {
   }, [cells, lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useLayoutEffect(() => {
-    clearCanvas({ canvas: canvasOverlayRef.current });
-    showGridlines && drawGridlines({ canvas: canvasOverlayRef.current });
+    clearCanvas({ canvas: canvasGridOverlayRef.current });
+    showGridlines && drawGridlines({ canvas: canvasGridOverlayRef.current });
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const lastX = React.useRef(0);
   const lastY = React.useRef(0);
+  const brushSizes = [
+    [[0, 0]],
+    [
+      [0, 0],
+      [0, -1],
+      [-1, 0],
+      [-1, -1],
+    ],
+    [
+      [-1, 0],
+      [0, -1],
+      [0, 0],
+      [0, 1],
+      [1, 0],
+    ],
+    [
+      [-1, -1],
+      [0, -1],
+      [1, -1],
+      [-1, 0],
+      [0, 0],
+      [1, 0],
+      [-1, 1],
+      [0, 1],
+      [1, 1],
+    ],
+  ];
+
+  const brushSize = 1;
 
   const handleCanvasPointerMove = React.useCallback(
     (e) => {
@@ -501,6 +535,22 @@ export const Lifelike = ({ isMobile }) => {
       const x = e.layerX - 2;
       const y = e.layerY - 2;
       if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight) {
+        const cellX = Math.floor(x / px);
+        const cellY = Math.floor(y / px);
+
+        const context = canvasDrawOverlayRef.current.getContext('2d');
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
+        context.fillStyle = e.altKey ? '#FF000075' : '#00FF0075';
+
+        brushSizes[brushSize].forEach((coord) =>
+          context.fillRect(
+            (cellX + coord[0]) * px,
+            (cellY + coord[1]) * px,
+            px,
+            px
+          )
+        );
+
         if (e.buttons) {
           const newState = e.altKey ? 0 : 1;
           setCell({
@@ -555,20 +605,41 @@ export const Lifelike = ({ isMobile }) => {
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
+  const handleCanvasPointerLeave = React.useCallback(() => {
+    const context = canvasDrawOverlayRef.current.getContext('2d');
+    context.clearRect(0, 0, canvasWidth, canvasHeight);
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
   React.useLayoutEffect(() => {
     if (!isRunning) {
-      const canvasOverlay = canvasOverlayRef.current;
-      canvasOverlay.addEventListener('pointermove', handleCanvasPointerMove);
-      canvasOverlay.addEventListener('pointerdown', handleCanvasPointerDown);
+      const canvasDrawOverlay = canvasDrawOverlayRef.current;
+      canvasDrawOverlay.addEventListener(
+        'pointermove',
+        handleCanvasPointerMove
+      );
+      canvasDrawOverlay.addEventListener(
+        'pointerdown',
+        handleCanvasPointerDown
+      );
+      canvasDrawOverlay.addEventListener(
+        'pointerleave',
+        handleCanvasPointerLeave
+      );
       return () => {
-        canvasOverlay.removeEventListener(
+        canvasDrawOverlay.removeEventListener(
           'pointermove',
           handleCanvasPointerMove
         );
-        canvasOverlay.removeEventListener(
+        canvasDrawOverlay.removeEventListener(
           'pointerdown',
           handleCanvasPointerDown
         );
+        canvasDrawOverlay.removeEventListener(
+          'pointerleave',
+          handleCanvasPointerLeave
+        );
+        const context = canvasDrawOverlay.getContext('2d');
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
       };
     }
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -704,7 +775,8 @@ export const Lifelike = ({ isMobile }) => {
         canvasRef={canvasRef}
         canvasWidth={canvasWidth}
         canvasHeight={canvasHeight}
-        canvasOverlayRef={canvasOverlayRef}
+        canvasGridOverlayRef={canvasGridOverlayRef}
+        canvasDrawOverlayRef={canvasDrawOverlayRef}
         isRunning={isRunning}
       />
     </Grid>

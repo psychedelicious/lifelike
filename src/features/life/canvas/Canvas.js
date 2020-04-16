@@ -9,7 +9,8 @@ export const Canvas = React.memo(
     canvasWidth,
     canvasHeight,
     canvasContainerRef,
-    canvasOverlayRef,
+    canvasGridOverlayRef,
+    canvasDrawOverlayRef,
     isRunning,
     ...rest
   }) => {
@@ -48,14 +49,27 @@ export const Canvas = React.memo(
             }}
           ></canvas>
           <canvas
-            ref={canvasOverlayRef}
-            
+            ref={canvasGridOverlayRef}
+            style={{
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              zIndex: '1',
+              width: canvasWidth || '100%',
+              height: canvasHeight || '100%',
+              boxSizing: 'border-box',
+              borderRadius: '1px',
+              border: '1px solid transparent',
+            }}
+          ></canvas>
+          <canvas
+            ref={canvasDrawOverlayRef}
             style={{
               touchAction: 'none',
               position: 'absolute',
               top: '0',
               left: '0',
-              zIndex: '1',
+              zIndex: '2',
               width: canvasWidth || '100%',
               height: canvasHeight || '100%',
               boxSizing: 'border-box',
@@ -76,6 +90,7 @@ Canvas.propTypes = {
   canvasContainerRef: PropTypes.object.isRequired,
   canvasContainerWidth: PropTypes.number,
   canvasContainerHeight: PropTypes.number,
-  canvasOverlayRef: PropTypes.object.isRequired,
+  canvasGridOverlayRef: PropTypes.object.isRequired,
+  canvasDrawOverlayRef: PropTypes.object.isRequired,
   isRunning: PropTypes.bool.isRequired,
 };
