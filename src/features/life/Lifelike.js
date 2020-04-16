@@ -147,6 +147,7 @@ export const Lifelike = ({ isMobile }) => {
     switch (e.key) {
       case ' ':
         if (!withModifiers(e)) {
+          e.originalTarget.blur();
           e.preventDefault();
           handleToggleIsRunning();
         }
