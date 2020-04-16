@@ -11,7 +11,6 @@ export const GET_NEXT_CELLS = 'GET_NEXT_CELLS';
 export const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
 export const SET_BORN = 'SET_BORN';
 export const SET_GRID = 'SET_GRID';
-export const SET_HEIGHT = 'SET_HEIGHT';
 export const SET_SPEED = 'SET_SPEED';
 export const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 export const SET_PREVIOUSFRAMETIME = 'SET_PREVIOUSFRAMETIME';
@@ -67,11 +66,6 @@ export const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case SET_HEIGHT:
-      return {
-        ...state,
-        height: action.height,
-      };
     case SET_BORN:
       return {
         ...state,
