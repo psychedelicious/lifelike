@@ -1,5 +1,5 @@
 import React from 'react';
-import { clamp } from 'lodash';
+import { clamp, uniqWith, isEqual } from 'lodash';
 import { saveAs } from 'file-saver';
 
 // Chakra UI
@@ -141,6 +141,7 @@ export const Lifelike = ({ isMobile }) => {
     setColors,
     toggleLayout,
     setCell,
+    setArrayOfCells,
   } = useLife();
 
   useGlobalKeyDown((e) => {
@@ -497,15 +498,16 @@ export const Lifelike = ({ isMobile }) => {
   const handleCanvasPointerMove = React.useCallback(
     (e) => {
       e.preventDefault();
-      const x = Math.floor((e.layerX - 2) / px);
-      const y = Math.floor((e.layerY - 2) / px);
-      if (x >= 0 && x < width && y >= 0 && y < height) {
+      const x = e.layerX - 2;
+      const y = e.layerY - 2;
+      if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight) {
         if (e.buttons) {
-          if (e.altKey) {
-            setCell({ x, y, state: 0 });
-          } else {
-            setCell({ x, y, state: 1 });
-          }
+          const newState = e.altKey ? 0 : 1;
+          setCell({
+            x: Math.floor(x / px),
+            y: Math.floor(y / px),
+            state: newState,
+          });
           lastX.current = x;
           lastY.current = y;
         }
@@ -517,10 +519,13 @@ export const Lifelike = ({ isMobile }) => {
   const handleCanvasPointerDown = React.useCallback(
     (e) => {
       e.preventDefault();
-      const x = Math.floor((e.layerX - 2) / px);
-      const y = Math.floor((e.layerY - 2) / px);
-      if (x >= 0 && x < width && y >= 0 && y < height) {
+      const x = e.layerX - 2;
+      const y = e.layerY - 2;
+      if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight) {
         let newState = e.altKey ? 0 : 1;
+
+        let arrayOfCells = [{ x: Math.floor(x / px), y: Math.floor(y / px) }];
+
         if (e.shiftKey) {
           let diffX = x - lastX.current;
           let diffY = y - lastY.current;
@@ -533,14 +538,15 @@ export const Lifelike = ({ isMobile }) => {
           let intervalY = diffY / pointCount;
 
           for (let i = 0; i < pointCount; i++) {
-            setCell({
-              x: Math.round(lastX.current + intervalX * i),
-              y: Math.round(lastY.current + intervalY * i),
-              state: newState,
-            });
+            let newX = Math.round((lastX.current + intervalX * i) / px);
+            let newY = Math.round((lastY.current + intervalY * i) / px);
+            arrayOfCells.push({ x: newX, y: newY });
           }
         }
-        setCell({ x, y, state: newState });
+        setArrayOfCells({
+          arrayOfCells: uniqWith(arrayOfCells, isEqual),
+          newState,
+        });
 
         lastX.current = x;
         lastY.current = y;

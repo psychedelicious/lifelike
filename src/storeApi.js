@@ -17,6 +17,7 @@ import {
   TOGGLE_WRAP,
   SET_COLORS,
   TOGGLE_LAYOUT,
+  SET_ARRAYOFCELLS,
 } from './store';
 
 export const useLife = () => {
@@ -98,5 +99,7 @@ export const useLife = () => {
     toggleLayout: () => dispatch({ type: TOGGLE_LAYOUT }),
     setCell: ({ x, y, state }) =>
       dispatch({ type: SET_CELL, payload: { x, y, state } }),
+    setArrayOfCells: ({ arrayOfCells, newState }) =>
+      dispatch({ type: SET_ARRAYOFCELLS, payload: { arrayOfCells, newState } }),
   };
 };

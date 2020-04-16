@@ -13,6 +13,7 @@ export const SET_BORN = 'SET_BORN';
 export const SET_GRID = 'SET_GRID';
 export const SET_SPEED = 'SET_SPEED';
 export const SET_CELL = 'SET_CELL';
+export const SET_ARRAYOFCELLS = 'SET_ARRAYOFCELLS';
 export const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 export const SET_PREVIOUSFRAMETIME = 'SET_PREVIOUSFRAMETIME';
 export const SET_SURVIVE = 'SET_SURVIVE';
@@ -212,6 +213,16 @@ const reducer = (state, action) => {
       return {
         ...state,
         layout: state.layout === 'left' ? 'right' : 'left',
+      };
+    }
+    case SET_ARRAYOFCELLS: {
+      let newArrayOfCells = [...state.cells];
+      action.payload.arrayOfCells.forEach(
+        ({ x, y }) => (newArrayOfCells[x][y] = action.payload.newState)
+      );
+      return {
+        ...state,
+        cells: newArrayOfCells,
       };
     }
     default:
