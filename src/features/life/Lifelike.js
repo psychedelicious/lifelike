@@ -273,7 +273,7 @@ export const Lifelike = ({ isMobile }) => {
     tempCanvas.toBlob((blob) => {
       saveAs(blob, fileName);
     });
-  }, [lastConfigChange]);
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggleColorMode = React.useCallback(() => {
     toggleColorMode();
