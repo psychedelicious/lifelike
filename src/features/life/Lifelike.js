@@ -175,6 +175,11 @@ export const Lifelike = ({ isMobile }) => {
           handleToggleWrap();
         }
         break;
+      case 's':
+        if (!withModifiers(e)) {
+          handleSaveImage();
+        }
+        break;
       case 'i':
         if (!withModifiers(e)) {
           handleToggleShowStats();
@@ -237,6 +242,25 @@ export const Lifelike = ({ isMobile }) => {
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
   const canvasOverlayRef = React.useRef(null);
+
+  const handleSaveImage = React.useCallback(() => {
+    const imageURL = canvasRef.current
+      .toDataURL('image/png')
+      .replace('image/png', 'image/octet-stream');
+
+    let downloadLink = document.createElement('a');
+
+    downloadLink.setAttribute(
+      'download',
+      `lifelike_${Math.random().toString(36).substr(2, 9)}.png`
+    );
+
+    downloadLink.setAttribute('href', imageURL);
+
+    downloadLink.click();
+
+    downloadLink.remove();
+  }, []);
 
   const handleToggleColorMode = React.useCallback(() => {
     toggleColorMode();
@@ -482,6 +506,7 @@ export const Lifelike = ({ isMobile }) => {
         colorMode={colorMode}
         handleToggleColorMode={handleToggleColorMode}
         handleToggleLayout={handleToggleLayout}
+        handleSaveImage={handleSaveImage}
       />
 
       <MainControls
@@ -592,6 +617,7 @@ export const Lifelike = ({ isMobile }) => {
         canvasHeight={canvasHeight}
         canvasOverlayRef={canvasOverlayRef}
         isRunning={isRunning}
+        handleSaveImage={handleSaveImage}
         // mousePositionRef={mousePositionRef}
       />
     </Grid>

@@ -80,6 +80,7 @@ const keyboardShortcuts = [
   { shortcut: '4', description: 'set neighborhood to von neumann' },
   { shortcut: '6', description: 'set neighborhood to hexagonal' },
   { shortcut: '8', description: 'set neighborhood to moore' },
+  { shortcut: 's', description: 'save current grid to image' },
   {
     shortcut: 'w',
     description: 'toggle edge wrapping',
