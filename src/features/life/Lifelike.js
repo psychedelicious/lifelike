@@ -1,7 +1,6 @@
 import React from 'react';
 import { clamp } from 'lodash';
 import { saveAs } from 'file-saver';
-// import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
 import { Grid, useColorMode } from '@chakra-ui/core';
@@ -141,6 +140,7 @@ export const Lifelike = ({ isMobile }) => {
     getNextCells,
     setColors,
     toggleLayout,
+    setCell,
   } = useLife();
 
   useGlobalKeyDown((e) => {
@@ -233,12 +233,6 @@ export const Lifelike = ({ isMobile }) => {
   const [lastConfigChange, setLastConfigChange] = React.useState(0);
 
   const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
-
-  // const [mousePosition, mousePositionRef] = useMousePosition(
-  //   0, // enterDelay
-  //   0, // leaveDelay
-  //   10 // fps
-  // );
 
   const canvasRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
@@ -497,6 +491,82 @@ export const Lifelike = ({ isMobile }) => {
     showGridlines && drawGridlines({ canvas: canvasOverlayRef.current });
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const lastX = React.useRef(0);
+  const lastY = React.useRef(0);
+
+  const handleCanvasPointerMove = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      const x = Math.floor((e.layerX - 2) / px);
+      const y = Math.floor((e.layerY - 2) / px);
+      if (x >= 0 && x < width && y >= 0 && y < height) {
+        if (e.buttons) {
+          if (e.altKey) {
+            setCell({ x, y, state: 0 });
+          } else {
+            setCell({ x, y, state: 1 });
+          }
+          lastX.current = x;
+          lastY.current = y;
+        }
+      }
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const handleCanvasPointerDown = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      const x = Math.floor((e.layerX - 2) / px);
+      const y = Math.floor((e.layerY - 2) / px);
+      if (x >= 0 && x < width && y >= 0 && y < height) {
+        let newState = e.altKey ? 0 : 1;
+        if (e.shiftKey) {
+          let diffX = x - lastX.current;
+          let diffY = y - lastY.current;
+
+          let pointCount = Math.ceil(
+            Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2))
+          );
+
+          let intervalX = diffX / pointCount;
+          let intervalY = diffY / pointCount;
+
+          for (let i = 0; i < pointCount; i++) {
+            setCell({
+              x: Math.round(lastX.current + intervalX * i),
+              y: Math.round(lastY.current + intervalY * i),
+              state: newState,
+            });
+          }
+        }
+        setCell({ x, y, state: newState });
+
+        lastX.current = x;
+        lastY.current = y;
+      }
+    },
+    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  React.useLayoutEffect(() => {
+    if (!isRunning) {
+      const canvasOverlay = canvasOverlayRef.current;
+      canvasOverlay.addEventListener('pointermove', handleCanvasPointerMove);
+      canvasOverlay.addEventListener('pointerdown', handleCanvasPointerDown);
+      return () => {
+        canvasOverlay.removeEventListener(
+          'pointermove',
+          handleCanvasPointerMove
+        );
+        canvasOverlay.removeEventListener(
+          'pointerdown',
+          handleCanvasPointerDown
+        );
+      };
+    }
+  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+
   React.useLayoutEffect(fitCellsToCanvas, []);
 
   return (
@@ -630,8 +700,6 @@ export const Lifelike = ({ isMobile }) => {
         canvasHeight={canvasHeight}
         canvasOverlayRef={canvasOverlayRef}
         isRunning={isRunning}
-        handleSaveImage={handleSaveImage}
-        // mousePositionRef={mousePositionRef}
       />
     </Grid>
   );

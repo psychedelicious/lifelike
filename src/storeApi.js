@@ -7,6 +7,7 @@ import {
   SET_BORN,
   SET_GRID,
   SET_SPEED,
+  SET_CELL,
   SET_NEIGHBORHOOD,
   SET_PREVIOUSFRAMETIME,
   SET_SURVIVE,
@@ -95,5 +96,7 @@ export const useLife = () => {
         payload: { aliveCellColor, deadCellColor, gridlineColor },
       }),
     toggleLayout: () => dispatch({ type: TOGGLE_LAYOUT }),
+    setCell: ({ x, y, state }) =>
+      dispatch({ type: SET_CELL, payload: { x, y, state } }),
   };
 };

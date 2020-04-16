@@ -12,7 +12,6 @@ export const Canvas = React.memo(
     canvasOverlayRef,
     isRunning,
     ...rest
-    // mousePositionRef,
   }) => {
     const theme = useTheme();
     const { colorMode } = useColorMode();
@@ -25,7 +24,6 @@ export const Canvas = React.memo(
         justify="center"
       >
         <div
-          // ref={!isRunning ? mousePositionRef : null}
           style={{
             height: '100%',
             width: '100%',
@@ -51,7 +49,9 @@ export const Canvas = React.memo(
           ></canvas>
           <canvas
             ref={canvasOverlayRef}
+            
             style={{
+              touchAction: 'none',
               position: 'absolute',
               top: '0',
               left: '0',
@@ -78,5 +78,4 @@ Canvas.propTypes = {
   canvasContainerHeight: PropTypes.number,
   canvasOverlayRef: PropTypes.object.isRequired,
   isRunning: PropTypes.bool.isRequired,
-  // mousePositionRef: PropTypes.object.isRequired,
 };

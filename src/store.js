@@ -12,6 +12,7 @@ export const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
 export const SET_BORN = 'SET_BORN';
 export const SET_GRID = 'SET_GRID';
 export const SET_SPEED = 'SET_SPEED';
+export const SET_CELL = 'SET_CELL';
 export const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 export const SET_PREVIOUSFRAMETIME = 'SET_PREVIOUSFRAMETIME';
 export const SET_SURVIVE = 'SET_SURVIVE';
@@ -77,6 +78,13 @@ const reducer = (state, action) => {
         survive: state.survive.map((val, i) =>
           i === action.index ? !val : val
         ),
+      };
+    case SET_CELL:
+      const newSetCells = [...state.cells];
+      newSetCells[action.payload.x][action.payload.y] = action.payload.state;
+      return {
+        ...state,
+        cells: newSetCells,
       };
     case RANDOMIZE_CELLS:
       const [randomizedCells, randomizedCellsPopulation] = createCells({
