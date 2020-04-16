@@ -1,5 +1,6 @@
 import React from 'react';
 import { clamp } from 'lodash';
+import { saveAs } from 'file-saver';
 // import useMousePosition from '@react-hook/mouse-position';
 
 // Chakra UI
@@ -244,23 +245,35 @@ export const Lifelike = ({ isMobile }) => {
   const canvasOverlayRef = React.useRef(null);
 
   const handleSaveImage = React.useCallback(() => {
-    const imageURL = canvasRef.current
-      .toDataURL('image/png')
-      .replace('image/png', 'image/octet-stream');
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvasWidth;
+    tempCanvas.height = canvasHeight;
 
-    let downloadLink = document.createElement('a');
+    const tempContext = tempCanvas.getContext('2d');
 
-    downloadLink.setAttribute(
-      'download',
-      `lifelike_${Math.random().toString(36).substr(2, 9)}.png`
+    tempContext.drawImage(canvasRef.current, 0, 0);
+    tempContext.drawImage(canvasOverlayRef.current, 0, 0);
+
+    const id = Math.random().toString(36).substr(2, 9);
+
+    const bornRuleString = born.reduce(
+      (acc, cur, idx) => acc.concat(cur ? idx : ''),
+      'B'
     );
 
-    downloadLink.setAttribute('href', imageURL);
+    const surviveRuleString = survive.reduce(
+      (acc, cur, idx) => acc.concat(cur ? idx : ''),
+      'S'
+    );
 
-    downloadLink.click();
+    const fileName = `lifelike_${bornRuleString}-${surviveRuleString}_${
+      neighborhood.id
+    }_wrap${wrap ? 'On' : 'Off'}_${width}x${height}_gen${generation}_${id}.png`;
 
-    downloadLink.remove();
-  }, []);
+    tempCanvas.toBlob((blob) => {
+      saveAs(blob, fileName);
+    });
+  }, [lastConfigChange]);
 
   const handleToggleColorMode = React.useCallback(() => {
     toggleColorMode();
