@@ -7,6 +7,7 @@ import { GiResize } from 'react-icons/gi';
 import { Flex, Collapse } from '@chakra-ui/core';
 
 import { NumberSlider } from './NumberSlider';
+import { MobilePxSlider } from './MobilePxSlider';
 
 export const SliderControls = React.memo(
   ({
@@ -25,7 +26,7 @@ export const SliderControls = React.memo(
     return (
       <Collapse isOpen={isOpen}>
         <Flex {...rest} direction="column">
-          {!isMobile && (
+          {!isMobile ? (
             <>
               <NumberSlider
                 value={width}
@@ -44,17 +45,27 @@ export const SliderControls = React.memo(
                 isDisabled={isRunning}
                 icon={AiOutlineColumnHeight}
               />
+
+              <NumberSlider
+                value={px}
+                min={minMaxLimits.px.min}
+                max={minMaxLimits.px.max}
+                onChange={onPxChange}
+                isDisabled={isRunning}
+                icon={GiResize}
+              />
+            </>
+          ) : (
+            <>
+              <MobilePxSlider
+                px={px}
+                min={minMaxLimits.px.min}
+                max={minMaxLimits.px.max}
+                onChange={onPxChange}
+                isDisabled={isRunning}
+              />
             </>
           )}
-
-          <NumberSlider
-            value={px}
-            min={minMaxLimits.px.min}
-            max={minMaxLimits.px.max}
-            onChange={onPxChange}
-            isDisabled={isRunning}
-            icon={GiResize}
-          />
         </Flex>
       </Collapse>
     );
