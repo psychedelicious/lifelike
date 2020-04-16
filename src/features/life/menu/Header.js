@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { IoMdSunny, IoMdMoon, IoMdSwap } from 'react-icons/io';
 
@@ -51,3 +52,10 @@ export const Header = React.memo(
     );
   }
 );
+
+Header.propTypes = {
+  colorMode: PropTypes.string.isRequired,
+  isMobile: PropTypes.bool.isRequired,
+  handleToggleColorMode: PropTypes.func.isRequired,
+  handleToggleLayout: PropTypes.func.isRequired,
+};
