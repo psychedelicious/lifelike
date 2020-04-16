@@ -420,13 +420,13 @@ export const Lifelike = ({ isMobile }) => {
 
       return { newWidth, newHeight };
     },
-    [lastConfigChange, isMobile]
-  ); // eslint-disable-line react-hooks/exhaustive-deps
+    [lastConfigChange, isMobile] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const fitCellsToCanvas = React.useCallback(() => {
     const { newWidth, newHeight } = getCellDimensions();
     handleCanvasSizeChange({ newWidth, newHeight });
-  }, [lastConfigChange, isMobile]);
+  }, [lastConfigChange, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useAnimationFrame(() => {
     if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
