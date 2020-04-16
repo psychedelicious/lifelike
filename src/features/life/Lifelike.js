@@ -175,6 +175,11 @@ export const Lifelike = ({ isMobile }) => {
           handleToggleWrap();
         }
         break;
+      case 'i':
+        if (!withModifiers(e)) {
+          handleToggleShowStats();
+        }
+        break;
       case '8':
         if (!withModifiers(e)) {
           handleNeighborhoodChange('MOORE');

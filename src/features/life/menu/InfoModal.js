@@ -85,7 +85,7 @@ const keyboardShortcuts = [
     description: 'toggle edge wrapping',
   },
   { shortcut: 'g', description: 'toggle gridlines' },
-  { shortcut: 's', description: 'toggle stats' },
+  { shortcut: 'i', description: 'toggle stats' },
   { shortcut: 'd', description: 'toggle dark mode' },
 ];
 
