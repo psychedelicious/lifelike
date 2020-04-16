@@ -22,58 +22,52 @@ import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { useCanvas } from './canvas/useCanvas';
 import { useLife } from '../../storeApi';
 
-const gridTemplateRows = {
-  base: '2rem 1fr 3rem auto 2rem 2rem 2rem 2rem 2rem 4rem',
-  md: 'auto',
-};
-
-const gridTemplateColumnsBase = 'auto';
-
 const gridTemplateColumnsLeft = {
-  base: gridTemplateColumnsBase,
+  base: 'auto',
   md: '18.5rem auto',
 };
+
 const gridTemplateColumnsRight = {
-  base: gridTemplateColumnsBase,
+  base: 'auto',
   md: 'auto 18.5rem',
 };
 
-const gridTemplateAreasBase = `"header"
+const gridTemplateAreasBase = `"."
   "canvas"
-  "maincontrols"
-  "slidercontrols"
-  "speedslider"
-  "bornrule"
-  "surviverule"
-  "neighborhoodradio"
-  "gridlineswrap"
-  "monitor"`;
+  "."
+  "."
+  "."
+  "."
+  "."
+  "."
+  "."
+  "."`;
 
 const gridTemplateAreasLeft = {
   base: gridTemplateAreasBase,
-  md: `"header canvas"
-    "maincontrols canvas"
-    "slidercontrols canvas"
-    "speedslider canvas"
-    "bornrule canvas"
-    "surviverule canvas"
-    "neighborhoodradio canvas"
-    "gridlineswrap canvas"
-    "monitor canvas"
+  md: `". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
     ". canvas"`,
 };
 
 const gridTemplateAreasRight = {
   base: gridTemplateAreasBase,
-  md: `"canvas header"
-    "canvas maincontrols"
-    "canvas slidercontrols"
-    "canvas speedslider"
-    "canvas bornrule"
-    "canvas surviverule"
-    "canvas neighborhoodradio"
-    "canvas gridlineswrap"
-    "canvas monitor"
+  md: `"canvas ."
+    "canvas ."
+    "canvas ."
+    "canvas ."
+    "canvas ."
+    "canvas ."
+    "canvas ."
+    "canvas ."
+    "canvas ."
     "canvas ."`,
 };
 
@@ -299,8 +293,6 @@ export const Lifelike = ({ isMobile }) => {
     !showGridlines
       ? drawGridlines({ canvas: canvasOverlayRef.current })
       : clearCanvas({ canvas: canvasOverlayRef.current });
-
-    setLastConfigChange(window.performance.now());
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleWidthChange = React.useCallback(
@@ -331,9 +323,19 @@ export const Lifelike = ({ isMobile }) => {
 
   const handlePxChange = React.useCallback(
     (val) => {
-      const newPx = clamp(val, minMaxLimits.px.min, minMaxLimits.px.max);
+      if (val === 'increment') {
+        val = px + 1;
+      } else if (val === 'decrement') {
+        val = px - 1;
+      }
 
-      handleCanvasSizeChange({ newPx });
+      const newPx = clamp(val, minMaxLimits.px.min, minMaxLimits.px.max);
+      if (isMobile) {
+        const { newWidth, newHeight } = getCellDimensions(newPx);
+        handleCanvasSizeChange({ newWidth, newHeight, newPx });
+      } else {
+        handleCanvasSizeChange({ newPx });
+      }
     },
     [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
   );
@@ -382,48 +384,49 @@ export const Lifelike = ({ isMobile }) => {
     getNextCells();
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const getCellDimensions = React.useCallback(
+    (newPx = px) => {
+      // calculate 1 rem in px
+      const rem = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
+
+      const canvasRect = canvasRef.current.getBoundingClientRect();
+
+      // TODO: get the offsets dynamically
+      const widthOffset = isMobile ? 0.5 * rem : rem;
+      const heightOffset = isMobile ? 17 * rem : rem;
+
+      // the canvas has a 1px border * 2 for each x and y
+      const borderWidth = 2;
+
+      const newWidth = clamp(
+        Math.trunc(
+          (window.innerWidth - canvasRect.left - widthOffset - borderWidth) /
+            newPx
+        ),
+        minMaxLimits.width.min,
+        minMaxLimits.width.max
+      );
+
+      const newHeight = clamp(
+        Math.trunc(
+          (window.innerHeight - canvasRect.top - heightOffset - borderWidth) /
+            newPx
+        ),
+        minMaxLimits.height.min,
+        minMaxLimits.height.max
+      );
+
+      return { newWidth, newHeight };
+    },
+    [lastConfigChange, isMobile]
+  ); // eslint-disable-line react-hooks/exhaustive-deps
+
   const fitCellsToCanvas = React.useCallback(() => {
-    // calculate 1 rem in px
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-    const canvasRect = canvasRef.current.getBoundingClientRect();
-
-    // TODO: get this dynamically - currently hardcoded from padding and border widths *sigh*
-    const widthOffset = rem * 1;
-    const heightOffset = rem * 1;
-
-    const mobileHeightOffset = isMobile
-      ? gridTemplateRows.base
-          .split(' ')
-          .reduce(
-            (total, val) =>
-              val.match(/rem/)
-                ? total + parseInt(val.replace('rem', '')) * rem
-                : total,
-            0
-          )
-      : 0;
-
-    const newWidth = clamp(
-      Math.trunc((window.innerWidth - canvasRect.left - widthOffset) / px),
-      minMaxLimits.width.min,
-      minMaxLimits.width.max
-    );
-
-    const newHeight = clamp(
-      Math.trunc(
-        (window.innerHeight -
-          canvasRect.top -
-          heightOffset -
-          mobileHeightOffset) /
-          px
-      ),
-      minMaxLimits.height.min,
-      minMaxLimits.height.max
-    );
-
+    const { newWidth, newHeight } = getCellDimensions();
     handleCanvasSizeChange({ newWidth, newHeight });
-  }, [lastConfigChange, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lastConfigChange, isMobile]);
 
   useAnimationFrame(() => {
     if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
@@ -448,7 +451,7 @@ export const Lifelike = ({ isMobile }) => {
   React.useEffect(() => {
     clearCanvas({ canvas: canvasOverlayRef.current });
     showGridlines && drawGridlines({ canvas: canvasOverlayRef.current });
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [showGridlines]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useLayoutEffect(fitCellsToCanvas, []);
 
@@ -456,7 +459,6 @@ export const Lifelike = ({ isMobile }) => {
     <Grid
       w="100%"
       h="100%"
-      rowGap="0.5rem"
       columnGap="1rem"
       alignItems="center"
       gridTemplateColumns={
@@ -467,13 +469,12 @@ export const Lifelike = ({ isMobile }) => {
       }
     >
       <Header
+        justify="space-between"
+        alignItems="center"
         isMobile={isMobile}
         colorMode={colorMode}
         handleToggleColorMode={handleToggleColorMode}
         handleToggleLayout={handleToggleLayout}
-        gridArea="header"
-        justify="space-between"
-        alignItems="center"
       />
 
       <MainControls
@@ -489,7 +490,7 @@ export const Lifelike = ({ isMobile }) => {
       />
 
       <SliderControls
-        gridArea="slidercontrols"
+        mt="0.5rem"
         isMobile={isMobile}
         isOpen={isOptionsOpen}
         width={width}
@@ -503,7 +504,7 @@ export const Lifelike = ({ isMobile }) => {
       />
 
       <SpeedSlider
-        gridArea={'speedslider'}
+        mt="0.5rem"
         justifySelf="center"
         w="calc(100% - 2rem)"
         speed={speed}
@@ -514,32 +515,32 @@ export const Lifelike = ({ isMobile }) => {
       />
 
       <RuleCheckboxRow
-        gridArea="born"
+        mt="0.5rem"
         ruleArray={born}
         ruleType="born"
         onChange={handleRuleChange}
       />
 
       <RuleCheckboxRow
-        gridArea="surive"
+        mt="0.5rem"
         ruleArray={survive}
         ruleType="survive"
         onChange={handleRuleChange}
       />
 
       <NeighborhoodRadio
+        mt="0.5rem"
         direction="row"
-        gridArea="neighborhoodradio"
         neighborhood={neighborhood}
         onChange={handleNeighborhoodChange}
       />
 
       <div
         style={{
-          gridArea: 'gridlineswrap',
           display: 'flex',
           justifyContent: 'space-between',
           direction: 'row',
+          marginTop: '0.5rem',
         }}
       >
         <StyledCheckbox
@@ -563,7 +564,7 @@ export const Lifelike = ({ isMobile }) => {
 
       {showStats && (
         <Monitor
-          gridArea="monitor"
+          mt="0.5rem"
           generation={generation}
           population={population}
           density={density}
@@ -575,6 +576,7 @@ export const Lifelike = ({ isMobile }) => {
         alignSelf="start"
         p={0}
         m={0}
+        mt={isMobile ? '0.5rem' : '0'}
         canvasContainerRef={canvasContainerRef}
         canvasContainerWidth={canvasContainerWidth}
         canvasContainerHeight={canvasContainerHeight}

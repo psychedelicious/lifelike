@@ -23,7 +23,7 @@ export const RuleCheckboxRow = React.memo(
     //     : `neighbors == [${numberString || 'null'}] ~> survive`;
 
     return (
-      <Flex align="center" justify="space-between">
+      <Flex {...rest} align="center" justify="space-between">
         <Text fontSize="sm">{ruleType === 'born' ? 'b ~>' : 's ~>'}</Text>
 
         {ruleArray.map((val, index) => {

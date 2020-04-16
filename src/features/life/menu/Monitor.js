@@ -17,7 +17,7 @@ export const Monitor = ({ generation, population, density, ...rest }) => {
       </Stat>
 
       <Stat>
-        <StatLabel>density %</StatLabel>
+        <StatLabel>density%</StatLabel>
         <StatNumber>{density}</StatNumber>
       </Stat>
     </Flex>
@@ -25,7 +25,7 @@ export const Monitor = ({ generation, population, density, ...rest }) => {
 };
 
 Monitor.propTypes = {
-  generation: PropTypes.number,
-  population: PropTypes.number,
-  density: PropTypes.number,
+  generation: PropTypes.number.isRequired,
+  population: PropTypes.number.isRequired,
+  density: PropTypes.number.isRequired,
 };

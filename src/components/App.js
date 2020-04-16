@@ -15,7 +15,11 @@ export default function App() {
   return (
     <ThemedApp>
       <StoreProvider>
-        <Box w="100%" p="1rem">
+        <Box
+          w="100%"
+          px={isMobile ? '0.75rem' : '1rem'}
+          py={isMobile ? '0.5rem' : '1rem'}
+        >
           <Lifelike isMobile={isMobile} />
         </Box>
       </StoreProvider>
