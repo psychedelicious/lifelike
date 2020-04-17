@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import { AiOutlineColumnHeight, AiOutlineColumnWidth } from 'react-icons/ai';
 import { GiResize } from 'react-icons/gi';
 
-import { Flex, Collapse } from '@chakra-ui/core';
+import { Flex, Collapse, Text, RadioGroup, Radio } from '@chakra-ui/core';
 
 import { NumberSlider } from './NumberSlider';
 import { MobilePxSlider } from './MobilePxSlider';
+import { FaPaintBrush } from 'react-icons/fa';
+import { StyledCheckbox } from './StyledCheckbox';
 
-export const SliderControls = React.memo(
+export const OptionsCollapsibles = React.memo(
   ({
     isMobile,
     width,
@@ -18,6 +20,14 @@ export const SliderControls = React.memo(
     onHeightChange,
     px,
     onPxChange,
+    brushShape,
+    onBrushShapeChange,
+    brushRadius,
+    onBrushRadiusChange,
+    brushFill,
+    onBrushFillChange,
+    isInvertDraw,
+    onToggleIsInvertDraw,
     minMaxLimits,
     isRunning,
     isOpen,
@@ -25,7 +35,7 @@ export const SliderControls = React.memo(
   }) => {
     return (
       <Collapse isOpen={isOpen}>
-        <Flex {...rest} direction="column">
+        <Flex {...rest} direction="column" fontSize="sm">
           {!isMobile ? (
             <>
               <NumberSlider
@@ -66,13 +76,60 @@ export const SliderControls = React.memo(
               />
             </>
           )}
+
+          <StyledCheckbox
+            label="erase"
+            isChecked={isInvertDraw}
+            onChange={onToggleIsInvertDraw}
+          />
+
+          <RadioGroup
+            onChange={(e) => onBrushShapeChange(e.target.value)}
+            value={brushShape}
+            isInline
+          >
+            <Radio value="circle">
+              <Text fontSize="sm">circle</Text>
+            </Radio>
+            <Radio value="square">
+              <Text fontSize="sm">square</Text>
+            </Radio>
+          </RadioGroup>
+
+          <RadioGroup
+            onChange={(e) => onBrushFillChange(e.target.value)}
+            value={brushFill}
+            isInline
+          >
+            <Radio value="solid">
+              <Text fontSize="sm">solid</Text>
+            </Radio>
+            <Radio value="outline">
+              <Text fontSize="sm">outline</Text>
+            </Radio>
+            <Radio value="random">
+              <Text fontSize="sm">rand</Text>
+            </Radio>
+            <Radio value="spray">
+              <Text fontSize="sm">spray</Text>
+            </Radio>
+          </RadioGroup>
+
+          <NumberSlider
+            value={brushRadius}
+            min={1}
+            max={25}
+            onChange={onBrushRadiusChange}
+            isDisabled={isRunning}
+            icon={FaPaintBrush}
+          />
         </Flex>
       </Collapse>
     );
   }
 );
 
-SliderControls.propTypes = {
+OptionsCollapsibles.propTypes = {
   width: PropTypes.number.isRequired,
   onWidthChange: PropTypes.func.isRequired,
   height: PropTypes.number.isRequired,

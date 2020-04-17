@@ -11,6 +11,7 @@ export const Canvas = React.memo(
     canvasContainerRef,
     canvasGridOverlayRef,
     canvasDrawOverlayRef,
+    canvasOverlayText,
     isRunning,
     ...rest
   }) => {
@@ -39,13 +40,13 @@ export const Canvas = React.memo(
             style={{
               width: canvasWidth || '100%',
               height: canvasHeight || '100%',
-              boxSizing: 'border-box',
-              borderRadius: '1px',
-              border: `1px solid ${
-                colorMode === 'light'
-                  ? theme.colors.blackAlpha[300]
-                  : theme.colors.whiteAlpha[300]
-              }`,
+              // boxSizing: 'border-box',
+              // borderRadius: '1px',
+              // border: `1px solid ${
+              //   colorMode === 'light'
+              //     ? theme.colors.blackAlpha[300]
+              //     : theme.colors.whiteAlpha[300]
+              // }`,
             }}
           ></canvas>
           <canvas
@@ -57,9 +58,9 @@ export const Canvas = React.memo(
               zIndex: '1',
               width: canvasWidth || '100%',
               height: canvasHeight || '100%',
-              boxSizing: 'border-box',
-              borderRadius: '1px',
-              border: '1px solid transparent',
+              // boxSizing: 'border-box',
+              // borderRadius: '1px',
+              // border: '1px solid transparent',
             }}
           ></canvas>
           <canvas
@@ -69,14 +70,35 @@ export const Canvas = React.memo(
               position: 'absolute',
               top: '0',
               left: '0',
-              zIndex: '2',
+              zIndex: '3',
               width: canvasWidth || '100%',
               height: canvasHeight || '100%',
-              boxSizing: 'border-box',
-              borderRadius: '1px',
-              border: '1px solid transparent',
+              // boxSizing: 'border-box',
+              // borderRadius: '1px',
+              // border: '1px solid transparent',
             }}
           ></canvas>
+          <div
+            style={{
+              display:
+                !isRunning && canvasOverlayText.length ? 'block' : 'none',
+              touchAction: 'none',
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              zIndex: '2',
+              padding: '0.25rem',
+              margin: '0.5rem',
+              borderRadius: '0.25rem',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: 'rgb(255,255,255)',
+              fontSize: '0.875rem',
+            }}
+          >
+            {canvasOverlayText.map((text, i) => (
+              <div key={`canvasOverlayText${i}`}>{text}</div>
+            ))}
+          </div>
         </div>
       </Flex>
     );
@@ -92,5 +114,6 @@ Canvas.propTypes = {
   canvasContainerHeight: PropTypes.number,
   canvasGridOverlayRef: PropTypes.object.isRequired,
   canvasDrawOverlayRef: PropTypes.object.isRequired,
+  canvasOverlayText: PropTypes.array.isRequired,
   isRunning: PropTypes.bool.isRequired,
 };

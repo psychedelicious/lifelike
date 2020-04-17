@@ -53,7 +53,7 @@ export const SpeedSlider = React.memo(
             size={6}
             borderRadius="sm"
             border="1px "
-            bg={colorMode === 'light' ? 'gray.50' : 'blue.100'}
+            bg={colorMode === 'light' ? 'white' : 'white'}
           >
             <Box
               as={IoIosSpeedometer}

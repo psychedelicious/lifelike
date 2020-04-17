@@ -18,6 +18,13 @@ import {
   SET_COLORS,
   TOGGLE_LAYOUT,
   SET_ARRAYOFCELLS,
+  SET_CANVASOVERLAYTEXT,
+  SET_CANVASMOUSEPOS,
+  SET_CELLMOUSEPOS,
+  SET_ISALTHELDDOWN,
+  SET_BRUSH,
+  TOGGLE_INEDITMODE,
+  TOGGLE_ISINVERTDRAW,
 } from './store';
 
 export const useLife = () => {
@@ -41,6 +48,14 @@ export const useLife = () => {
     canvasHeight: state.canvasHeight,
     canvasContainerWidth: state.canvasContainerWidth,
     canvasContainerHeight: state.canvasContainerHeight,
+    canvasOverlayText: state.canvasOverlayText,
+    cellMousePos: state.cellMousePos,
+    canvasMousePos: state.canvasMousePos,
+    isAltHeldDown: state.isAltHeldDown,
+    brushShape: state.brushShape,
+    brushRadius: state.brushRadius,
+    brushPoints: state.brushPoints,
+    brushFill: state.brushFill,
     previousFrameTime: state.previousFrameTime,
     speed: state.speed,
     msDelay: state.msDelay,
@@ -50,6 +65,8 @@ export const useLife = () => {
     aliveCellColor: state.aliveCellColor,
     gridlineColor: state.gridlineColor,
     layout: state.layout,
+    inEditMode: state.inEditMode,
+    isInvertDraw: state.isInvertDraw,
     toggleIsRunning: () => dispatch({ type: TOGGLE_ISRUNNING }),
     toggleWrap: () => dispatch({ type: TOGGLE_WRAP }),
     toggleShowStats: () => dispatch({ type: TOGGLE_SHOWSTATS }),
@@ -99,7 +116,25 @@ export const useLife = () => {
     toggleLayout: () => dispatch({ type: TOGGLE_LAYOUT }),
     setCell: ({ x, y, state }) =>
       dispatch({ type: SET_CELL, payload: { x, y, state } }),
-    setArrayOfCells: ({ arrayOfCells, newState }) =>
-      dispatch({ type: SET_ARRAYOFCELLS, payload: { arrayOfCells, newState } }),
+    setArrayOfCells: ({ arrayOfCells, invertState }) =>
+      dispatch({
+        type: SET_ARRAYOFCELLS,
+        payload: { arrayOfCells, invertState },
+      }),
+    setCanvasOverlayText: ({ text }) =>
+      dispatch({ type: SET_CANVASOVERLAYTEXT, payload: { text } }),
+    setCanvasMousePos: ({ x, y }) =>
+      dispatch({ type: SET_CANVASMOUSEPOS, payload: { x, y } }),
+    setCellMousePos: ({ x, y }) =>
+      dispatch({ type: SET_CELLMOUSEPOS, payload: { x, y } }),
+    setIsAltHeldDown: ({ isAltHeldDown }) =>
+      dispatch({ type: SET_ISALTHELDDOWN, payload: { isAltHeldDown } }),
+    setBrush: ({ brushShape, brushRadius, brushFill }) =>
+      dispatch({
+        type: SET_BRUSH,
+        payload: { brushShape, brushRadius, brushFill },
+      }),
+    toggleInEditMode: () => dispatch({ type: TOGGLE_INEDITMODE }),
+    toggleIsInvertDraw: () => dispatch({ type: TOGGLE_ISINVERTDRAW }),
   };
 };

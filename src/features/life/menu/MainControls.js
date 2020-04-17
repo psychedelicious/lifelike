@@ -6,8 +6,10 @@ import {
   FaStepForward,
   FaTrash,
   FaRandom,
-  FaExpandArrowsAlt,
-  FaSlidersH,
+  FaExpand,
+  FaPaintBrush,
+  FaAngleDoubleUp,
+  FaAngleDoubleDown,
 } from 'react-icons/fa';
 import { Flex, IconButton } from '@chakra-ui/core';
 
@@ -20,6 +22,9 @@ export const MainControls = React.memo(
     onClickClearCells,
     onClickFitCellsToCanvas,
     onClickToggleOptions,
+    isOptionsOpen,
+    inEditMode,
+    onClickToggleEditMode,
     ...rest
   }) => {
     const style = { touchAction: 'manipulation' };
@@ -58,15 +63,23 @@ export const MainControls = React.memo(
         <IconButton
           style={style}
           isDisabled={isRunning}
-          icon={FaExpandArrowsAlt}
+          icon={FaExpand}
           variant="solid"
           aria-label="expand/shrink grid to fit"
           onClick={onClickFitCellsToCanvas}
         />
         <IconButton
           style={style}
-          icon={FaSlidersH}
-          variant="ghost"
+          isDisabled={isRunning}
+          icon={FaPaintBrush}
+          variant={inEditMode ? 'outline' : 'ghost'}
+          aria-label="expand/shrink grid to fit"
+          onClick={onClickToggleEditMode}
+        />
+        <IconButton
+          style={style}
+          icon={isOptionsOpen ? FaAngleDoubleUp : FaAngleDoubleDown}
+          variant={isOptionsOpen ? 'outline' : 'ghost'}
           aria-label="show/hide options"
           onClick={onClickToggleOptions}
         />
