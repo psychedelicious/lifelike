@@ -1,6 +1,5 @@
 import React from 'react';
 import { clamp } from 'lodash';
-import { saveAs } from 'file-saver';
 
 // Chakra UI
 import { Grid, useColorMode } from '@chakra-ui/core';
@@ -98,6 +97,7 @@ const withModifiers = (e) => {
 
 export const Lifelike = ({ isMobile }) => {
   const { drawCells, drawGridlines, clearCanvas } = useCanvas();
+
   const { colorMode, toggleColorMode } = useColorMode();
 
   const {
@@ -133,6 +133,9 @@ export const Lifelike = ({ isMobile }) => {
     brushFill,
     inEditMode,
     isInvertDraw,
+    deadCellColor,
+    aliveCellColor,
+    gridlineColor,
     // state setters
     toggleIsRunning,
     toggleWrap,
@@ -193,7 +196,7 @@ export const Lifelike = ({ isMobile }) => {
         break;
       case 's':
         if (!withModifiers(e)) {
-          handleSaveImage();
+          // handleSaveImage();
         }
         break;
       case 'i':
@@ -257,36 +260,19 @@ export const Lifelike = ({ isMobile }) => {
   const canvasMousePos = React.useRef({ x: null, y: null });
   const cellMousePos = React.useRef({ x: null, y: null });
 
-  const handleSaveImage = React.useCallback(() => {
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvasWidth;
-    tempCanvas.height = canvasHeight;
-
-    const tempContext = tempCanvas.getContext('2d');
-
-    tempContext.drawImage(canvasRef.current, 0, 0);
-    tempContext.drawImage(canvasGridOverlayRef.current, 0, 0);
-
-    const id = Math.random().toString(36).substr(2, 9);
-
-    const bornRuleString = born.reduce(
-      (acc, cur, idx) => acc.concat(cur ? idx : ''),
-      'B'
-    );
-
-    const surviveRuleString = survive.reduce(
-      (acc, cur, idx) => acc.concat(cur ? idx : ''),
-      'S'
-    );
-
-    const fileName = `lifelike_${bornRuleString}-${surviveRuleString}_${
-      neighborhood.id
-    }_wrap${wrap ? 'On' : 'Off'}_${width}x${height}_gen${generation}_${id}.png`;
-
-    tempCanvas.toBlob((blob) => {
-      saveAs(blob, fileName);
-    });
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  // const handleSaveImage = React.useCallback(() => {
+  //   saveCanvasAsImage({
+  //     canvas: canvasRef.current,
+  //     canvasGridOverlay: canvasGridOverlayRef.current,
+  //     born,
+  //     survive,
+  //     neighborhood,
+  //     wrap,
+  //     width,
+  //     height,
+  //     generation,
+  //   });
+  // }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggleColorMode = React.useCallback(() => {
     toggleColorMode();
@@ -349,7 +335,13 @@ export const Lifelike = ({ isMobile }) => {
     toggleShowGridlines();
 
     !showGridlines
-      ? drawGridlines({ canvas: canvasGridOverlayRef.current })
+      ? drawGridlines({
+          canvas: canvasGridOverlayRef.current,
+          gridlineColor,
+          width,
+          height,
+          px,
+        })
       : clearCanvas({ canvas: canvasGridOverlayRef.current });
 
     setLastConfigChange(window.performance.now());
@@ -547,12 +539,25 @@ export const Lifelike = ({ isMobile }) => {
   React.useLayoutEffect(() => {
     drawCells({
       canvas: canvasRef.current,
+      deadCellColor,
+      aliveCellColor,
+      width,
+      height,
+      cells,
+      px,
     });
   }, [cells, lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useLayoutEffect(() => {
     clearCanvas({ canvas: canvasGridOverlayRef.current });
-    showGridlines && drawGridlines({ canvas: canvasGridOverlayRef.current });
+    showGridlines &&
+      drawGridlines({
+        canvas: canvasGridOverlayRef.current,
+        gridlineColor,
+        width,
+        height,
+        px,
+      });
   }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCanvasPointerMove = React.useCallback(
@@ -731,7 +736,8 @@ export const Lifelike = ({ isMobile }) => {
         colorMode={colorMode}
         handleToggleColorMode={handleToggleColorMode}
         handleToggleLayout={handleToggleLayout}
-        handleSaveImage={handleSaveImage}
+        canvasRef={canvasRef}
+        canvasGridOverlayRef={canvasGridOverlayRef}
       />
 
       <MainControls

@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { IoMdSunny, IoMdMoon, IoMdSwap, IoMdImage } from 'react-icons/io';
+import { IoMdSunny, IoMdMoon, IoMdSwap } from 'react-icons/io';
 
 import { IconButton, Flex, Heading } from '@chakra-ui/core';
 import { InfoModal } from './InfoModal';
+import { SaveCanvasAsImageButton } from './SaveCanvasAsImageButton';
 
 export const Header = React.memo(
   ({
@@ -12,7 +13,8 @@ export const Header = React.memo(
     isMobile,
     handleToggleColorMode,
     handleToggleLayout,
-    handleSaveImage,
+    canvasRef,
+    canvasGridOverlayRef,
     ...rest
   }) => {
     return (
@@ -22,17 +24,11 @@ export const Header = React.memo(
         </Heading>
 
         <Flex justify="right">
-          <IconButton
-            icon={IoMdImage}
-            fontSize="1.5rem"
-            p={0}
-            h="unset"
-            minW="unset"
-            mr="0.5rem"
-            variant="unstyled"
-            aria-label="save grid as image"
-            onClick={handleSaveImage}
+          <SaveCanvasAsImageButton
+            canvas={canvasRef.current}
+            canvasGridOverlay={canvasGridOverlayRef.current}
           />
+
           {!isMobile && (
             <IconButton
               icon={IoMdSwap}
