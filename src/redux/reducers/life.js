@@ -1,41 +1,39 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import {
+  CLEAR_CELLS,
+  GET_NEXT_CELLS,
+  RANDOMIZE_CELLS,
+  SET_BORN,
+  SET_GRID,
+  SET_SPEED,
+  SET_CELL,
+  SET_ARRAYOFCELLS,
+  SET_NEIGHBORHOOD,
+  SET_PREVIOUSFRAMETIME,
+  SET_SURVIVE,
+  TOGGLE_ISRUNNING,
+  TOGGLE_SHOWGRIDLINES,
+  TOGGLE_SHOWSTATS,
+  TOGGLE_WRAP,
+  SET_COLORS,
+  TOGGLE_LAYOUT,
+  SET_CANVASOVERLAYTEXT,
+  SET_CANVASMOUSEPOS,
+  SET_CELLMOUSEPOS,
+  SET_ISALTHELDDOWN,
+  SET_BRUSH,
+  TOGGLE_INEDITMODE,
+  TOGGLE_ISINVERTDRAW,
+} from '../actionTypes';
 
-import { Neighborhoods } from './features/life/neighborhoods';
-import { createCells } from './features/life/createCells';
-import { getNextCells } from './features/life/getNextCells';
+import { Neighborhoods } from '../../features/life/neighborhoods';
+import { createCells } from '../../features/life/createCells';
+import { getNextCells } from '../../features/life/getNextCells';
 
-import { lifelikeTheme } from './theme';
+import { lifelikeTheme } from '../../theme';
 
-import { getBrushPoints } from './geometry/getBrushPoints';
+import { getBrushPoints } from '../../geometry/getBrushPoints';
 
-export const CLEAR_CELLS = 'CLEAR_CELLS';
-export const GET_NEXT_CELLS = 'GET_NEXT_CELLS';
-export const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
-export const SET_BORN = 'SET_BORN';
-export const SET_GRID = 'SET_GRID';
-export const SET_SPEED = 'SET_SPEED';
-export const SET_CELL = 'SET_CELL';
-export const SET_ARRAYOFCELLS = 'SET_ARRAYOFCELLS';
-export const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
-export const SET_PREVIOUSFRAMETIME = 'SET_PREVIOUSFRAMETIME';
-export const SET_SURVIVE = 'SET_SURVIVE';
-export const TOGGLE_ISRUNNING = 'TOGGLE_ISRUNNING';
-export const TOGGLE_SHOWGRIDLINES = 'TOGGLE_SHOWGRIDLINES';
-export const TOGGLE_SHOWSTATS = 'TOGGLE_SHOWSTATS';
-export const TOGGLE_WRAP = 'TOGGLE_WRAP';
-export const SET_COLORS = 'SET_COLORS';
-export const TOGGLE_LAYOUT = 'TOGGLE_LAYOUT';
-export const SET_CANVASOVERLAYTEXT = 'SET_CANVASOVERLAYTEXT';
-export const SET_CANVASMOUSEPOS = 'SET_CANVASMOUSEPOS';
-export const SET_CELLMOUSEPOS = 'SET_CELLMOUSEPOS';
-export const SET_ISALTHELDDOWN = 'SET_ISALTHELDDOWN';
-export const SET_BRUSH = 'SET_BRUSH';
-export const TOGGLE_INEDITMODE = 'TOGGLE_INEDITMODE';
-export const TOGGLE_ISINVERTDRAW = 'TOGGLE_ISINVERTDRAW';
-
-const StoreContext = createContext();
-
-export const initialState = {
+const initialState = {
   cells: [],
   width: 0,
   height: 0,
@@ -85,7 +83,7 @@ export const initialState = {
   gridlineColor: null,
 };
 
-const reducer = (state, action) => {
+export default function life(state = initialState, action) {
   switch (action.type) {
     case SET_BORN:
       return {
@@ -315,18 +313,6 @@ const reducer = (state, action) => {
       };
     }
     default:
-      throw new Error(`Action type ${action.type} unrecognized`);
+      return state;
   }
-};
-
-export const StoreProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  return (
-    <StoreContext.Provider value={{ state, dispatch }}>
-      {children}
-    </StoreContext.Provider>
-  );
-};
-
-export const useStore = () => useContext(StoreContext);
+}

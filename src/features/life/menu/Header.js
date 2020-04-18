@@ -66,5 +66,4 @@ Header.propTypes = {
   isMobile: PropTypes.bool.isRequired,
   handleToggleColorMode: PropTypes.func.isRequired,
   handleToggleLayout: PropTypes.func.isRequired,
-  handleSaveImage: PropTypes.func.isRequired,
 };

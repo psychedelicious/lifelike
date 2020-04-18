@@ -34,6 +34,6 @@ export const SaveCanvasAsImageButton = React.memo(
 );
 
 SaveCanvasAsImageButton.propTypes = {
-  canvas: PropTypes.object.isRequired,
-  canvasGridOverlay: PropTypes.object.isRequired,
+  canvas: PropTypes.object,
+  canvasGridOverlay: PropTypes.object,
 };

@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import { clamp } from 'lodash';
 
 // Chakra UI
@@ -19,9 +21,31 @@ import { StyledCheckbox } from './menu/StyledCheckbox';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { useCanvas } from './canvas/useCanvas';
-import { useLifeStore } from '../../storeApi';
 
 import { getPointsOnLine } from '../../geometry/getPointsOnLine';
+
+import {
+  toggleIsRunning,
+  toggleWrap,
+  toggleShowStats,
+  setGrid,
+  toggleShowGridlines,
+  setSpeed,
+  setNeighborhood,
+  setBorn,
+  setSurvive,
+  clearCells,
+  randomizeCells,
+  setPreviousFrameTime,
+  getNextCells,
+  setColors,
+  toggleLayout,
+  setArrayOfCells,
+  setCanvasOverlayText,
+  setBrush,
+  toggleInEditMode,
+  toggleIsInvertDraw,
+} from '../../redux/actions';
 
 const gridTemplateColumnsLeft = {
   base: 'auto',
@@ -95,69 +119,67 @@ const withModifiers = (e) => {
   return e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
 };
 
-export const Lifelike = ({ isMobile }) => {
+const Lifelike = ({
+  isMobile, // state values
+  cells,
+  width,
+  height,
+  px,
+  neighborhood,
+  born,
+  survive,
+  wrap,
+  showGridlines,
+  isRunning,
+  showStats,
+  generation,
+  population,
+  density,
+  canvasWidth,
+  canvasHeight,
+  canvasContainerWidth,
+  canvasContainerHeight,
+  previousFrameTime,
+  speed,
+  msDelay,
+  lightModeColors,
+  darkModeColors,
+  layout,
+  canvasOverlayText,
+  brushShape,
+  brushRadius,
+  brushPoints,
+  brushFill,
+  inEditMode,
+  isInvertDraw,
+  deadCellColor,
+  aliveCellColor,
+  gridlineColor,
+  // state setters
+  toggleIsRunning,
+  toggleWrap,
+  toggleShowStats,
+  setGrid,
+  toggleShowGridlines,
+  setSpeed,
+  setNeighborhood,
+  setBorn,
+  setSurvive,
+  clearCells,
+  randomizeCells,
+  setPreviousFrameTime,
+  getNextCells,
+  setColors,
+  toggleLayout,
+  setArrayOfCells,
+  setCanvasOverlayText,
+  setBrush,
+  toggleInEditMode,
+  toggleIsInvertDraw,
+}) => {
   const { drawCells, drawGridlines, clearCanvas } = useCanvas();
 
   const { colorMode, toggleColorMode } = useColorMode();
-
-  const {
-    // state values
-    cells,
-    width,
-    height,
-    px,
-    neighborhood,
-    born,
-    survive,
-    wrap,
-    showGridlines,
-    isRunning,
-    showStats,
-    generation,
-    population,
-    density,
-    canvasWidth,
-    canvasHeight,
-    canvasContainerWidth,
-    canvasContainerHeight,
-    previousFrameTime,
-    speed,
-    msDelay,
-    lightModeColors,
-    darkModeColors,
-    layout,
-    canvasOverlayText,
-    brushShape,
-    brushRadius,
-    brushPoints,
-    brushFill,
-    inEditMode,
-    isInvertDraw,
-    deadCellColor,
-    aliveCellColor,
-    gridlineColor,
-    // state setters
-    toggleIsRunning,
-    toggleWrap,
-    toggleShowStats,
-    setGrid,
-    toggleShowGridlines,
-    setSpeed,
-    setNeighborhood,
-    setBorn,
-    setSurvive,
-    clearCells,
-    randomizeCells,
-    setPreviousFrameTime,
-    getNextCells,
-    setColors,
-    toggleLayout,
-    setArrayOfCells,
-    setCanvasOverlayText,
-    setBrush,
-    toggleInEditMode,
-    toggleIsInvertDraw,
-  } = useLifeStore();
 
   useGlobalKeyDown((e) => {
     switch (e.key) {
@@ -259,20 +281,6 @@ export const Lifelike = ({ isMobile }) => {
 
   const canvasMousePos = React.useRef({ x: null, y: null });
   const cellMousePos = React.useRef({ x: null, y: null });
-
-  // const handleSaveImage = React.useCallback(() => {
-  //   saveCanvasAsImage({
-  //     canvas: canvasRef.current,
-  //     canvasGridOverlay: canvasGridOverlayRef.current,
-  //     born,
-  //     survive,
-  //     neighborhood,
-  //     wrap,
-  //     width,
-  //     height,
-  //     generation,
-  //   });
-  // }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggleColorMode = React.useCallback(() => {
     toggleColorMode();
@@ -866,3 +874,68 @@ export const Lifelike = ({ isMobile }) => {
     </Grid>
   );
 };
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    isMobile: ownProps.isMobile,
+    cells: state.life.cells,
+    width: state.life.width,
+    height: state.life.height,
+    px: state.life.px,
+    neighborhood: state.life.neighborhood,
+    born: state.life.born,
+    survive: state.life.survive,
+    wrap: state.life.wrap,
+    showGridlines: state.life.showGridlines,
+    isRunning: state.life.isRunning,
+    showStats: state.life.showStats,
+    generation: state.life.generation,
+    population: state.life.population,
+    density: state.life.density,
+    canvasWidth: state.life.canvasWidth,
+    canvasHeight: state.life.canvasHeight,
+    canvasContainerWidth: state.life.canvasContainerWidth,
+    canvasContainerHeight: state.life.canvasContainerHeight,
+    previousFrameTime: state.life.previousFrameTime,
+    speed: state.life.speed,
+    msDelay: state.life.msDelay,
+    lightModeColors: state.life.lightModeColors,
+    darkModeColors: state.life.darkModeColors,
+    layout: state.life.layout,
+    canvasOverlayText: state.life.canvasOverlayText,
+    brushShape: state.life.brushShape,
+    brushRadius: state.life.brushRadius,
+    brushPoints: state.life.brushPoints,
+    brushFill: state.life.brushFill,
+    inEditMode: state.life.inEditMode,
+    isInvertDraw: state.life.isInvertDraw,
+    deadCellColor: state.life.deadCellColor,
+    aliveCellColor: state.life.aliveCellColor,
+    gridlineColor: state.life.gridlineColor,
+  };
+};
+
+const mapDispatchToProps = {
+  toggleIsRunning,
+  toggleWrap,
+  toggleShowStats,
+  setGrid,
+  toggleShowGridlines,
+  setSpeed,
+  setNeighborhood,
+  setBorn,
+  setSurvive,
+  clearCells,
+  randomizeCells,
+  setPreviousFrameTime,
+  getNextCells,
+  setColors,
+  toggleLayout,
+  setArrayOfCells,
+  setCanvasOverlayText,
+  setBrush,
+  toggleInEditMode,
+  toggleIsInvertDraw,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Lifelike);
