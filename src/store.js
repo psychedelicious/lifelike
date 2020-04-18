@@ -6,12 +6,16 @@ import { getNextCells } from './features/life/getNextCells';
 
 import { lifelikeTheme } from './theme';
 
+import { getBrushPoints } from './geometry/getBrushPoints';
+
 export const CLEAR_CELLS = 'CLEAR_CELLS';
 export const GET_NEXT_CELLS = 'GET_NEXT_CELLS';
 export const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
 export const SET_BORN = 'SET_BORN';
 export const SET_GRID = 'SET_GRID';
 export const SET_SPEED = 'SET_SPEED';
+export const SET_CELL = 'SET_CELL';
+export const SET_ARRAYOFCELLS = 'SET_ARRAYOFCELLS';
 export const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 export const SET_PREVIOUSFRAMETIME = 'SET_PREVIOUSFRAMETIME';
 export const SET_SURVIVE = 'SET_SURVIVE';
@@ -21,6 +25,13 @@ export const TOGGLE_SHOWSTATS = 'TOGGLE_SHOWSTATS';
 export const TOGGLE_WRAP = 'TOGGLE_WRAP';
 export const SET_COLORS = 'SET_COLORS';
 export const TOGGLE_LAYOUT = 'TOGGLE_LAYOUT';
+export const SET_CANVASOVERLAYTEXT = 'SET_CANVASOVERLAYTEXT';
+export const SET_CANVASMOUSEPOS = 'SET_CANVASMOUSEPOS';
+export const SET_CELLMOUSEPOS = 'SET_CELLMOUSEPOS';
+export const SET_ISALTHELDDOWN = 'SET_ISALTHELDDOWN';
+export const SET_BRUSH = 'SET_BRUSH';
+export const TOGGLE_INEDITMODE = 'TOGGLE_INEDITMODE';
+export const TOGGLE_ISINVERTDRAW = 'TOGGLE_ISINVERTDRAW';
 
 const StoreContext = createContext();
 
@@ -45,10 +56,20 @@ export const initialState = {
   canvasHeight: 0,
   canvasContainerWidth: 0,
   canvasContainerHeight: 0,
+  canvasOverlayText: [],
+  canvasMousePos: { x: 0, y: 0 },
+  cellMousePos: { x: 0, y: 0 },
+  isAltHeldDown: false,
+  brushShape: 'circle',
+  brushRadius: 7,
+  brushPoints: [0, 0],
+  brushFill: 'solid',
   previousFrameTime: 0,
   speed: 70,
   msDelay: Math.pow(100 - 70, 3) / 1000,
   layout: 'left',
+  inEditMode: false,
+  isInvertDraw: false,
   lightModeColors: {
     deadCellColor: lifelikeTheme.colors.gray['50'],
     aliveCellColor: lifelikeTheme.colors.blue['700'],
@@ -77,6 +98,13 @@ const reducer = (state, action) => {
         survive: state.survive.map((val, i) =>
           i === action.index ? !val : val
         ),
+      };
+    case SET_CELL:
+      const newSetCells = [...state.cells];
+      newSetCells[action.payload.x][action.payload.y] = action.payload.state;
+      return {
+        ...state,
+        cells: newSetCells,
       };
     case RANDOMIZE_CELLS:
       const [randomizedCells, randomizedCellsPopulation] = createCells({
@@ -204,6 +232,86 @@ const reducer = (state, action) => {
       return {
         ...state,
         layout: state.layout === 'left' ? 'right' : 'left',
+      };
+    }
+    case SET_ARRAYOFCELLS: {
+      let newArrayOfCells = [...state.cells];
+      action.payload.arrayOfCells.forEach(({ x, y, state: cellState }) => {
+        if (x >= 0 && x < state.width && y >= 0 && y < state.height) {
+          if (action.payload.invertState) {
+            if (cellState === 1) {
+              newArrayOfCells[x][y] = 0;
+            }
+          } else {
+            if (cellState === 1) {
+              newArrayOfCells[x][y] = 1;
+            }
+          }
+        }
+      });
+
+      let newPopulation = newArrayOfCells
+        .flat()
+        .reduce((acc, val) => acc + val, 0);
+
+      return {
+        ...state,
+        cells: newArrayOfCells,
+        population: newPopulation,
+        density:
+          Math.round((newPopulation * 1000) / (state.width * state.height)) /
+          10,
+      };
+    }
+    case SET_CANVASOVERLAYTEXT: {
+      return {
+        ...state,
+        canvasOverlayText: action.payload.text,
+      };
+    }
+    case SET_CANVASMOUSEPOS: {
+      return {
+        ...state,
+        canvasMousePos: action.payload,
+      };
+    }
+    case SET_CELLMOUSEPOS: {
+      return {
+        ...state,
+        cellMousePos: action.payload,
+      };
+    }
+    case SET_ISALTHELDDOWN: {
+      return {
+        ...state,
+        isAltHeldDown: action.payload.isAltHeldDown,
+      };
+    }
+    case SET_BRUSH: {
+      const newBrushPoints = getBrushPoints({
+        brushShape: action.payload.brushShape,
+        brushRadius: action.payload.brushRadius,
+        brushFill: action.payload.brushFill,
+      });
+
+      return {
+        ...state,
+        brushShape: action.payload.brushShape,
+        brushRadius: action.payload.brushRadius,
+        brushFill: action.payload.brushFill,
+        brushPoints: newBrushPoints,
+      };
+    }
+    case TOGGLE_INEDITMODE: {
+      return {
+        ...state,
+        inEditMode: !state.inEditMode,
+      };
+    }
+    case TOGGLE_ISINVERTDRAW: {
+      return {
+        ...state,
+        isInvertDraw: !state.isInvertDraw,
       };
     }
     default:

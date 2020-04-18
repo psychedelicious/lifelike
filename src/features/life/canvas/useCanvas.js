@@ -1,4 +1,4 @@
-import { useLife } from '../../../storeApi';
+import { useLifeStore } from '../../../storeApi';
 
 export const useCanvas = () => {
   const {
@@ -9,7 +9,7 @@ export const useCanvas = () => {
     cells,
     px,
     gridlineColor,
-  } = useLife();
+  } = useLifeStore();
 
   const drawCells = ({ canvas }) => {
     const context = canvas.getContext('2d', { alpha: false });
@@ -31,16 +31,19 @@ export const useCanvas = () => {
 
   const drawGridlines = ({ canvas }) => {
     const context = canvas.getContext('2d');
+    context.translate(-0.5, -0.5);
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     context.fillStyle = gridlineColor;
 
     for (let cellX = 1; cellX < width; cellX++) {
-      context.fillRect(cellX * px, 0, 1, height * px);
+      context.fillRect(cellX * px, 0, 1, canvas.height + 1);
     }
     for (let cellY = 1; cellY < height; cellY++) {
-      context.fillRect(0, cellY * px, width * px, 1);
+      context.fillRect(0, cellY * px, canvas.width + 1, 1);
     }
+    context.translate(0.5, 0.5);
+
   };
 
   return { drawCells, clearCanvas, drawGridlines };
