@@ -1,35 +1,44 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import { Text, Radio, Box, Flex } from '@chakra-ui/core';
 
+import { setNeighborhood } from '../../../redux/actions';
 import { Neighborhoods } from '../neighborhoods';
 
-export const NeighborhoodRadio = React.memo(
-  ({ neighborhood, onChange, ...rest }) => {
-    return (
-      <Flex {...rest} fontSize="sm">
-        <Text>n ~></Text>
-        <Flex px="0.5rem" justify="space-between" flex="1 1 auto">
-          {Neighborhoods.types.map((n, i) => (
-            <Box key={`neighborhood${i}`}>
-              <Radio
-                value={n}
-                size="sm"
-                isChecked={neighborhood.id === n}
-                onChange={() => onChange(n)}
-              >
-                <Text>{Neighborhoods[n].name}</Text>
-              </Radio>
-            </Box>
-          ))}
-        </Flex>
-      </Flex>
-    );
-  }
-);
+const NeighborhoodRadio = React.memo(({ ...rest }) => {
+  const neighborhood = useSelector(
+    (state) => state.life.neighborhood,
+    shallowEqual
+  );
+  const dispatch = useDispatch();
 
-NeighborhoodRadio.propTypes = {
-  neighborhood: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
+  const handleNeighborhoodChange = React.useCallback(
+    (neighborhood) => {
+      dispatch(setNeighborhood({ neighborhood }));
+    },
+    [dispatch]
+  );
+
+  return (
+    <Flex {...rest} fontSize="sm">
+      <Text>n ~></Text>
+      <Flex px="0.5rem" justify="space-between" flex="1 1 auto">
+        {Neighborhoods.types.map((n, i) => (
+          <Box key={`neighborhood${i}`}>
+            <Radio
+              value={n}
+              size="sm"
+              isChecked={neighborhood.id === n}
+              onChange={() => handleNeighborhoodChange(n)}
+            >
+              <Text>{Neighborhoods[n].name}</Text>
+            </Radio>
+          </Box>
+        ))}
+      </Flex>
+    </Flex>
+  );
+});
+
+export default NeighborhoodRadio;

@@ -15,7 +15,6 @@ import {
   TOGGLE_SHOWSTATS,
   TOGGLE_WRAP,
   SET_COLORS,
-  TOGGLE_LAYOUT,
   SET_CANVASOVERLAYTEXT,
   SET_CANVASMOUSEPOS,
   SET_CELLMOUSEPOS,
@@ -50,6 +49,7 @@ const initialState = {
   generation: 0,
   population: 0,
   density: 0,
+  cellsChanged: [],
   canvasWidth: 0,
   canvasHeight: 0,
   canvasContainerWidth: 0,
@@ -65,7 +65,6 @@ const initialState = {
   previousFrameTime: 0,
   speed: 70,
   msDelay: Math.pow(100 - 70, 3) / 1000,
-  layout: 'left',
   inEditMode: false,
   isInvertDraw: false,
   lightModeColors: {
@@ -81,6 +80,28 @@ const initialState = {
   deadCellColor: null,
   aliveCellColor: null,
   gridlineColor: null,
+  minMaxLimits: {
+    width: {
+      min: 1,
+      max: 2000,
+    },
+    height: {
+      min: 1,
+      max: 2000,
+    },
+    px: {
+      min: 1,
+      max: 25,
+    },
+    speed: {
+      min: 0,
+      max: 100,
+    },
+    brushRadius: {
+      min: 1,
+      max: 50,
+    },
+  },
 };
 
 export default function life(state = initialState, action) {
@@ -175,7 +196,7 @@ export default function life(state = initialState, action) {
       };
     }
     case GET_NEXT_CELLS: {
-      const [nextCells, nextPopulation] = getNextCells(
+      const [nextCells, nextPopulation, cellsChanged] = getNextCells(
         state.cells,
         state.width,
         state.height,
@@ -189,6 +210,7 @@ export default function life(state = initialState, action) {
         generation: state.generation + 1,
         cells: nextCells,
         population: nextPopulation,
+        cellsChanged: cellsChanged,
         density:
           Math.round((nextPopulation * 1000) / (state.width * state.height)) /
           10,
@@ -224,12 +246,6 @@ export default function life(state = initialState, action) {
         aliveCellColor: action.payload.aliveCellColor ?? state.aliveCellColor,
         deadCellColor: action.payload.deadCellColor ?? state.deadCellColor,
         gridlineColor: action.payload.gridlineColor ?? state.gridlineColor,
-      };
-    }
-    case TOGGLE_LAYOUT: {
-      return {
-        ...state,
-        layout: state.layout === 'left' ? 'right' : 'left',
       };
     }
     case SET_ARRAYOFCELLS: {
@@ -286,17 +302,18 @@ export default function life(state = initialState, action) {
       };
     }
     case SET_BRUSH: {
+      const { brushRadius, brushFill, brushShape } = action.payload;
       const newBrushPoints = getBrushPoints({
-        brushShape: action.payload.brushShape,
-        brushRadius: action.payload.brushRadius,
-        brushFill: action.payload.brushFill,
+        brushShape: brushShape,
+        brushRadius: brushRadius,
+        brushFill: brushFill,
       });
 
       return {
         ...state,
-        brushShape: action.payload.brushShape,
-        brushRadius: action.payload.brushRadius,
-        brushFill: action.payload.brushFill,
+        brushShape: brushShape,
+        brushRadius: brushRadius,
+        brushFill: brushFill,
         brushPoints: newBrushPoints,
       };
     }

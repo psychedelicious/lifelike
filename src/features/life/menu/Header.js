@@ -1,25 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { IoMdSunny, IoMdMoon, IoMdSwap } from 'react-icons/io';
+import { IoMdSunny, IoMdMoon } from 'react-icons/io';
+import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
 
-import { IconButton, Flex, Heading } from '@chakra-ui/core';
 import { InfoModal } from './InfoModal';
 import { SaveCanvasAsImageButton } from './SaveCanvasAsImageButton';
 
 export const Header = React.memo(
-  ({
-    colorMode,
-    isMobile,
-    handleToggleColorMode,
-    handleToggleLayout,
-    canvasRef,
-    canvasGridOverlayRef,
-    ...rest
-  }) => {
+  ({ isMobile, canvasRef, canvasGridOverlayRef, ...rest }) => {
+    const { colorMode, toggleColorMode } = useColorMode();
+
     return (
       <Flex {...rest} justify="space-between">
-        <Heading fontSize="1.25rem" fontWeight={400}>
+        <Heading fontSize="1.25rem" fontWeight={300}>
           lifelike
         </Heading>
 
@@ -28,20 +22,6 @@ export const Header = React.memo(
             canvas={canvasRef.current}
             canvasGridOverlay={canvasGridOverlayRef.current}
           />
-
-          {!isMobile && (
-            <IconButton
-              icon={IoMdSwap}
-              fontSize="1.5rem"
-              p={0}
-              h="unset"
-              minW="unset"
-              mr="0.5rem"
-              variant="unstyled"
-              aria-label="swap menu side"
-              onClick={handleToggleLayout}
-            />
-          )}
 
           <InfoModal />
 
@@ -53,7 +33,7 @@ export const Header = React.memo(
             minW="unset"
             variant="unstyled"
             aria-label="toggle dark mode"
-            onClick={handleToggleColorMode}
+            onClick={toggleColorMode}
           />
         </Flex>
       </Flex>
@@ -62,8 +42,5 @@ export const Header = React.memo(
 );
 
 Header.propTypes = {
-  colorMode: PropTypes.string.isRequired,
   isMobile: PropTypes.bool.isRequired,
-  handleToggleColorMode: PropTypes.func.isRequired,
-  handleToggleLayout: PropTypes.func.isRequired,
 };

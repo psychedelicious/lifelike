@@ -15,7 +15,6 @@ import {
   TOGGLE_SHOWSTATS,
   TOGGLE_WRAP,
   SET_COLORS,
-  TOGGLE_LAYOUT,
   SET_CANVASOVERLAYTEXT,
   SET_CANVASMOUSEPOS,
   SET_CELLMOUSEPOS,
@@ -30,6 +29,8 @@ export const toggleIsRunning = () => ({ type: TOGGLE_ISRUNNING });
 export const toggleWrap = () => ({ type: TOGGLE_WRAP });
 
 export const toggleShowStats = () => ({ type: TOGGLE_SHOWSTATS });
+
+export const toggleShowGridlines = () => ({ type: TOGGLE_SHOWGRIDLINES });
 
 export const setGrid = ({
   width,
@@ -51,8 +52,6 @@ export const setGrid = ({
     canvasContainerHeight,
   },
 });
-
-export const toggleShowGridlines = () => ({ type: TOGGLE_SHOWGRIDLINES });
 
 export const setSpeed = ({ speed }) => ({ type: SET_SPEED, speed });
 
@@ -84,8 +83,6 @@ export const setColors = ({
   type: SET_COLORS,
   payload: { aliveCellColor, deadCellColor, gridlineColor },
 });
-
-export const toggleLayout = () => ({ type: TOGGLE_LAYOUT });
 
 export const setCell = ({ x, y, state }) => ({
   type: SET_CELL,

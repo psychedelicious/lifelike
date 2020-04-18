@@ -1,9 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useSelector, shallowEqual } from 'react-redux';
 
 import { Flex, Stat, StatLabel, StatNumber } from '@chakra-ui/core';
 
-export const Monitor = ({ generation, population, density, ...rest }) => {
+const Monitor = ({ ...rest }) => {
+  const { generation, population, density } = useSelector(
+    (state) => ({
+      generation: state.life.generation,
+      population: state.life.population,
+      density: state.life.density,
+    }),
+    shallowEqual
+  );
+
   return (
     <Flex {...rest} justify="left">
       <Stat>
@@ -24,8 +33,4 @@ export const Monitor = ({ generation, population, density, ...rest }) => {
   );
 };
 
-Monitor.propTypes = {
-  generation: PropTypes.number.isRequired,
-  population: PropTypes.number.isRequired,
-  density: PropTypes.number.isRequired,
-};
+export default Monitor;

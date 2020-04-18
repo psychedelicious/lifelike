@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { setBorn, setSurvive } from '../../../redux/actions';
+
 import {
   ControlBox,
   VisuallyHidden,
@@ -9,19 +12,8 @@ import {
   useColorMode,
 } from '@chakra-ui/core';
 
-export const RuleCheckboxRow = React.memo(
-  ({ ruleArray, ruleType, onChange, ...rest }) => {
-    const { colorMode } = useColorMode();
-
-    // const numberString = ruleArray
-    //   .reduce((acc, val, idx) => (val ? acc.concat(idx) : acc), [])
-    //   .join(`|`);
-
-    // const tooltipLabel =
-    //   ruleType === 'born'
-    //     ? `neighbors == [${numberString || 'null'}] ~> born`
-    //     : `neighbors == [${numberString || 'null'}] ~> survive`;
-
+const RuleCheckboxRow = React.memo(
+  ({ ruleArray, ruleType, onChange, colorMode, ...rest }) => {
     return (
       <Flex {...rest} align="center" justify="space-between">
         <Text fontSize="sm">{ruleType === 'born' ? 'b ~>' : 's ~>'}</Text>
@@ -81,4 +73,49 @@ RuleCheckboxRow.propTypes = {
   ruleArray: PropTypes.array.isRequired,
   ruleType: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  colorMode: PropTypes.string.isRequired,
 };
+
+const RuleCheckboxes = React.memo(() => {
+  const { born, survive } = useSelector(
+    (state) => ({
+      born: state.life.born,
+      survive: state.life.survive,
+    }),
+    shallowEqual
+  );
+
+  const { colorMode } = useColorMode();
+
+  const dispatch = useDispatch();
+
+  const handleRuleChange = React.useCallback(
+    (ruleType, index) => {
+      ruleType === 'born'
+        ? dispatch(setBorn({ index }))
+        : dispatch(setSurvive({ index }));
+    },
+    [dispatch]
+  );
+
+  return (
+    <>
+      <RuleCheckboxRow
+        mt="0.5rem"
+        colorMode={colorMode}
+        ruleArray={born}
+        ruleType="born"
+        onChange={handleRuleChange}
+      />
+      <RuleCheckboxRow
+        mt="0.5rem"
+        colorMode={colorMode}
+        ruleArray={survive}
+        ruleType="survive"
+        onChange={handleRuleChange}
+      />
+    </>
+  );
+});
+
+export default RuleCheckboxes;

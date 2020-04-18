@@ -1,22 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Flex, useTheme, useColorMode } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/core';
+import { shallowEqual, useSelector } from 'react-redux';
 
-export const Canvas = React.memo(
+const Canvas = React.memo(
   ({
     canvasRef,
-    canvasWidth,
-    canvasHeight,
     canvasContainerRef,
     canvasGridOverlayRef,
     canvasDrawOverlayRef,
-    canvasOverlayText,
-    isRunning,
     ...rest
   }) => {
-    const theme = useTheme();
-    const { colorMode } = useColorMode();
+    const {
+      canvasWidth,
+      canvasHeight,
+      canvasOverlayText,
+      isRunning,
+      inEditMode,
+    } = useSelector(
+      (state) => ({
+        canvasWidth: state.life.canvasWidth,
+        canvasHeight: state.life.canvasHeight,
+        canvasOverlayText: state.life.canvasOverlayText,
+        isRunning: state.life.isRunning,
+        inEditMode: state.life.inEditMode,
+      }),
+      shallowEqual
+    );
+
+    console.log(inEditMode);
 
     return (
       <Flex
@@ -40,13 +53,6 @@ export const Canvas = React.memo(
             style={{
               width: canvasWidth || '100%',
               height: canvasHeight || '100%',
-              // boxSizing: 'border-box',
-              // borderRadius: '1px',
-              // border: `1px solid ${
-              //   colorMode === 'light'
-              //     ? theme.colors.blackAlpha[300]
-              //     : theme.colors.whiteAlpha[300]
-              // }`,
             }}
           ></canvas>
           <canvas
@@ -58,24 +64,19 @@ export const Canvas = React.memo(
               zIndex: '1',
               width: canvasWidth || '100%',
               height: canvasHeight || '100%',
-              // boxSizing: 'border-box',
-              // borderRadius: '1px',
-              // border: '1px solid transparent',
             }}
           ></canvas>
           <canvas
             ref={canvasDrawOverlayRef}
             style={{
               touchAction: 'none',
+              cursor: !isRunning && inEditMode ? 'none' : 'not-allowed',
               position: 'absolute',
               top: '0',
               left: '0',
               zIndex: '3',
               width: canvasWidth || '100%',
               height: canvasHeight || '100%',
-              // boxSizing: 'border-box',
-              // borderRadius: '1px',
-              // border: '1px solid transparent',
             }}
           ></canvas>
           <div
@@ -107,13 +108,9 @@ export const Canvas = React.memo(
 
 Canvas.propTypes = {
   canvasRef: PropTypes.object.isRequired,
-  canvasWidth: PropTypes.number,
-  canvasHeight: PropTypes.number,
   canvasContainerRef: PropTypes.object.isRequired,
-  canvasContainerWidth: PropTypes.number,
-  canvasContainerHeight: PropTypes.number,
   canvasGridOverlayRef: PropTypes.object.isRequired,
   canvasDrawOverlayRef: PropTypes.object.isRequired,
-  canvasOverlayText: PropTypes.array.isRequired,
-  isRunning: PropTypes.bool.isRequired,
 };
+
+export default Canvas;

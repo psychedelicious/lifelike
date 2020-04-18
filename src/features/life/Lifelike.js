@@ -1,26 +1,25 @@
 import React from 'react';
-import { connect } from 'react-redux';
-
-import { clamp } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 
 // Chakra UI
 import { Grid, useColorMode } from '@chakra-ui/core';
 
 // Components
-import { Canvas } from './canvas/Canvas';
+import Monitor from './menu/Monitor';
+import NeighborhoodRadio from './menu/NeighborhoodRadio';
+import SpeedSlider from './menu/SpeedSlider';
+import Canvas from './canvas/Canvas';
 import { Header } from './menu/Header';
 import { MainControls } from './menu/MainControls';
-import { Monitor } from './menu/Monitor';
-import { NeighborhoodRadio } from './menu/NeighborhoodRadio';
-import { RuleCheckboxRow } from './menu/RuleCheckboxRow';
-import { OptionsCollapsibles } from './menu/OptionsCollapsible';
-import { SpeedSlider } from './menu/SpeedSlider';
-import { StyledCheckbox } from './menu/StyledCheckbox';
+import RuleCheckboxes from './menu/RuleCheckboxes';
+import { OptionsCollapsible } from './menu/OptionsCollapsible';
 
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { useCanvas } from './canvas/useCanvas';
+import { useCanvasSizeChange } from './canvas/useCanvasSizeChange';
+import { useCellDimensions } from './canvas/useCellDimensions';
 
 import { getPointsOnLine } from '../../geometry/getPointsOnLine';
 
@@ -28,36 +27,27 @@ import {
   toggleIsRunning,
   toggleWrap,
   toggleShowStats,
-  setGrid,
   toggleShowGridlines,
   setSpeed,
   setNeighborhood,
-  setBorn,
-  setSurvive,
   clearCells,
   randomizeCells,
   setPreviousFrameTime,
   getNextCells,
   setColors,
-  toggleLayout,
   setArrayOfCells,
   setCanvasOverlayText,
   setBrush,
-  toggleInEditMode,
-  toggleIsInvertDraw,
 } from '../../redux/actions';
+import OptionsCheckboxes from './menu/OptionsCheckboxes';
 
-const gridTemplateColumnsLeft = {
+const gridTemplateColumns = {
   base: 'auto',
   md: '20rem auto',
 };
 
-const gridTemplateColumnsRight = {
-  base: 'auto',
-  md: 'auto 20rem',
-};
-
-const gridTemplateAreasBase = `"."
+const gridTemplateAreas = {
+  base: `"."
   "canvas"
   "."
   "."
@@ -66,10 +56,7 @@ const gridTemplateAreasBase = `"."
   "."
   "."
   "."
-  "."`;
-
-const gridTemplateAreasLeft = {
-  base: gridTemplateAreasBase,
+  "."`,
   md: `". canvas"
     ". canvas"
     ". canvas"
@@ -82,123 +69,108 @@ const gridTemplateAreasLeft = {
     ". canvas"`,
 };
 
-const gridTemplateAreasRight = {
-  base: gridTemplateAreasBase,
-  md: `"canvas ."
-    "canvas ."
-    "canvas ."
-    "canvas ."
-    "canvas ."
-    "canvas ."
-    "canvas ."
-    "canvas ."
-    "canvas ."
-    "canvas ."`,
-};
-
-const minMaxLimits = {
-  width: {
-    min: 1,
-    max: 2000,
-  },
-  height: {
-    min: 1,
-    max: 2000,
-  },
-  px: {
-    min: 1,
-    max: 25,
-  },
-  speed: {
-    min: 0,
-    max: 100,
-  },
-};
-
 const withModifiers = (e) => {
   return e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
 };
 
-const Lifelike = ({
-  isMobile, // state values
-  cells,
-  width,
-  height,
-  px,
-  neighborhood,
-  born,
-  survive,
-  wrap,
-  showGridlines,
-  isRunning,
-  showStats,
-  generation,
-  population,
-  density,
-  canvasWidth,
-  canvasHeight,
-  canvasContainerWidth,
-  canvasContainerHeight,
-  previousFrameTime,
-  speed,
-  msDelay,
-  lightModeColors,
-  darkModeColors,
-  layout,
-  canvasOverlayText,
-  brushShape,
-  brushRadius,
-  brushPoints,
-  brushFill,
-  inEditMode,
-  isInvertDraw,
-  deadCellColor,
-  aliveCellColor,
-  gridlineColor,
-  // state setters
-  toggleIsRunning,
-  toggleWrap,
-  toggleShowStats,
-  setGrid,
-  toggleShowGridlines,
-  setSpeed,
-  setNeighborhood,
-  setBorn,
-  setSurvive,
-  clearCells,
-  randomizeCells,
-  setPreviousFrameTime,
-  getNextCells,
-  setColors,
-  toggleLayout,
-  setArrayOfCells,
-  setCanvasOverlayText,
-  setBrush,
-  toggleInEditMode,
-  toggleIsInvertDraw,
-}) => {
-  const { drawCells, drawGridlines, clearCanvas } = useCanvas();
+const Lifelike = ({ isMobile }) => {
+  const {
+    drawCells,
+    drawGridlines,
+    clearCanvas,
+    saveCanvasAsImage,
+  } = useCanvas();
 
   const { colorMode, toggleColorMode } = useColorMode();
+  const changeCanvasSize = useCanvasSizeChange();
+  const getCellDimensions = useCellDimensions();
+
+  const {
+    cells,
+    width,
+    height,
+    px,
+    showGridlines,
+    isRunning,
+    showStats,
+    canvasWidth,
+    canvasHeight,
+    previousFrameTime,
+    speed,
+    msDelay,
+    lightModeColors,
+    darkModeColors,
+    brushShape,
+    brushRadius,
+    brushPoints,
+    brushFill,
+    inEditMode,
+    isInvertDraw,
+    deadCellColor,
+    aliveCellColor,
+    gridlineColor,
+    minWidth,
+    maxWidth,
+    minHeight,
+    maxHeight,
+  } = useSelector((state) => ({
+    cells: state.life.cells,
+    cellsChanged: state.life.cellsChanged,
+    width: state.life.width,
+    height: state.life.height,
+    px: state.life.px,
+    neighborhood: state.life.neighborhood,
+    born: state.life.born,
+    survive: state.life.survive,
+    wrap: state.life.wrap,
+    showGridlines: state.life.showGridlines,
+    isRunning: state.life.isRunning,
+    showStats: state.life.showStats,
+    canvasWidth: state.life.canvasWidth,
+    canvasHeight: state.life.canvasHeight,
+    canvasContainerWidth: state.life.canvasContainerWidth,
+    canvasContainerHeight: state.life.canvasContainerHeight,
+    previousFrameTime: state.life.previousFrameTime,
+    speed: state.life.speed,
+    msDelay: state.life.msDelay,
+    lightModeColors: state.life.lightModeColors,
+    darkModeColors: state.life.darkModeColors,
+    layout: state.life.layout,
+    canvasOverlayText: state.life.canvasOverlayText,
+    brushShape: state.life.brushShape,
+    brushRadius: state.life.brushRadius,
+    brushPoints: state.life.brushPoints,
+    brushFill: state.life.brushFill,
+    inEditMode: state.life.inEditMode,
+    isInvertDraw: state.life.isInvertDraw,
+    deadCellColor: state.life.deadCellColor,
+    aliveCellColor: state.life.aliveCellColor,
+    gridlineColor: state.life.gridlineColor,
+    minWidth: state.life.minMaxLimits.width.min,
+    maxWidth: state.life.minMaxLimits.width.max,
+    minHeight: state.life.minMaxLimits.height.min,
+    maxHeight: state.life.minMaxLimits.height.max,
+  }));
+
+  const dispatch = useDispatch();
 
   useGlobalKeyDown((e) => {
     switch (e.key) {
       case ' ':
         if (!withModifiers(e)) {
-          e.originalTarget.blur();
           e.preventDefault();
           e.target.blur();
-          handleToggleIsRunning();
+          dispatch(toggleIsRunning());
         }
         break;
       case 'c':
         if (!withModifiers(e)) {
-          handleClearCells();
+          dispatch(clearCells());
         }
         break;
       case 'r':
         if (!withModifiers(e)) {
-          handleRandomizeCells();
+          dispatch(randomizeCells());
         }
         break;
       case 'f':
@@ -208,69 +180,70 @@ const Lifelike = ({
         break;
       case 'g':
         if (!withModifiers(e)) {
-          handleToggleGridlines();
+          dispatch(toggleShowGridlines());
         }
         break;
       case 'w':
         if (!withModifiers(e)) {
-          handleToggleWrap();
+          dispatch(toggleWrap());
         }
         break;
       case 's':
         if (!withModifiers(e)) {
-          // handleSaveImage();
+          saveCanvasAsImage({
+            canvas: canvasRef.current,
+            canvasGridOverlay: canvasGridOverlayRef.current,
+          });
         }
         break;
       case 'i':
         if (!withModifiers(e)) {
-          handleToggleShowStats();
+          dispatch(toggleShowStats());
         }
         break;
       case '8':
         if (!withModifiers(e)) {
-          handleNeighborhoodChange('MOORE');
+          dispatch(setNeighborhood('MOORE'));
         }
         break;
       case '4':
         if (!withModifiers(e)) {
-          handleNeighborhoodChange('VONNEUMANN');
+          dispatch(setNeighborhood('VONNEUMANN'));
         }
         break;
       case '6':
         if (!withModifiers(e)) {
-          handleNeighborhoodChange('HEXAGONAL');
-        }
-        break;
-      case 'ArrowUp':
-        if (!withModifiers(e)) {
-          e.preventDefault();
-          handleSpeedChange(speed + 1);
+          dispatch(setNeighborhood('HEXAGONAL'));
         }
         break;
       case 'd':
         if (!withModifiers(e)) {
           e.preventDefault();
-          handleToggleColorMode();
+          dispatch(toggleColorMode());
+        }
+        break;
+      case 'ArrowUp':
+        if (!withModifiers(e)) {
+          e.preventDefault();
+          dispatch(setSpeed({ speed: speed + 1 }));
         }
         break;
       case 'ArrowDown':
         if (!withModifiers(e)) {
           e.preventDefault();
-          handleSpeedChange(speed - 1);
+          dispatch(setSpeed({ speed: speed - 1 }));
         }
         break;
       case 'ArrowRight':
         if (!withModifiers(e) && !isRunning) {
           e.preventDefault();
-          handleClickTick();
+          dispatch(getNextCells());
         }
         break;
       default:
         break;
     }
   });
-
-  const [lastConfigChange, setLastConfigChange] = React.useState(0);
 
   const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
 
@@ -282,267 +255,47 @@ const Lifelike = ({
   const canvasMousePos = React.useRef({ x: null, y: null });
   const cellMousePos = React.useRef({ x: null, y: null });
 
-  const handleToggleColorMode = React.useCallback(() => {
-    toggleColorMode();
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleToggleLayout = React.useCallback(() => {
-    toggleLayout();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleToggleIsRunning = React.useCallback(() => {
-    toggleIsRunning();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleToggleWrap = React.useCallback(() => {
-    toggleWrap();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleToggleShowStats = React.useCallback(() => {
-    toggleShowStats();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleCanvasSizeChange = React.useCallback(
-    ({ newWidth = width, newHeight = height, newPx = px }) => {
-      const rem = parseFloat(
-        getComputedStyle(document.documentElement).fontSize
-      );
-
-      const newCanvasHeight = newHeight * newPx;
-      const newCanvasWidth = newWidth * newPx;
-
-      canvasRef.current.width = newCanvasWidth;
-      canvasRef.current.height = newCanvasHeight;
-
-      canvasGridOverlayRef.current.width = newCanvasWidth;
-      canvasGridOverlayRef.current.height = newCanvasHeight;
-
-      canvasDrawOverlayRef.current.width = newCanvasWidth;
-      canvasDrawOverlayRef.current.height = newCanvasHeight;
-
-      setGrid({
-        width: newWidth,
-        height: newHeight,
-        px: newPx,
-        canvasWidth: newCanvasWidth,
-        canvasHeight: newCanvasHeight,
-        canvasContainerWidth: newCanvasWidth + rem + 2,
-        canvasContainerHeight: newCanvasHeight + rem + 2,
-      });
-
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleToggleGridlines = React.useCallback(() => {
-    toggleShowGridlines();
-
-    !showGridlines
-      ? drawGridlines({
-          canvas: canvasGridOverlayRef.current,
-          gridlineColor,
-          width,
-          height,
-          px,
-        })
-      : clearCanvas({ canvas: canvasGridOverlayRef.current });
-
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleWidthChange = React.useCallback(
-    (val) => {
-      const newWidth = clamp(
-        val,
-        minMaxLimits.width.min,
-        minMaxLimits.width.max
-      );
-
-      handleCanvasSizeChange({ newWidth });
-    },
-    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleHeightChange = React.useCallback(
-    (val) => {
-      const newHeight = clamp(
-        val,
-        minMaxLimits.height.min,
-        minMaxLimits.height.max
-      );
-
-      handleCanvasSizeChange({ newHeight });
-    },
-    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handlePxChange = React.useCallback(
-    (val) => {
-      if (val === 'increment') {
-        val = px + 1;
-      } else if (val === 'decrement') {
-        val = px - 1;
-      }
-
-      const newPx = clamp(val, minMaxLimits.px.min, minMaxLimits.px.max);
-      if (isMobile) {
-        const { newWidth, newHeight } = getCellDimensions(newPx);
-        handleCanvasSizeChange({ newWidth, newHeight, newPx });
-      } else {
-        handleCanvasSizeChange({ newPx });
-      }
-    },
-    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleSpeedChange = React.useCallback(
-    (val) => {
-      const speed = clamp(val, minMaxLimits.speed.min, minMaxLimits.speed.max);
-
-      setSpeed({ speed });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleBrushShapeChange = React.useCallback(
-    (newShape) => {
-      setBrush({
-        brushShape: newShape,
-        brushRadius,
-        brushFill,
-      });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleBrushRadiusChange = React.useCallback(
-    (val) => {
-      const newRadius = clamp(val, 1, 25);
-      setBrush({
-        brushShape,
-        brushRadius: newRadius,
-        brushFill,
-      });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleBrushFillChange = React.useCallback(
-    (newFill) => {
-      setBrush({
-        brushShape,
-        brushRadius,
-        brushFill: newFill,
-      });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange]
-  );
-
-  const handleNeighborhoodChange = React.useCallback(
-    (neighborhood) => {
-      setNeighborhood({ neighborhood });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleRuleChange = React.useCallback(
-    (ruleType, index) => {
-      ruleType === 'born' ? setBorn({ index }) : setSurvive({ index });
-      setLastConfigChange(window.performance.now());
-    },
-    [lastConfigChange] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleClearCells = React.useCallback(() => {
-    clearCells();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleRandomizeCells = React.useCallback(() => {
-    randomizeCells();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleToggleOptions = React.useCallback(() => {
-    setIsOptionsOpen((isOptionsOpen) => !isOptionsOpen);
-  }, []);
-
-  const handleClickTick = React.useCallback(() => {
-    getNextCells();
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const getCellDimensions = React.useCallback(
-    (newPx = px) => {
-      // calculate 1 rem in px
-      const rem = parseFloat(
-        getComputedStyle(document.documentElement).fontSize
-      );
-
-      const canvasRect = canvasRef.current.getBoundingClientRect();
-
-      // TODO: get the offsets dynamically
-      const widthOffset = isMobile ? 0.5 * rem : rem;
-      const heightOffset = isMobile ? 17 * rem : rem;
-
-      // the canvas has a 1px border * 2 for each x and y
-      const borderWidth = 2;
-
-      const newWidth = clamp(
-        Math.trunc(
-          (window.innerWidth - canvasRect.left - widthOffset - borderWidth) /
-            newPx
-        ),
-        minMaxLimits.width.min,
-        minMaxLimits.width.max
-      );
-
-      const newHeight = clamp(
-        Math.trunc(
-          (window.innerHeight - canvasRect.top - heightOffset - borderWidth) /
-            newPx
-        ),
-        minMaxLimits.height.min,
-        minMaxLimits.height.max
-      );
-
-      return { newWidth, newHeight };
-    },
-    [lastConfigChange, isMobile] // eslint-disable-line react-hooks/exhaustive-deps
-  );
-
-  const handleToggleEditMode = React.useCallback(() => {
-    toggleInEditMode();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
-
   const fitCellsToCanvas = React.useCallback(() => {
-    const { newWidth, newHeight } = getCellDimensions();
-    handleCanvasSizeChange({ newWidth, newHeight });
-  }, [lastConfigChange, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
+    const { newWidth, newHeight } = getCellDimensions({
+      isMobile,
+      canvasRef,
+      minWidth,
+      maxWidth,
+      minHeight,
+      maxHeight,
+      px,
+    });
+    changeCanvasSize({
+      canvasRef,
+      canvasGridOverlayRef,
+      canvasDrawOverlayRef,
+      height: newHeight,
+      width: newWidth,
+      px,
+    });
+  }, [
+    isMobile,
+    minWidth,
+    maxWidth,
+    minHeight,
+    maxHeight,
+    px,
+    changeCanvasSize,
+    getCellDimensions,
+  ]);
 
   useAnimationFrame(() => {
     if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
-      setPreviousFrameTime();
-      getNextCells();
+      dispatch(setPreviousFrameTime());
+      dispatch(getNextCells());
     }
   });
 
   React.useLayoutEffect(() => {
     colorMode === 'light'
-      ? setColors(lightModeColors)
-      : setColors(darkModeColors);
-    setLastConfigChange(window.performance.now());
-  }, [colorMode]); // eslint-disable-line react-hooks/exhaustive-deps
+      ? dispatch(setColors(lightModeColors))
+      : dispatch(setColors(darkModeColors));
+  }, [dispatch, darkModeColors, lightModeColors, colorMode]);
 
   React.useLayoutEffect(() => {
     drawCells({
@@ -554,7 +307,7 @@ const Lifelike = ({
       cells,
       px,
     });
-  }, [cells, lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cells, aliveCellColor, deadCellColor, drawCells, height, width, px]);
 
   React.useLayoutEffect(() => {
     clearCanvas({ canvas: canvasGridOverlayRef.current });
@@ -566,7 +319,15 @@ const Lifelike = ({
         height,
         px,
       });
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    clearCanvas,
+    gridlineColor,
+    width,
+    height,
+    px,
+    showGridlines,
+    drawGridlines,
+  ]);
 
   const handleCanvasPointerMove = React.useCallback(
     (e) => {
@@ -600,27 +361,41 @@ const Lifelike = ({
           context.fillRect(0, canvasY, canvasWidth, 1);
           context.fillRect(canvasX, 0, 1, canvasHeight);
 
-          setCanvasOverlayText({
-            text: [
-              `width: ${width}`,
-              `height: ${height}`,
-              `x: ${x}`,
-              `y: ${y}`,
-            ],
-          });
+          dispatch(
+            setCanvasOverlayText({
+              text: [
+                `width: ${width}`,
+                `height: ${height}`,
+                `x: ${x}`,
+                `y: ${y}`,
+              ],
+            })
+          );
 
           if (e.buttons) {
-            setArrayOfCells({
-              arrayOfCells: brushCells,
-              invertState: isAltKey !== isInvertDraw,
-            });
+            dispatch(
+              setArrayOfCells({
+                arrayOfCells: brushCells,
+                invertState: isAltKey !== isInvertDraw,
+              })
+            );
             canvasMousePos.current = { x: canvasX, y: canvasY };
             cellMousePos.current = { x, y };
           }
         }
       }
     },
-    [lastConfigChange]
+    [
+      dispatch,
+      brushPoints,
+      canvasHeight,
+      canvasWidth,
+      height,
+      inEditMode,
+      isInvertDraw,
+      px,
+      width,
+    ]
   );
 
   const handleCanvasPointerDown = React.useCallback(
@@ -660,30 +435,27 @@ const Lifelike = ({
             }));
           }
 
-          setArrayOfCells({
-            arrayOfCells: points,
-            invertState: isAltKey !== isInvertDraw,
-          });
+          dispatch(
+            setArrayOfCells({
+              arrayOfCells: points,
+              invertState: isAltKey !== isInvertDraw,
+            })
+          );
           canvasMousePos.current = { x: canvasX, y: canvasY };
           cellMousePos.current = { x, y };
         }
       }
     },
-    [lastConfigChange]
+    [dispatch, brushPoints, height, inEditMode, isInvertDraw, px, width]
   );
 
   const handleCanvasPointerLeave = React.useCallback(() => {
     if (inEditMode) {
       const context = canvasDrawOverlayRef.current.getContext('2d');
       context.clearRect(0, 0, canvasWidth, canvasHeight);
-      setCanvasOverlayText({ text: [] });
+      dispatch(setCanvasOverlayText({ text: [] }));
     }
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleToggleIsInvertDraw = React.useCallback(() => {
-    toggleIsInvertDraw();
-    setLastConfigChange(window.performance.now());
-  }, [lastConfigChange]);
+  }, [dispatch, canvasWidth, canvasHeight, inEditMode]);
 
   React.useLayoutEffect(() => {
     if (!isRunning) {
@@ -717,12 +489,19 @@ const Lifelike = ({
         context.clearRect(0, 0, canvasWidth, canvasHeight);
       };
     }
-  }, [lastConfigChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    handleCanvasPointerDown,
+    handleCanvasPointerLeave,
+    handleCanvasPointerMove,
+    canvasWidth,
+    canvasHeight,
+    isRunning,
+  ]);
 
   React.useLayoutEffect(() => {
     fitCellsToCanvas();
-    setBrush({ brushShape, brushRadius, brushFill });
-  }, []);
+    dispatch(setBrush({ brushShape, brushRadius, brushFill }));
+  }, [dispatch, brushShape, brushRadius, brushFill]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Grid
@@ -730,20 +509,13 @@ const Lifelike = ({
       h="100%"
       columnGap="1rem"
       alignItems="center"
-      gridTemplateColumns={
-        layout === 'left' ? gridTemplateColumnsLeft : gridTemplateColumnsRight
-      }
-      gridTemplateAreas={
-        layout === 'left' ? gridTemplateAreasLeft : gridTemplateAreasRight
-      }
+      gridTemplateColumns={gridTemplateColumns}
+      gridTemplateAreas={gridTemplateAreas}
     >
       <Header
         justify="space-between"
         alignItems="center"
         isMobile={isMobile}
-        colorMode={colorMode}
-        handleToggleColorMode={handleToggleColorMode}
-        handleToggleLayout={handleToggleLayout}
         canvasRef={canvasRef}
         canvasGridOverlayRef={canvasGridOverlayRef}
       />
@@ -751,61 +523,26 @@ const Lifelike = ({
       <MainControls
         mt="0.5rem"
         justify="space-between"
-        isRunning={isRunning}
-        onClickStartStop={handleToggleIsRunning}
-        onClickTick={handleClickTick}
-        onClickRandomizeCells={handleRandomizeCells}
-        onClickClearCells={handleClearCells}
-        onClickFitCellsToCanvas={fitCellsToCanvas}
-        onClickToggleOptions={handleToggleOptions}
+        isMobile={isMobile}
         isOptionsOpen={isOptionsOpen}
-        inEditMode={inEditMode}
-        onClickToggleEditMode={handleToggleEditMode}
+        setIsOptionsOpen={setIsOptionsOpen}
+        canvasRef={canvasRef}
+        canvasGridOverlayRef={canvasGridOverlayRef}
+        canvasDrawOverlayRef={canvasDrawOverlayRef}
       />
 
-      <OptionsCollapsibles
+      <OptionsCollapsible
         mt="0.5rem"
         isMobile={isMobile}
         isOpen={isOptionsOpen}
-        width={width}
-        onWidthChange={handleWidthChange}
-        height={height}
-        onHeightChange={handleHeightChange}
-        px={px}
-        onPxChange={handlePxChange}
-        brushShape={brushShape}
-        onBrushShapeChange={handleBrushShapeChange}
-        brushRadius={brushRadius}
-        onBrushRadiusChange={handleBrushRadiusChange}
-        brushFill={brushFill}
-        onBrushFillChange={handleBrushFillChange}
-        isInvertDraw={isInvertDraw}
-        onToggleIsInvertDraw={handleToggleIsInvertDraw}
-        minMaxLimits={minMaxLimits}
-        isRunning={isRunning}
-        inEditMode={inEditMode}
+        canvasRef={canvasRef}
+        canvasGridOverlayRef={canvasGridOverlayRef}
+        canvasDrawOverlayRef={canvasDrawOverlayRef}
       />
 
-      <RuleCheckboxRow
-        mt="0.5rem"
-        ruleArray={born}
-        ruleType="born"
-        onChange={handleRuleChange}
-      />
+      <RuleCheckboxes />
 
-      <RuleCheckboxRow
-        mt="0.5rem"
-        ruleArray={survive}
-        ruleType="survive"
-        onChange={handleRuleChange}
-      />
-
-      <NeighborhoodRadio
-        mt="0.5rem"
-        direction="row"
-        neighborhood={neighborhood}
-        onChange={handleNeighborhoodChange}
-      />
+      <NeighborhoodRadio mt="0.5rem" direction="row" />
 
       <div
         style={{
@@ -815,44 +552,12 @@ const Lifelike = ({
           marginTop: '0.5rem',
         }}
       >
-        <StyledCheckbox
-          isChecked={showGridlines}
-          onChange={handleToggleGridlines}
-          label="gridlines"
-        />
-
-        <StyledCheckbox
-          isChecked={wrap}
-          onChange={handleToggleWrap}
-          label="wrap"
-        />
-
-        <StyledCheckbox
-          isChecked={showStats}
-          onChange={handleToggleShowStats}
-          label="stats"
-        />
+        <OptionsCheckboxes />
       </div>
 
-      <SpeedSlider
-        mt="0.5rem"
-        justifySelf="center"
-        // w="calc(100% - 2rem)"
-        speed={speed}
-        msDelay={msDelay}
-        min={minMaxLimits.speed.min}
-        max={minMaxLimits.speed.max}
-        onChange={handleSpeedChange}
-      />
+      <SpeedSlider mt="0.5rem" justifySelf="center" />
 
-      {showStats && (
-        <Monitor
-          mt="0.5rem"
-          generation={generation}
-          population={population}
-          density={density}
-        />
-      )}
+      {showStats && <Monitor mt="0.5rem" />}
 
       <Canvas
         gridArea="canvas"
@@ -861,81 +566,12 @@ const Lifelike = ({
         m={0}
         mt={isMobile ? '0.5rem' : '0'}
         canvasContainerRef={canvasContainerRef}
-        canvasContainerWidth={canvasContainerWidth}
-        canvasContainerHeight={canvasContainerHeight}
         canvasRef={canvasRef}
-        canvasWidth={canvasWidth}
-        canvasHeight={canvasHeight}
         canvasGridOverlayRef={canvasGridOverlayRef}
         canvasDrawOverlayRef={canvasDrawOverlayRef}
-        canvasOverlayText={canvasOverlayText}
-        isRunning={isRunning}
       />
     </Grid>
   );
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    isMobile: ownProps.isMobile,
-    cells: state.life.cells,
-    width: state.life.width,
-    height: state.life.height,
-    px: state.life.px,
-    neighborhood: state.life.neighborhood,
-    born: state.life.born,
-    survive: state.life.survive,
-    wrap: state.life.wrap,
-    showGridlines: state.life.showGridlines,
-    isRunning: state.life.isRunning,
-    showStats: state.life.showStats,
-    generation: state.life.generation,
-    population: state.life.population,
-    density: state.life.density,
-    canvasWidth: state.life.canvasWidth,
-    canvasHeight: state.life.canvasHeight,
-    canvasContainerWidth: state.life.canvasContainerWidth,
-    canvasContainerHeight: state.life.canvasContainerHeight,
-    previousFrameTime: state.life.previousFrameTime,
-    speed: state.life.speed,
-    msDelay: state.life.msDelay,
-    lightModeColors: state.life.lightModeColors,
-    darkModeColors: state.life.darkModeColors,
-    layout: state.life.layout,
-    canvasOverlayText: state.life.canvasOverlayText,
-    brushShape: state.life.brushShape,
-    brushRadius: state.life.brushRadius,
-    brushPoints: state.life.brushPoints,
-    brushFill: state.life.brushFill,
-    inEditMode: state.life.inEditMode,
-    isInvertDraw: state.life.isInvertDraw,
-    deadCellColor: state.life.deadCellColor,
-    aliveCellColor: state.life.aliveCellColor,
-    gridlineColor: state.life.gridlineColor,
-  };
-};
-
-const mapDispatchToProps = {
-  toggleIsRunning,
-  toggleWrap,
-  toggleShowStats,
-  setGrid,
-  toggleShowGridlines,
-  setSpeed,
-  setNeighborhood,
-  setBorn,
-  setSurvive,
-  clearCells,
-  randomizeCells,
-  setPreviousFrameTime,
-  getNextCells,
-  setColors,
-  toggleLayout,
-  setArrayOfCells,
-  setCanvasOverlayText,
-  setBrush,
-  toggleInEditMode,
-  toggleIsInvertDraw,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Lifelike);
+export default Lifelike;

@@ -9,6 +9,7 @@ export const getNextCells = (
 ) => {
   let newCells = Array.from(Array(width), () => new Array(height));
   let population = 0,
+    cellsChanged = [],
     neighborCount;
 
   for (let x = 0; x < width; x++) {
@@ -45,8 +46,10 @@ export const getNextCells = (
 
       if (cells[x][y] === 0 && born[neighborCount] === true) {
         newCells[x][y] = 1;
+        cellsChanged.push([x, y]);
       } else if (cells[x][y] === 1 && survive[neighborCount] === false) {
         newCells[x][y] = 0;
+        cellsChanged.push([x, y]);
       } else {
         newCells[x][y] = cells[x][y];
       }
@@ -55,5 +58,5 @@ export const getNextCells = (
     }
   }
   // return newCells;
-  return [newCells, population];
+  return [newCells, population, cellsChanged];
 };
