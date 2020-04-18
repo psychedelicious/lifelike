@@ -1,4 +1,4 @@
-import { useLife } from '../../../storeApi';
+import { useLifeStore } from '../../../storeApi';
 
 export const useCanvas = () => {
   const {
@@ -9,7 +9,7 @@ export const useCanvas = () => {
     cells,
     px,
     gridlineColor,
-  } = useLife();
+  } = useLifeStore();
 
   const drawCells = ({ canvas }) => {
     const context = canvas.getContext('2d', { alpha: false });

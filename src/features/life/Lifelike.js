@@ -20,7 +20,7 @@ import { StyledCheckbox } from './menu/StyledCheckbox';
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { useCanvas } from './canvas/useCanvas';
-import { useLife } from '../../storeApi';
+import { useLifeStore } from '../../storeApi';
 
 import { getPointsOnLine } from '../../geometry/getPointsOnLine';
 
@@ -154,7 +154,7 @@ export const Lifelike = ({ isMobile }) => {
     setBrush,
     toggleInEditMode,
     toggleIsInvertDraw,
-  } = useLife();
+  } = useLifeStore();
 
   useGlobalKeyDown((e) => {
     switch (e.key) {
@@ -768,17 +768,7 @@ export const Lifelike = ({ isMobile }) => {
         onToggleIsInvertDraw={handleToggleIsInvertDraw}
         minMaxLimits={minMaxLimits}
         isRunning={isRunning}
-      />
-
-      <SpeedSlider
-        mt="0.5rem"
-        justifySelf="center"
-        w="calc(100% - 2rem)"
-        speed={speed}
-        msDelay={msDelay}
-        min={minMaxLimits.speed.min}
-        max={minMaxLimits.speed.max}
-        onChange={handleSpeedChange}
+        inEditMode={inEditMode}
       />
 
       <RuleCheckboxRow
@@ -828,6 +818,17 @@ export const Lifelike = ({ isMobile }) => {
           label="stats"
         />
       </div>
+
+      <SpeedSlider
+        mt="0.5rem"
+        justifySelf="center"
+        // w="calc(100% - 2rem)"
+        speed={speed}
+        msDelay={msDelay}
+        min={minMaxLimits.speed.min}
+        max={minMaxLimits.speed.max}
+        onChange={handleSpeedChange}
+      />
 
       {showStats && (
         <Monitor

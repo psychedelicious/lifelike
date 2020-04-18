@@ -27,7 +27,7 @@ import {
   TOGGLE_ISINVERTDRAW,
 } from './store';
 
-export const useLife = () => {
+export const useLifeStore = () => {
   const { state, dispatch } = useStore();
   return {
     cells: state.cells,

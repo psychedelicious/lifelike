@@ -31,6 +31,7 @@ export const OptionsCollapsibles = React.memo(
     minMaxLimits,
     isRunning,
     isOpen,
+    inEditMode,
     ...rest
   }) => {
     return (
@@ -79,6 +80,7 @@ export const OptionsCollapsibles = React.memo(
 
           <StyledCheckbox
             label="erase"
+            isDisabled={isRunning || !inEditMode}
             isChecked={isInvertDraw}
             onChange={onToggleIsInvertDraw}
           />
@@ -88,11 +90,14 @@ export const OptionsCollapsibles = React.memo(
             value={brushShape}
             isInline
           >
-            <Radio value="circle">
+            <Radio isDisabled={isRunning || !inEditMode} value="circle">
               <Text fontSize="sm">circle</Text>
             </Radio>
-            <Radio value="square">
+            <Radio isDisabled={isRunning || !inEditMode} value="square">
               <Text fontSize="sm">square</Text>
+            </Radio>
+            <Radio isDisabled={isRunning || !inEditMode} value="pencil">
+              <Text fontSize="sm">pencil</Text>
             </Radio>
           </RadioGroup>
 
@@ -101,16 +106,28 @@ export const OptionsCollapsibles = React.memo(
             value={brushFill}
             isInline
           >
-            <Radio value="solid">
+            <Radio
+              isDisabled={isRunning || !inEditMode || brushShape === 'pencil'}
+              value="solid"
+            >
               <Text fontSize="sm">solid</Text>
             </Radio>
-            <Radio value="outline">
+            <Radio
+              isDisabled={isRunning || !inEditMode || brushShape === 'pencil'}
+              value="outline"
+            >
               <Text fontSize="sm">outline</Text>
             </Radio>
-            <Radio value="random">
+            <Radio
+              isDisabled={isRunning || !inEditMode || brushShape === 'pencil'}
+              value="random"
+            >
               <Text fontSize="sm">rand</Text>
             </Radio>
-            <Radio value="spray">
+            <Radio
+              isDisabled={isRunning || !inEditMode || brushShape === 'pencil'}
+              value="spray"
+            >
               <Text fontSize="sm">spray</Text>
             </Radio>
           </RadioGroup>
@@ -120,7 +137,7 @@ export const OptionsCollapsibles = React.memo(
             min={1}
             max={25}
             onChange={onBrushRadiusChange}
-            isDisabled={isRunning}
+            isDisabled={isRunning || !inEditMode || brushShape === 'pencil'}
             icon={FaPaintBrush}
           />
         </Flex>

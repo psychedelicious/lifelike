@@ -50,7 +50,7 @@ export const SpeedSlider = React.memo(
           color={colorMode === 'light' ? 'blue.600' : 'blue.800'}
         >
           <SliderThumb
-            size={6}
+            size='1.5rem'
             borderRadius="sm"
             border="1px "
             bg={colorMode === 'light' ? 'white' : 'white'}
