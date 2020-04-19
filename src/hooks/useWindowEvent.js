@@ -18,4 +18,3 @@ export const useGlobalMouseMove = (callback) => {
 export const useGlobalKeyDown = (callback) => {
   return useWindowEvent('keydown', callback);
 };
-

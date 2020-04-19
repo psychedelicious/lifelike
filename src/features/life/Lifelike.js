@@ -5,41 +5,37 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Grid, useColorMode } from '@chakra-ui/core';
 
 // Components
+import Canvas from './canvas/Canvas';
+import Header from './menu/Header';
+import MainControls from './menu/MainControls';
 import Monitor from './menu/Monitor';
 import NeighborhoodRadio from './menu/NeighborhoodRadio';
-import SpeedSlider from './menu/SpeedSlider';
-import Canvas from './canvas/Canvas';
-import { Header } from './menu/Header';
-import { MainControls } from './menu/MainControls';
+import OptionsCheckboxes from './menu/OptionsCheckboxes';
+import OptionsCollapsible from './menu/OptionsCollapsible';
 import RuleCheckboxes from './menu/RuleCheckboxes';
-import { OptionsCollapsible } from './menu/OptionsCollapsible';
+import SpeedSlider from './menu/SpeedSlider';
 
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
-import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 import { useCanvas } from './canvas/useCanvas';
 import { useCanvasSizeChange } from './canvas/useCanvasSizeChange';
 import { useCellDimensions } from './canvas/useCellDimensions';
-
-import { getPointsOnLine } from '../../geometry/getPointsOnLine';
+import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
 
 import {
-  toggleIsRunning,
-  toggleWrap,
-  toggleShowStats,
-  toggleShowGridlines,
-  setSpeed,
-  setNeighborhood,
   clearCells,
-  randomizeCells,
-  setPreviousFrameTime,
   getNextCells,
-  setColors,
-  setArrayOfCells,
-  setCanvasOverlayText,
+  randomizeCells,
   setBrush,
+  setColors,
+  setNeighborhood,
+  setPreviousFrameTime,
+  setSpeed,
+  toggleIsRunning,
+  toggleShowGridlines,
+  toggleShowStats,
+  toggleWrap,
 } from '../../redux/actions';
-import OptionsCheckboxes from './menu/OptionsCheckboxes';
 
 const gridTemplateColumns = {
   base: 'auto',
@@ -86,70 +82,51 @@ const Lifelike = ({ isMobile }) => {
   const getCellDimensions = useCellDimensions();
 
   const {
-    cells,
-    width,
-    height,
-    px,
-    showGridlines,
-    isRunning,
-    showStats,
-    canvasWidth,
-    canvasHeight,
-    previousFrameTime,
-    speed,
-    msDelay,
-    lightModeColors,
-    darkModeColors,
-    brushShape,
-    brushRadius,
-    brushPoints,
-    brushFill,
-    inEditMode,
-    isInvertDraw,
-    deadCellColor,
     aliveCellColor,
+    brushFill,
+    brushRadius,
+    brushShape,
+    cells,
+    darkModeColors,
+    deadCellColor,
     gridlineColor,
-    minWidth,
+    height,
+    isRunning,
+    lightModeColors,
+    maxHeight,
     maxWidth,
     minHeight,
-    maxHeight,
+    minWidth,
+    msDelay,
+    previousFrameTime,
+    px,
+    showGridlines,
+    showStats,
+    speed,
+    width,
   } = useSelector((state) => ({
-    cells: state.life.cells,
-    cellsChanged: state.life.cellsChanged,
-    width: state.life.width,
-    height: state.life.height,
-    px: state.life.px,
-    neighborhood: state.life.neighborhood,
-    born: state.life.born,
-    survive: state.life.survive,
-    wrap: state.life.wrap,
-    showGridlines: state.life.showGridlines,
-    isRunning: state.life.isRunning,
-    showStats: state.life.showStats,
-    canvasWidth: state.life.canvasWidth,
-    canvasHeight: state.life.canvasHeight,
-    canvasContainerWidth: state.life.canvasContainerWidth,
-    canvasContainerHeight: state.life.canvasContainerHeight,
-    previousFrameTime: state.life.previousFrameTime,
-    speed: state.life.speed,
-    msDelay: state.life.msDelay,
-    lightModeColors: state.life.lightModeColors,
-    darkModeColors: state.life.darkModeColors,
-    layout: state.life.layout,
-    canvasOverlayText: state.life.canvasOverlayText,
-    brushShape: state.life.brushShape,
-    brushRadius: state.life.brushRadius,
-    brushPoints: state.life.brushPoints,
-    brushFill: state.life.brushFill,
-    inEditMode: state.life.inEditMode,
-    isInvertDraw: state.life.isInvertDraw,
-    deadCellColor: state.life.deadCellColor,
     aliveCellColor: state.life.aliveCellColor,
+    brushFill: state.life.brushFill,
+    brushRadius: state.life.brushRadius,
+    brushShape: state.life.brushShape,
+    cells: state.life.cells,
+    darkModeColors: state.life.darkModeColors,
+    deadCellColor: state.life.deadCellColor,
     gridlineColor: state.life.gridlineColor,
-    minWidth: state.life.minMaxLimits.width.min,
-    maxWidth: state.life.minMaxLimits.width.max,
-    minHeight: state.life.minMaxLimits.height.min,
-    maxHeight: state.life.minMaxLimits.height.max,
+    height: state.life.height,
+    isRunning: state.life.isRunning,
+    lightModeColors: state.life.lightModeColors,
+    maxHeight: state.life.maxHeight,
+    maxWidth: state.life.maxWidth,
+    minHeight: state.life.minHeight,
+    minWidth: state.life.minWidth,
+    msDelay: state.life.msDelay,
+    previousFrameTime: state.life.previousFrameTime,
+    px: state.life.px,
+    showGridlines: state.life.showGridlines,
+    showStats: state.life.showStats,
+    speed: state.life.speed,
+    width: state.life.width,
   }));
 
   const dispatch = useDispatch();
@@ -191,8 +168,8 @@ const Lifelike = ({ isMobile }) => {
       case 's':
         if (!withModifiers(e)) {
           saveCanvasAsImage({
-            canvas: canvasRef.current,
-            canvasGridOverlay: canvasGridOverlayRef.current,
+            canvasBaseLayer: canvasBaseLayerRef.current,
+            canvasGridLayer: canvasGridLayerRef.current,
           });
         }
         break;
@@ -247,41 +224,38 @@ const Lifelike = ({ isMobile }) => {
 
   const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
 
-  const canvasRef = React.useRef(null);
+  const canvasBaseLayerRef = React.useRef(null);
   const canvasContainerRef = React.useRef(null);
-  const canvasGridOverlayRef = React.useRef(null);
-  const canvasDrawOverlayRef = React.useRef(null);
-
-  const canvasMousePos = React.useRef({ x: null, y: null });
-  const cellMousePos = React.useRef({ x: null, y: null });
+  const canvasGridLayerRef = React.useRef(null);
+  const canvasDrawLayerRef = React.useRef(null);
 
   const fitCellsToCanvas = React.useCallback(() => {
     const { newWidth, newHeight } = getCellDimensions({
+      canvasBaseLayerRef,
       isMobile,
-      canvasRef,
-      minWidth,
+      maxHeight,
       maxWidth,
       minHeight,
-      maxHeight,
+      minWidth,
       px,
     });
     changeCanvasSize({
-      canvasRef,
-      canvasGridOverlayRef,
-      canvasDrawOverlayRef,
+      canvasBaseLayerRef,
+      canvasDrawLayerRef,
+      canvasGridLayerRef,
       height: newHeight,
-      width: newWidth,
       px,
+      width: newWidth,
     });
   }, [
-    isMobile,
-    minWidth,
-    maxWidth,
-    minHeight,
-    maxHeight,
-    px,
     changeCanvasSize,
     getCellDimensions,
+    isMobile,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    px,
   ]);
 
   useAnimationFrame(() => {
@@ -299,21 +273,21 @@ const Lifelike = ({ isMobile }) => {
 
   React.useLayoutEffect(() => {
     drawCells({
-      canvas: canvasRef.current,
-      deadCellColor,
       aliveCellColor,
-      width,
-      height,
+      canvasBaseLayer: canvasBaseLayerRef.current,
       cells,
+      deadCellColor,
+      height,
       px,
+      width,
     });
-  }, [cells, aliveCellColor, deadCellColor, drawCells, height, width, px]);
+  }, [aliveCellColor, cells, deadCellColor, drawCells, height, px, width]);
 
   React.useLayoutEffect(() => {
-    clearCanvas({ canvas: canvasGridOverlayRef.current });
+    clearCanvas({ canvasBaseLayer: canvasGridLayerRef.current });
     showGridlines &&
       drawGridlines({
-        canvas: canvasGridOverlayRef.current,
+        canvasBaseLayer: canvasGridLayerRef.current,
         gridlineColor,
         width,
         height,
@@ -321,187 +295,22 @@ const Lifelike = ({ isMobile }) => {
       });
   }, [
     clearCanvas,
+    drawGridlines,
     gridlineColor,
-    width,
     height,
     px,
     showGridlines,
-    drawGridlines,
+    width,
   ]);
 
-  const handleCanvasPointerMove = React.useCallback(
-    (e) => {
-      e.preventDefault();
-      if (inEditMode) {
-        const canvasX = e.layerX - 1;
-        const canvasY = e.layerY - 1;
-        const x = Math.floor(canvasX / px);
-        const y = Math.floor(canvasY / px);
-
-        if (x >= 0 && x < width && y >= 0 && y < height) {
-          const isAltKey = e.altKey;
-          const context = canvasDrawOverlayRef.current.getContext('2d');
-          const brushCells = brushPoints.map((point) => ({
-            x: point.x + x,
-            y: point.y + y,
-            state: point.state,
-          }));
-
-          context.clearRect(0, 0, canvasWidth, canvasHeight);
-
-          context.fillStyle =
-            isAltKey !== isInvertDraw ? '#FF000075' : '#00FF0075';
-
-          brushCells.forEach(
-            (cell) =>
-              cell.state && context.fillRect(cell.x * px, cell.y * px, px, px)
-          );
-
-          context.fillStyle = isAltKey !== isInvertDraw ? '#FF0000' : '#00FF00';
-          context.fillRect(0, canvasY, canvasWidth, 1);
-          context.fillRect(canvasX, 0, 1, canvasHeight);
-
-          dispatch(
-            setCanvasOverlayText({
-              text: [
-                `width: ${width}`,
-                `height: ${height}`,
-                `x: ${x}`,
-                `y: ${y}`,
-              ],
-            })
-          );
-
-          if (e.buttons) {
-            dispatch(
-              setArrayOfCells({
-                arrayOfCells: brushCells,
-                invertState: isAltKey !== isInvertDraw,
-              })
-            );
-            canvasMousePos.current = { x: canvasX, y: canvasY };
-            cellMousePos.current = { x, y };
-          }
-        }
-      }
-    },
-    [
-      dispatch,
-      brushPoints,
-      canvasHeight,
-      canvasWidth,
-      height,
-      inEditMode,
-      isInvertDraw,
-      px,
-      width,
-    ]
-  );
-
-  const handleCanvasPointerDown = React.useCallback(
-    (e) => {
-      e.preventDefault();
-      if (inEditMode) {
-        const canvasX = e.layerX - 1;
-        const canvasY = e.layerY - 1;
-        const x = Math.floor(canvasX / px);
-        const y = Math.floor(canvasY / px);
-        if (x >= 0 && x < width && y >= 0 && y < height) {
-          const isAltKey = e.altKey;
-
-          let points;
-          if (e.shiftKey && cellMousePos.current.x && cellMousePos.current.y) {
-            let linePoints = getPointsOnLine(
-              x,
-              y,
-              cellMousePos.current.x,
-              cellMousePos.current.y
-            );
-
-            points = linePoints
-              .map((linePoint) =>
-                brushPoints.map((point) => ({
-                  x: point.x + linePoint.x,
-                  y: point.y + linePoint.y,
-                  state: point.state,
-                }))
-              )
-              .flat();
-          } else {
-            points = brushPoints.map((point) => ({
-              x: point.x + x,
-              y: point.y + y,
-              state: point.state,
-            }));
-          }
-
-          dispatch(
-            setArrayOfCells({
-              arrayOfCells: points,
-              invertState: isAltKey !== isInvertDraw,
-            })
-          );
-          canvasMousePos.current = { x: canvasX, y: canvasY };
-          cellMousePos.current = { x, y };
-        }
-      }
-    },
-    [dispatch, brushPoints, height, inEditMode, isInvertDraw, px, width]
-  );
-
-  const handleCanvasPointerLeave = React.useCallback(() => {
-    if (inEditMode) {
-      const context = canvasDrawOverlayRef.current.getContext('2d');
-      context.clearRect(0, 0, canvasWidth, canvasHeight);
-      dispatch(setCanvasOverlayText({ text: [] }));
-    }
-  }, [dispatch, canvasWidth, canvasHeight, inEditMode]);
-
-  React.useLayoutEffect(() => {
-    if (!isRunning) {
-      const canvasDrawOverlay = canvasDrawOverlayRef.current;
-      canvasDrawOverlay.addEventListener(
-        'pointermove',
-        handleCanvasPointerMove
-      );
-      canvasDrawOverlay.addEventListener(
-        'pointerdown',
-        handleCanvasPointerDown
-      );
-      canvasDrawOverlay.addEventListener(
-        'pointerleave',
-        handleCanvasPointerLeave
-      );
-      return () => {
-        canvasDrawOverlay.removeEventListener(
-          'pointermove',
-          handleCanvasPointerMove
-        );
-        canvasDrawOverlay.removeEventListener(
-          'pointerdown',
-          handleCanvasPointerDown
-        );
-        canvasDrawOverlay.removeEventListener(
-          'pointerleave',
-          handleCanvasPointerLeave
-        );
-        const context = canvasDrawOverlay.getContext('2d');
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
-      };
-    }
-  }, [
-    handleCanvasPointerDown,
-    handleCanvasPointerLeave,
-    handleCanvasPointerMove,
-    canvasWidth,
-    canvasHeight,
-    isRunning,
-  ]);
-
-  React.useLayoutEffect(() => {
-    fitCellsToCanvas();
+  React.useEffect(() => {
     dispatch(setBrush({ brushShape, brushRadius, brushFill }));
-  }, [dispatch, brushShape, brushRadius, brushFill]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [brushFill, brushRadius, brushShape, dispatch]);
+
+  React.useEffect(() => {
+    // should only run on first render
+    fitCellsToCanvas();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Grid
@@ -516,8 +325,8 @@ const Lifelike = ({ isMobile }) => {
         justify="space-between"
         alignItems="center"
         isMobile={isMobile}
-        canvasRef={canvasRef}
-        canvasGridOverlayRef={canvasGridOverlayRef}
+        canvasBaseLayerRef={canvasBaseLayerRef}
+        canvasGridLayerRef={canvasGridLayerRef}
       />
 
       <MainControls
@@ -526,34 +335,30 @@ const Lifelike = ({ isMobile }) => {
         isMobile={isMobile}
         isOptionsOpen={isOptionsOpen}
         setIsOptionsOpen={setIsOptionsOpen}
-        canvasRef={canvasRef}
-        canvasGridOverlayRef={canvasGridOverlayRef}
-        canvasDrawOverlayRef={canvasDrawOverlayRef}
+        canvasBaseLayerRef={canvasBaseLayerRef}
+        canvasGridLayerRef={canvasGridLayerRef}
+        canvasDrawLayerRef={canvasDrawLayerRef}
       />
 
       <OptionsCollapsible
         mt="0.5rem"
         isMobile={isMobile}
         isOpen={isOptionsOpen}
-        canvasRef={canvasRef}
-        canvasGridOverlayRef={canvasGridOverlayRef}
-        canvasDrawOverlayRef={canvasDrawOverlayRef}
+        canvasBaseLayerRef={canvasBaseLayerRef}
+        canvasGridLayerRef={canvasGridLayerRef}
+        canvasDrawLayerRef={canvasDrawLayerRef}
       />
 
       <RuleCheckboxes />
 
       <NeighborhoodRadio mt="0.5rem" direction="row" />
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          direction: 'row',
-          marginTop: '0.5rem',
-        }}
-      >
-        <OptionsCheckboxes />
-      </div>
+      <OptionsCheckboxes
+        display="flex"
+        justifyContent="space-between"
+        direction="row"
+        marginTop="0.5rem"
+      />
 
       <SpeedSlider mt="0.5rem" justifySelf="center" />
 
@@ -566,9 +371,9 @@ const Lifelike = ({ isMobile }) => {
         m={0}
         mt={isMobile ? '0.5rem' : '0'}
         canvasContainerRef={canvasContainerRef}
-        canvasRef={canvasRef}
-        canvasGridOverlayRef={canvasGridOverlayRef}
-        canvasDrawOverlayRef={canvasDrawOverlayRef}
+        canvasBaseLayerRef={canvasBaseLayerRef}
+        canvasGridLayerRef={canvasGridLayerRef}
+        canvasDrawLayerRef={canvasDrawLayerRef}
       />
     </Grid>
   );

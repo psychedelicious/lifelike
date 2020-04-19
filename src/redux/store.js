@@ -1,9 +1,7 @@
 import { createStore } from 'redux';
+import rootReducer from './reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
-import rootReducer from './reducers';
+const composeEnhancers = composeWithDevTools({ trace: false, traceLimit: 25 });
 
-export default createStore(rootReducer);
-// const composeEnhancers = composeWithDevTools({ trace: true, traceLimit: 25 });
-
-// export default createStore(rootReducer, composeEnhancers());
+export default createStore(rootReducer, composeEnhancers());

@@ -27,14 +27,14 @@ import {
   toggleInEditMode,
 } from '../../../redux/actions';
 
-export const MainControls = React.memo(
+const MainControls = React.memo(
   ({
     isMobile,
     isOptionsOpen,
     setIsOptionsOpen,
-    canvasRef,
-    canvasGridOverlayRef,
-    canvasDrawOverlayRef,
+    canvasBaseLayerRef,
+    canvasGridLayerRef,
+    canvasDrawLayerRef,
     ...rest
   }) => {
     const {
@@ -66,7 +66,7 @@ export const MainControls = React.memo(
     const handleFitCellsToCanvas = React.useCallback(() => {
       const { newWidth, newHeight } = getCellDimensions({
         isMobile,
-        canvasRef,
+        canvasBaseLayerRef,
         minWidth,
         maxWidth,
         minHeight,
@@ -74,9 +74,9 @@ export const MainControls = React.memo(
         px,
       });
       changeCanvasSize({
-        canvasRef,
-        canvasGridOverlayRef,
-        canvasDrawOverlayRef,
+        canvasBaseLayerRef,
+        canvasGridLayerRef,
+        canvasDrawLayerRef,
         height: newHeight,
         width: newWidth,
         px,
@@ -88,9 +88,9 @@ export const MainControls = React.memo(
       minHeight,
       maxHeight,
       px,
-      canvasRef,
-      canvasGridOverlayRef,
-      canvasDrawOverlayRef,
+      canvasBaseLayerRef,
+      canvasGridLayerRef,
+      canvasDrawLayerRef,
       changeCanvasSize,
       getCellDimensions,
     ]);
@@ -187,9 +187,9 @@ MainControls.propTypes = {
   isMobile: PropTypes.bool.isRequired,
   isOptionsOpen: PropTypes.bool.isRequired,
   setIsOptionsOpen: PropTypes.func.isRequired,
-  canvasRef: PropTypes.object.isRequired,
-  canvasGridOverlayRef: PropTypes.object.isRequired,
-  canvasDrawOverlayRef: PropTypes.object.isRequired,
+  canvasBaseLayerRef: PropTypes.object.isRequired,
+  canvasGridLayerRef: PropTypes.object.isRequired,
+  canvasDrawLayerRef: PropTypes.object.isRequired,
 };
 
 export default MainControls;

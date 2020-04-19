@@ -1,12 +1,11 @@
 diff --git a/node_modules/react-scripts/config/webpack.config.js b/node_modules/react-scripts/config/webpack.config.js
-index 25840d9..0e31ead 100644
+index 25840d9..6530d19 100644
 --- a/node_modules/react-scripts/config/webpack.config.js
 +++ b/node_modules/react-scripts/config/webpack.config.js
-@@ -307,6 +307,8 @@ module.exports = function(webpackEnv) {
+@@ -307,6 +307,7 @@ module.exports = function(webpackEnv) {
            'react-dom$': 'react-dom/profiling',
            'scheduler/tracing': 'scheduler/tracing-profiling',
          }),
-+        // WHY DID YOU RENDER:
 +        'react-redux': process.env.NODE_ENV === 'development' ? 'react-redux/lib' : 'react-redux',
          ...(modules.webpackAliases || {}),
        },

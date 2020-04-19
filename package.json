@@ -18,11 +18,12 @@
     "react-icons": "^3.9.0",
     "react-redux": "^7.2.0",
     "react-responsive": "^8.0.3",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^3.4.1",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8"
   },
   "scripts": {
+    "prepare": "patch-package",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -47,5 +48,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0"
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { Flex } from '@chakra-ui/core';
 
 import {
   toggleShowGridlines,
@@ -9,7 +10,7 @@ import {
 
 import { StyledCheckbox } from './StyledCheckbox';
 
-const OptionsCheckboxes = React.memo(() => {
+const OptionsCheckboxes = React.memo(({...rest}) => {
   const { showGridlines, wrap, showStats } = useSelector(
     (state) => ({
       showGridlines: state.life.showGridlines,
@@ -34,7 +35,7 @@ const OptionsCheckboxes = React.memo(() => {
   }, [dispatch]);
 
   return (
-    <>
+    <Flex {...rest}>
       <StyledCheckbox
         isChecked={showGridlines}
         onChange={handleToggleShowGridlines}
@@ -52,7 +53,7 @@ const OptionsCheckboxes = React.memo(() => {
         onChange={handleToggleShowStats}
         label="stats"
       />
-    </>
+    </Flex>
   );
 });
 

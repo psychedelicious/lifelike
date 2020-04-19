@@ -7,8 +7,8 @@ import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
 import { InfoModal } from './InfoModal';
 import { SaveCanvasAsImageButton } from './SaveCanvasAsImageButton';
 
-export const Header = React.memo(
-  ({ isMobile, canvasRef, canvasGridOverlayRef, ...rest }) => {
+const Header = React.memo(
+  ({ isMobile, canvasBaseLayerRef, canvasGridLayerRef, ...rest }) => {
     const { colorMode, toggleColorMode } = useColorMode();
 
     return (
@@ -19,8 +19,8 @@ export const Header = React.memo(
 
         <Flex justify="right">
           <SaveCanvasAsImageButton
-            canvas={canvasRef.current}
-            canvasGridOverlay={canvasGridOverlayRef.current}
+            canvasBaseLayerRef={canvasBaseLayerRef}
+            canvasGridLayerRef={canvasGridLayerRef}
           />
 
           <InfoModal />
@@ -43,4 +43,8 @@ export const Header = React.memo(
 
 Header.propTypes = {
   isMobile: PropTypes.bool.isRequired,
+  canvasBaseLayerRef: PropTypes.object.isRequired,
+  canvasGridLayerRef: PropTypes.object.isRequired,
 };
+
+export default Header;

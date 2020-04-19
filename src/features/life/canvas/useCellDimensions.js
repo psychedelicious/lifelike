@@ -3,7 +3,7 @@ import { clamp } from 'lodash';
 export const useCellDimensions = () => {
   const getCellDimensions = ({
     isMobile,
-    canvasRef,
+    canvasBaseLayerRef,
     minWidth,
     maxWidth,
     minHeight,
@@ -13,7 +13,7 @@ export const useCellDimensions = () => {
     // calculate 1 rem in px
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-    const canvasRect = canvasRef.current.getBoundingClientRect();
+    const canvasRect = canvasBaseLayerRef.current.getBoundingClientRect();
 
     // TODO: get the offsets dynamically
     const widthOffset = isMobile ? 0.5 * rem : rem;

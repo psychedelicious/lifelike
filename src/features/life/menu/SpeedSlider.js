@@ -17,12 +17,12 @@ import {
 } from '@chakra-ui/core';
 
 const SpeedSlider = React.memo(({ ...rest }) => {
-  const { speed, msDelay, min, max } = useSelector(
+  const { speed, msDelay, minSpeed, maxSpeed } = useSelector(
     (state) => ({
       speed: state.life.speed,
       msDelay: state.life.msDelay,
-      min: state.life.minMaxLimits.speed.min,
-      max: state.life.minMaxLimits.speed.max,
+      minSpeed: state.life.minSpeed,
+      maxSpeed: state.life.maxSpeed,
     }),
     shallowEqual
   );
@@ -33,10 +33,10 @@ const SpeedSlider = React.memo(({ ...rest }) => {
 
   const handleSpeedChange = React.useCallback(
     (val) => {
-      const speed = clamp(val, min, max);
+      const speed = clamp(val, minSpeed, maxSpeed);
       dispatch(setSpeed({ speed }));
     },
-    [min, max, dispatch]
+    [minSpeed, maxSpeed, dispatch]
   );
 
   let delayString;
@@ -58,8 +58,9 @@ const SpeedSlider = React.memo(({ ...rest }) => {
       {...rest}
       flex="1"
       value={speed}
-      min={min}
-      max={max}
+      min={minSpeed}
+      max={maxSpeed}
+      width="calc(100% - 2rem)"
       onChange={handleSpeedChange}
     >
       <SliderTrack />

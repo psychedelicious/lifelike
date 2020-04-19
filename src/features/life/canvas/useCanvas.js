@@ -2,7 +2,7 @@ import { saveAs } from 'file-saver';
 
 export const useCanvas = () => {
   const drawCells = ({
-    canvas,
+    canvasBaseLayer,
     deadCellColor,
     aliveCellColor,
     width,
@@ -10,9 +10,9 @@ export const useCanvas = () => {
     cells,
     px,
   }) => {
-    const context = canvas.getContext('2d', { alpha: false });
+    const context = canvasBaseLayer.getContext('2d', { alpha: false });
     context.fillStyle = deadCellColor;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillRect(0, 0, canvasBaseLayer.width, canvasBaseLayer.height);
 
     context.fillStyle = aliveCellColor;
     for (let x = 0; x < width; x++) {
@@ -22,36 +22,42 @@ export const useCanvas = () => {
     }
   };
 
-  const clearCanvas = ({ canvas }) => {
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
+  const clearCanvas = ({ canvasBaseLayer }) => {
+    const context = canvasBaseLayer.getContext('2d');
+    context.clearRect(0, 0, canvasBaseLayer.width, canvasBaseLayer.height);
   };
 
-  const drawGridlines = ({ canvas, gridlineColor, width, height, px }) => {
-    const context = canvas.getContext('2d');
+  const drawGridlines = ({
+    canvasBaseLayer,
+    gridlineColor,
+    width,
+    height,
+    px,
+  }) => {
+    const context = canvasBaseLayer.getContext('2d');
     context.translate(-0.5, -0.5);
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvasBaseLayer.width, canvasBaseLayer.height);
 
     context.fillStyle = gridlineColor;
 
     for (let cellX = 1; cellX < width; cellX++) {
-      context.fillRect(cellX * px, 0, 1, canvas.height + 1);
+      context.fillRect(cellX * px, 0, 1, canvasBaseLayer.height + 1);
     }
     for (let cellY = 1; cellY < height; cellY++) {
-      context.fillRect(0, cellY * px, canvas.width + 1, 1);
+      context.fillRect(0, cellY * px, canvasBaseLayer.width + 1, 1);
     }
     context.translate(0.5, 0.5);
   };
 
-  const saveCanvasAsImage = ({ canvas, canvasGridOverlay }) => {
+  const saveCanvasAsImage = ({ canvasBaseLayerRef, canvasGridLayerRef }) => {
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
+    tempCanvas.width = canvasBaseLayerRef.current.width;
+    tempCanvas.height = canvasGridLayerRef.current.height;
 
     const tempContext = tempCanvas.getContext('2d');
 
-    tempContext.drawImage(canvas, 0, 0);
-    tempContext.drawImage(canvasGridOverlay, 0, 0);
+    tempContext.drawImage(canvasBaseLayerRef.current, 0, 0);
+    tempContext.drawImage(canvasGridLayerRef.current, 0, 0);
 
     const id = Math.random().toString(36).substr(2, 9);
 

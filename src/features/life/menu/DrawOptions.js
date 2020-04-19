@@ -1,11 +1,11 @@
 import React from 'react';
 import { clamp } from 'lodash';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 
-import { Text, RadioGroup, Radio } from '@chakra-ui/core';
+import { Radio, RadioGroup, Text } from '@chakra-ui/core';
 
-import { NumberSlider } from './NumberSlider';
 import { FaPaintBrush } from 'react-icons/fa';
+import { NumberSlider } from './NumberSlider';
 import { StyledCheckbox } from './StyledCheckbox';
 import { toggleIsInvertDraw, setBrush } from '../../../redux/actions';
 
@@ -14,24 +14,24 @@ const brushShapeOptions = ['square', 'circle', 'pencil'];
 
 const DrawOptions = React.memo(() => {
   const {
-    isRunning,
+    brushFill,
+    brushRadius,
+    brushShape,
     inEditMode,
     isInvertDraw,
-    brushShape,
-    brushRadius,
-    brushFill,
-    minBrushRadius,
+    isRunning,
     maxBrushRadius,
+    minBrushRadius,
   } = useSelector(
     (state) => ({
-      isRunning: state.life.isRunning,
+      brushFill: state.life.brushFill,
+      brushRadius: state.life.brushRadius,
+      brushShape: state.life.brushShape,
       inEditMode: state.life.inEditMode,
       isInvertDraw: state.life.isInvertDraw,
-      brushShape: state.life.brushShape,
-      brushRadius: state.life.brushRadius,
-      brushFill: state.life.brushFill,
-      minBrushRadius: state.life.minMaxLimits.brushRadius.min,
-      maxBrushRadius: state.life.minMaxLimits.brushRadius.max,
+      isRunning: state.life.isRunning,
+      maxBrushRadius: state.life.maxBrushRadius,
+      minBrushRadius: state.life.minBrushRadius,
     }),
     shallowEqual
   );
@@ -46,13 +46,13 @@ const DrawOptions = React.memo(() => {
     (e) => {
       dispatch(
         setBrush({
-          brushShape: e.target.value,
-          brushRadius,
           brushFill,
+          brushRadius,
+          brushShape: e.target.value,
         })
       );
     },
-    [dispatch, brushFill, brushRadius]
+    [brushFill, brushRadius, dispatch]
   );
 
   const handleBrushRadiusChange = React.useCallback(
@@ -60,26 +60,26 @@ const DrawOptions = React.memo(() => {
       const newRadius = clamp(val, minBrushRadius, maxBrushRadius);
       dispatch(
         setBrush({
-          brushShape,
-          brushRadius: newRadius,
           brushFill,
+          brushRadius: newRadius,
+          brushShape,
         })
       );
     },
-    [dispatch, brushShape, brushFill, minBrushRadius, maxBrushRadius]
+    [brushFill, brushShape, dispatch, maxBrushRadius, minBrushRadius]
   );
 
   const handleBrushFillChange = React.useCallback(
     (e) => {
       dispatch(
         setBrush({
-          brushShape,
-          brushRadius,
           brushFill: e.target.value,
+          brushRadius,
+          brushShape,
         })
       );
     },
-    [dispatch, brushShape, brushRadius]
+    [brushRadius, brushShape, dispatch]
   );
 
   return (

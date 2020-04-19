@@ -13,7 +13,12 @@ import { useCanvasSizeChange } from '../canvas/useCanvasSizeChange';
 import { useCellDimensions } from '../canvas/useCellDimensions';
 
 const WidthHeightPxSliders = React.memo(
-  ({ isMobile, canvasRef, canvasGridOverlayRef, canvasDrawOverlayRef }) => {
+  ({
+    isMobile,
+    canvasBaseLayerRef,
+    canvasGridLayerRef,
+    canvasDrawLayerRef,
+  }) => {
     const {
       isRunning,
       width,
@@ -29,14 +34,14 @@ const WidthHeightPxSliders = React.memo(
       (state) => ({
         isRunning: state.life.isRunning,
         width: state.life.width,
-        minWidth: state.life.minMaxLimits.width.min,
-        maxWidth: state.life.minMaxLimits.width.max,
+        minWidth: state.life.minWidth,
+        maxWidth: state.life.maxWidth,
         height: state.life.height,
-        minHeight: state.life.minMaxLimits.height.min,
-        maxHeight: state.life.minMaxLimits.height.max,
+        minHeight: state.life.minHeight,
+        maxHeight: state.life.maxHeight,
         px: state.life.px,
-        minPx: state.life.minMaxLimits.px.min,
-        maxPx: state.life.minMaxLimits.px.max,
+        minPx: state.life.minPx,
+        maxPx: state.life.maxPx,
       }),
       shallowEqual
     );
@@ -49,18 +54,18 @@ const WidthHeightPxSliders = React.memo(
         const newWidth = clamp(val, minWidth, maxWidth);
 
         changeCanvasSize({
-          canvasRef,
-          canvasGridOverlayRef,
-          canvasDrawOverlayRef,
+          canvasBaseLayerRef,
+          canvasGridLayerRef,
+          canvasDrawLayerRef,
           height,
           width: newWidth,
           px,
         });
       },
       [
-        canvasRef,
-        canvasGridOverlayRef,
-        canvasDrawOverlayRef,
+        canvasBaseLayerRef,
+        canvasGridLayerRef,
+        canvasDrawLayerRef,
         minWidth,
         maxWidth,
         px,
@@ -74,18 +79,18 @@ const WidthHeightPxSliders = React.memo(
         const newHeight = clamp(val, minHeight, maxHeight);
 
         changeCanvasSize({
-          canvasRef,
-          canvasGridOverlayRef,
-          canvasDrawOverlayRef,
+          canvasBaseLayerRef,
+          canvasGridLayerRef,
+          canvasDrawLayerRef,
           height: newHeight,
           width,
           px,
         });
       },
       [
-        canvasRef,
-        canvasGridOverlayRef,
-        canvasDrawOverlayRef,
+        canvasBaseLayerRef,
+        canvasGridLayerRef,
+        canvasDrawLayerRef,
         minHeight,
         maxHeight,
         px,
@@ -101,7 +106,7 @@ const WidthHeightPxSliders = React.memo(
         const { newWidth, newHeight } = isMobile
           ? getCellDimensions({
               isMobile,
-              canvasRef,
+              canvasBaseLayerRef,
               minWidth,
               maxWidth,
               minHeight,
@@ -114,18 +119,18 @@ const WidthHeightPxSliders = React.memo(
             };
 
         changeCanvasSize({
-          canvasRef,
-          canvasGridOverlayRef,
-          canvasDrawOverlayRef,
+          canvasBaseLayerRef,
+          canvasGridLayerRef,
+          canvasDrawLayerRef,
           height: newHeight,
           width: newWidth,
           px: newPx,
         });
       },
       [
-        canvasRef,
-        canvasGridOverlayRef,
-        canvasDrawOverlayRef,
+        canvasBaseLayerRef,
+        canvasGridLayerRef,
+        canvasDrawLayerRef,
         getCellDimensions,
         isMobile,
         maxPx,
@@ -187,9 +192,9 @@ const WidthHeightPxSliders = React.memo(
 
 WidthHeightPxSliders.propTypes = {
   isMobile: PropTypes.bool.isRequired,
-  canvasRef: PropTypes.object.isRequired,
-  canvasGridOverlayRef: PropTypes.object.isRequired,
-  canvasDrawOverlayRef: PropTypes.object.isRequired,
+  canvasBaseLayerRef: PropTypes.object.isRequired,
+  canvasGridLayerRef: PropTypes.object.isRequired,
+  canvasDrawLayerRef: PropTypes.object.isRequired,
 };
 
 export default WidthHeightPxSliders;

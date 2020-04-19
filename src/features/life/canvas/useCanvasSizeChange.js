@@ -5,9 +5,9 @@ export const useCanvasSizeChange = () => {
   const dispatch = useDispatch();
 
   const changeCanvasSize = ({
-    canvasRef,
-    canvasGridOverlayRef,
-    canvasDrawOverlayRef,
+    canvasBaseLayerRef,
+    canvasGridLayerRef,
+    canvasDrawLayerRef,
     width,
     height,
     px,
@@ -17,14 +17,14 @@ export const useCanvasSizeChange = () => {
     const newCanvasHeight = height * px;
     const newCanvasWidth = width * px;
 
-    canvasRef.current.width = newCanvasWidth;
-    canvasRef.current.height = newCanvasHeight;
+    canvasBaseLayerRef.current.width = newCanvasWidth;
+    canvasBaseLayerRef.current.height = newCanvasHeight;
 
-    canvasGridOverlayRef.current.width = newCanvasWidth;
-    canvasGridOverlayRef.current.height = newCanvasHeight;
+    canvasGridLayerRef.current.width = newCanvasWidth;
+    canvasGridLayerRef.current.height = newCanvasHeight;
 
-    canvasDrawOverlayRef.current.width = newCanvasWidth;
-    canvasDrawOverlayRef.current.height = newCanvasHeight;
+    canvasDrawLayerRef.current.width = newCanvasWidth;
+    canvasDrawLayerRef.current.height = newCanvasHeight;
 
     dispatch(
       setGrid({

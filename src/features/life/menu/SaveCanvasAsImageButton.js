@@ -7,15 +7,15 @@ import { IconButton } from '@chakra-ui/core';
 import { useCanvas } from '../canvas/useCanvas';
 
 export const SaveCanvasAsImageButton = React.memo(
-  ({ canvas, canvasGridOverlay }) => {
+  ({ canvasBaseLayerRef, canvasGridLayerRef }) => {
     const { saveCanvasAsImage } = useCanvas();
 
     const handleClick = React.useCallback(() => {
       saveCanvasAsImage({
-        canvas,
-        canvasGridOverlay,
+        canvasBaseLayerRef,
+        canvasGridLayerRef,
       });
-    }, [canvas, canvasGridOverlay]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [canvasBaseLayerRef, canvasGridLayerRef, saveCanvasAsImage]);
 
     return (
       <IconButton
@@ -34,6 +34,6 @@ export const SaveCanvasAsImageButton = React.memo(
 );
 
 SaveCanvasAsImageButton.propTypes = {
-  canvas: PropTypes.object,
-  canvasGridOverlay: PropTypes.object,
+  canvasBaseLayerRef: PropTypes.object.isRequired,
+  canvasGridLayerRef: PropTypes.object.isRequired,
 };

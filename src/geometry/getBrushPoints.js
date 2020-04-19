@@ -16,6 +16,7 @@ export const getBrushPoints = ({ brushShape, brushRadius, brushFill }) => {
    * use this to keep track of the added points.
    */
   let usedPoints = {};
+  
   if (brushShape === 'pencil') {
     points.push({ x: 0, y: 0, state: 1 });
   } else if (brushFill === 'solid') {

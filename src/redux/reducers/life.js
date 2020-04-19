@@ -16,20 +16,17 @@ import {
   TOGGLE_WRAP,
   SET_COLORS,
   SET_CANVASOVERLAYTEXT,
-  SET_CANVASMOUSEPOS,
-  SET_CELLMOUSEPOS,
   SET_ISALTHELDDOWN,
   SET_BRUSH,
   TOGGLE_INEDITMODE,
   TOGGLE_ISINVERTDRAW,
 } from '../actionTypes';
 
+import { lifelikeTheme } from '../../theme';
+
 import { Neighborhoods } from '../../features/life/neighborhoods';
 import { createCells } from '../../features/life/createCells';
 import { getNextCells } from '../../features/life/getNextCells';
-
-import { lifelikeTheme } from '../../theme';
-
 import { getBrushPoints } from '../../geometry/getBrushPoints';
 
 const initialState = {
@@ -55,8 +52,6 @@ const initialState = {
   canvasContainerWidth: 0,
   canvasContainerHeight: 0,
   canvasOverlayText: [],
-  canvasMousePos: { x: 0, y: 0 },
-  cellMousePos: { x: 0, y: 0 },
   isAltHeldDown: false,
   brushShape: 'circle',
   brushRadius: 7,
@@ -80,28 +75,16 @@ const initialState = {
   deadCellColor: null,
   aliveCellColor: null,
   gridlineColor: null,
-  minMaxLimits: {
-    width: {
-      min: 1,
-      max: 2000,
-    },
-    height: {
-      min: 1,
-      max: 2000,
-    },
-    px: {
-      min: 1,
-      max: 25,
-    },
-    speed: {
-      min: 0,
-      max: 100,
-    },
-    brushRadius: {
-      min: 1,
-      max: 50,
-    },
-  },
+  minWidth: 1,
+  maxWidth: 2000,
+  minHeight: 1,
+  maxHeight: 2000,
+  minPx: 1,
+  maxPx: 25,
+  minSpeed: 0,
+  maxSpeed: 100,
+  minBrushRadius: 1,
+  maxBrushRadius: 50,
 };
 
 export default function life(state = initialState, action) {
@@ -281,18 +264,6 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         canvasOverlayText: action.payload.text,
-      };
-    }
-    case SET_CANVASMOUSEPOS: {
-      return {
-        ...state,
-        canvasMousePos: action.payload,
-      };
-    }
-    case SET_CELLMOUSEPOS: {
-      return {
-        ...state,
-        cellMousePos: action.payload,
       };
     }
     case SET_ISALTHELDDOWN: {

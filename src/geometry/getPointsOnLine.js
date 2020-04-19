@@ -1,6 +1,5 @@
 export const getPointsOnLine = (x0, y0, x1, y1) => {
   // Bresenham line algorithm
-
   let points = [];
 
   let dx = Math.abs(x1 - x0),

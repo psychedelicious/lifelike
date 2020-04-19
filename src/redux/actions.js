@@ -16,8 +16,6 @@ import {
   TOGGLE_WRAP,
   SET_COLORS,
   SET_CANVASOVERLAYTEXT,
-  SET_CANVASMOUSEPOS,
-  SET_CELLMOUSEPOS,
   SET_ISALTHELDDOWN,
   SET_BRUSH,
   TOGGLE_INEDITMODE,
@@ -97,16 +95,6 @@ export const setArrayOfCells = ({ arrayOfCells, invertState }) => ({
 export const setCanvasOverlayText = ({ text }) => ({
   type: SET_CANVASOVERLAYTEXT,
   payload: { text },
-});
-
-export const setCanvasMousePos = ({ x, y }) => ({
-  type: SET_CANVASMOUSEPOS,
-  payload: { x, y },
-});
-
-export const setCellMousePos = ({ x, y }) => ({
-  type: SET_CELLMOUSEPOS,
-  payload: { x, y },
 });
 
 export const setIsAltHeldDown = ({ isAltHeldDown }) => ({
