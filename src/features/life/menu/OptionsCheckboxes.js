@@ -1,24 +1,21 @@
 import React from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Flex } from '@chakra-ui/core';
 
 import {
   toggleShowGridlines,
   toggleWrap,
-  toggleShowStats,
-} from '../../../redux/actions';
+  toggleShowHUD,
+  toggleStopOnStable,
+} from '../../../redux/reducers/life';
 
 import { StyledCheckbox } from './StyledCheckbox';
 
-const OptionsCheckboxes = React.memo(({...rest}) => {
-  const { showGridlines, wrap, showStats } = useSelector(
-    (state) => ({
-      showGridlines: state.life.showGridlines,
-      wrap: state.life.wrap,
-      showStats: state.life.showStats,
-    }),
-    shallowEqual
-  );
+const OptionsCheckboxes = React.memo(({ ...rest }) => {
+  const showGridlines = useSelector((state) => state.life.showGridlines);
+  const wrap = useSelector((state) => state.life.wrap);
+  const showHUD = useSelector((state) => state.life.showHUD);
+  const stopOnStable = useSelector((state) => state.life.stopOnStable);
 
   const dispatch = useDispatch();
 
@@ -30,8 +27,12 @@ const OptionsCheckboxes = React.memo(({...rest}) => {
     dispatch(toggleWrap());
   }, [dispatch]);
 
-  const handleToggleShowStats = React.useCallback(() => {
-    dispatch(toggleShowStats());
+  const handleToggleShowHUD = React.useCallback(() => {
+    dispatch(toggleShowHUD());
+  }, [dispatch]);
+
+  const handleToggleStopOnStable = React.useCallback(() => {
+    dispatch(toggleStopOnStable());
   }, [dispatch]);
 
   return (
@@ -49,9 +50,15 @@ const OptionsCheckboxes = React.memo(({...rest}) => {
       />
 
       <StyledCheckbox
-        isChecked={showStats}
-        onChange={handleToggleShowStats}
-        label="stats"
+        isChecked={stopOnStable}
+        onChange={handleToggleStopOnStable}
+        label="autopause"
+      />
+
+      <StyledCheckbox
+        isChecked={showHUD}
+        onChange={handleToggleShowHUD}
+        label="HUD"
       />
     </Flex>
   );

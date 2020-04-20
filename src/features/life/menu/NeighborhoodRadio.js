@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
 import { Text, Radio, Box, Flex } from '@chakra-ui/core';
 
-import { setNeighborhood } from '../../../redux/actions';
+import { setNeighborhood } from '../../../redux/reducers/life';
 import { Neighborhoods } from '../neighborhoods';
 
 const NeighborhoodRadio = React.memo(({ ...rest }) => {

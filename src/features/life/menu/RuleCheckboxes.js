@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { setBorn, setSurvive } from '../../../redux/actions';
+import { setBorn, setSurvive } from '../../../redux/reducers/life';
 
 import {
   ControlBox,
@@ -77,13 +77,8 @@ RuleCheckboxRow.propTypes = {
 };
 
 const RuleCheckboxes = React.memo(() => {
-  const { born, survive } = useSelector(
-    (state) => ({
-      born: state.life.born,
-      survive: state.life.survive,
-    }),
-    shallowEqual
-  );
+  const born = useSelector((state) => state.life.born, shallowEqual);
+  const survive = useSelector((state) => state.life.survive, shallowEqual);
 
   const { colorMode } = useColorMode();
 
@@ -101,7 +96,6 @@ const RuleCheckboxes = React.memo(() => {
   return (
     <>
       <RuleCheckboxRow
-        mt="0.5rem"
         colorMode={colorMode}
         ruleArray={born}
         ruleType="born"

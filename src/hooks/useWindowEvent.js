@@ -18,3 +18,9 @@ export const useGlobalMouseMove = (callback) => {
 export const useGlobalKeyDown = (callback) => {
   return useWindowEvent('keydown', callback);
 };
+
+export const useWithModifiers = () => {
+  return (e) => {
+    return e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
+  };
+};

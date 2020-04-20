@@ -9,14 +9,18 @@ export const getNextCells = (
 ) => {
   let newCells = Array.from(Array(width), () => new Array(height));
   let population = 0,
-    cellsChanged = [],
-    neighborCount;
+    cellsChanged = false,
+    neighborCount,
+    coord,
+    _x,
+    _y;
 
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
-      neighborCount = neighborhood.coords.reduce((count, coord) => {
-        let _x = x + coord[0];
-        let _y = y + coord[1];
+      neighborCount = 0;
+      for (coord of neighborhood.coords) {
+        _x = x + coord[0];
+        _y = y + coord[1];
 
         if (wrap) {
           if (_x < 0) {
@@ -37,19 +41,19 @@ export const getNextCells = (
         } else {
           if (_x < 0 || _x >= width || _y < 0 || _y >= height) {
             // ignore this neighbor
-            return count;
+            continue;
           }
         }
 
-        return count + cells[_x][_y];
-      }, 0);
+        neighborCount += cells[_x][_y];
+      }
 
       if (cells[x][y] === 0 && born[neighborCount] === true) {
         newCells[x][y] = 1;
-        cellsChanged.push([x, y]);
+        cellsChanged = true;
       } else if (cells[x][y] === 1 && survive[neighborCount] === false) {
         newCells[x][y] = 0;
-        cellsChanged.push([x, y]);
+        cellsChanged = true;
       } else {
         newCells[x][y] = cells[x][y];
       }

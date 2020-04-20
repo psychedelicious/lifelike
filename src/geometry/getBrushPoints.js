@@ -1,29 +1,22 @@
 const getLine = (x, y, w) => {
   let points = [];
   for (let i = 0; i <= w; i++) {
-    points.push({ x: x + i, y, state: 1 });
+    points.push({ x: x + i, y });
   }
   return points;
 };
 
 export const getBrushPoints = ({ brushShape, brushRadius, brushFill }) => {
-  let points = [];
+  let points = [],
+    usedPoints = {};
 
-  /**
-   * if points are added multiple times, canvas renders multiple
-   * rects in same place, causing an unwanted artifact outline.
-   *
-   * use this to keep track of the added points.
-   */
-  let usedPoints = {};
-  
   if (brushShape === 'pencil') {
-    points.push({ x: 0, y: 0, state: 1 });
+    points.push({ x: 0, y: 0 });
   } else if (brushFill === 'solid') {
     if (brushShape === 'square') {
       for (let x = -brushRadius; x <= brushRadius; x++) {
         for (let y = -brushRadius; y <= brushRadius; y++) {
-          points.push({ x, y, state: 1 });
+          points.push({ x, y });
         }
       }
     } else if (brushShape === 'circle') {
@@ -73,7 +66,7 @@ export const getBrushPoints = ({ brushShape, brushRadius, brushFill }) => {
             y === -brushRadius ||
             y === brushRadius
           ) {
-            points.push({ x, y, state: 1 });
+            points.push({ x, y });
           }
         }
       }
@@ -84,14 +77,14 @@ export const getBrushPoints = ({ brushShape, brushRadius, brushFill }) => {
 
       while (x <= y) {
         let newPoints = [
-          { x: x, y: y, state: 1 },
-          { x: x, y: -y, state: 1 },
-          { x: -x, y: y, state: 1 },
-          { x: -x, y: -y, state: 1 },
-          { x: y, y: x, state: 1 },
-          { x: y, y: -x, state: 1 },
-          { x: -y, y: x, state: 1 },
-          { x: -y, y: -x, state: 1 },
+          { x: x, y: y },
+          { x: x, y: -y },
+          { x: -x, y: y },
+          { x: -x, y: -y },
+          { x: y, y: x },
+          { x: y, y: -x },
+          { x: -y, y: x },
+          { x: -y, y: -x },
         ];
 
         newPoints.forEach((point) => {
@@ -114,8 +107,7 @@ export const getBrushPoints = ({ brushShape, brushRadius, brushFill }) => {
       }
     }
   } else if (brushFill === 'random' || brushFill === 'spray') {
-    let i = 0,
-      cellState;
+    let cellState;
     for (let x = -brushRadius; x < brushRadius; x++) {
       for (let y = -brushRadius; y < brushRadius; y++) {
         if (brushFill === 'spray') {
@@ -125,15 +117,15 @@ export const getBrushPoints = ({ brushShape, brushRadius, brushFill }) => {
           cellState = Math.random() > 0.5 ? 1 : 0;
         }
 
-        points.push({ x, y, state: cellState });
-
         if (
-          brushShape === 'circle' &&
-          (x - 0) * (x - 0) + (y - 0) * (y - 0) > brushRadius * brushRadius
+          cellState &&
+          (brushShape === 'square' ||
+            (brushShape === 'circle' &&
+              (x - 0) * (x - 0) + (y - 0) * (y - 0) <
+                brushRadius * brushRadius))
         ) {
-          points[i] = { x, y, state: 0 };
+          points.push({ x, y });
         }
-        i++;
       }
     }
   }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import PropTypes from 'prop-types';
 
 // Chakra UI
 import { Grid, useColorMode } from '@chakra-ui/core';
@@ -8,224 +9,59 @@ import { Grid, useColorMode } from '@chakra-ui/core';
 import Canvas from './canvas/Canvas';
 import Header from './menu/Header';
 import MainControls from './menu/MainControls';
-import Monitor from './menu/Monitor';
-import NeighborhoodRadio from './menu/NeighborhoodRadio';
-import OptionsCheckboxes from './menu/OptionsCheckboxes';
-import OptionsCollapsible from './menu/OptionsCollapsible';
-import RuleCheckboxes from './menu/RuleCheckboxes';
-import SpeedSlider from './menu/SpeedSlider';
 
 // Hooks
 import { useAnimationFrame } from '../../hooks/useAnimationFrame';
 import { useCanvas } from './canvas/useCanvas';
-import { useCanvasSizeChange } from './canvas/useCanvasSizeChange';
-import { useCellDimensions } from './canvas/useCellDimensions';
-import { useGlobalKeyDown } from '../../hooks/useWindowEvent';
+import { getCellDimensions } from './getCellDimensions';
+import { useKeyboardShortcuts } from './useKeyboardShortcuts';
 
 import {
-  clearCells,
   getNextCells,
-  randomizeCells,
-  setBrush,
   setColors,
-  setNeighborhood,
   setPreviousFrameTime,
-  setSpeed,
   toggleIsRunning,
-  toggleShowGridlines,
-  toggleShowStats,
-  toggleWrap,
-} from '../../redux/actions';
+} from '../../redux/reducers/life';
 
-const gridTemplateColumns = {
-  base: 'auto',
-  md: '20rem auto',
-};
-
-const gridTemplateAreas = {
-  base: `"."
-  "canvas"
-  "."
-  "."
-  "."
-  "."
-  "."
-  "."
-  "."
-  "."`,
-  md: `". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"`,
-};
-
-const withModifiers = (e) => {
-  return e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
-};
+import MainAccordion from './menu/MainAccordion';
 
 const Lifelike = ({ isMobile }) => {
-  const {
-    drawCells,
-    drawGridlines,
-    clearCanvas,
-    saveCanvasAsImage,
-  } = useCanvas();
+  const { drawCells, drawGridlines, clearCanvas, changeCanvasSize } = useCanvas();
 
-  const { colorMode, toggleColorMode } = useColorMode();
-  const changeCanvasSize = useCanvasSizeChange();
-  const getCellDimensions = useCellDimensions();
+  const { colorMode } = useColorMode();
 
-  const {
-    aliveCellColor,
-    brushFill,
-    brushRadius,
-    brushShape,
-    cells,
-    darkModeColors,
-    deadCellColor,
-    gridlineColor,
-    height,
-    isRunning,
-    lightModeColors,
-    maxHeight,
-    maxWidth,
-    minHeight,
-    minWidth,
-    msDelay,
-    previousFrameTime,
-    px,
-    showGridlines,
-    showStats,
-    speed,
-    width,
-  } = useSelector((state) => ({
-    aliveCellColor: state.life.aliveCellColor,
-    brushFill: state.life.brushFill,
-    brushRadius: state.life.brushRadius,
-    brushShape: state.life.brushShape,
-    cells: state.life.cells,
-    darkModeColors: state.life.darkModeColors,
-    deadCellColor: state.life.deadCellColor,
-    gridlineColor: state.life.gridlineColor,
-    height: state.life.height,
-    isRunning: state.life.isRunning,
-    lightModeColors: state.life.lightModeColors,
-    maxHeight: state.life.maxHeight,
-    maxWidth: state.life.maxWidth,
-    minHeight: state.life.minHeight,
-    minWidth: state.life.minWidth,
-    msDelay: state.life.msDelay,
-    previousFrameTime: state.life.previousFrameTime,
-    px: state.life.px,
-    showGridlines: state.life.showGridlines,
-    showStats: state.life.showStats,
-    speed: state.life.speed,
-    width: state.life.width,
-  }));
+  const cells = useSelector((state) => state.life.cells);
+  const cellsChanged = useSelector((state) => state.life.cellsChanged);
+  const stopOnStable = useSelector((state) => state.life.stopOnStable);
+
+  const aliveCellColor = useSelector((state) => state.life.aliveCellColor);
+  const darkModeColors = useSelector(
+    (state) => state.life.darkModeColors,
+    shallowEqual
+  );
+  const deadCellColor = useSelector((state) => state.life.deadCellColor);
+  const gridlineColor = useSelector((state) => state.life.gridlineColor);
+  const height = useSelector((state) => state.life.height);
+  const isRunning = useSelector((state) => state.life.isRunning);
+  const lightModeColors = useSelector(
+    (state) => state.life.lightModeColors,
+    shallowEqual
+  );
+  const maxHeight = useSelector((state) => state.life.maxHeight);
+  const maxWidth = useSelector((state) => state.life.maxWidth);
+  const minHeight = useSelector((state) => state.life.minHeight);
+  const minWidth = useSelector((state) => state.life.minWidth);
+  const msDelay = useSelector((state) => state.life.msDelay);
+  const previousFrameTime = useSelector(
+    (state) => state.life.previousFrameTime
+  );
+  const px = useSelector((state) => state.life.px);
+  const showGridlines = useSelector((state) => state.life.showGridlines);
+  const width = useSelector((state) => state.life.width);
 
   const dispatch = useDispatch();
 
-  useGlobalKeyDown((e) => {
-    switch (e.key) {
-      case ' ':
-        if (!withModifiers(e)) {
-          e.preventDefault();
-          e.target.blur();
-          dispatch(toggleIsRunning());
-        }
-        break;
-      case 'c':
-        if (!withModifiers(e)) {
-          dispatch(clearCells());
-        }
-        break;
-      case 'r':
-        if (!withModifiers(e)) {
-          dispatch(randomizeCells());
-        }
-        break;
-      case 'f':
-        if (!isRunning && !withModifiers(e)) {
-          fitCellsToCanvas();
-        }
-        break;
-      case 'g':
-        if (!withModifiers(e)) {
-          dispatch(toggleShowGridlines());
-        }
-        break;
-      case 'w':
-        if (!withModifiers(e)) {
-          dispatch(toggleWrap());
-        }
-        break;
-      case 's':
-        if (!withModifiers(e)) {
-          saveCanvasAsImage({
-            canvasBaseLayer: canvasBaseLayerRef.current,
-            canvasGridLayer: canvasGridLayerRef.current,
-          });
-        }
-        break;
-      case 'i':
-        if (!withModifiers(e)) {
-          dispatch(toggleShowStats());
-        }
-        break;
-      case '8':
-        if (!withModifiers(e)) {
-          dispatch(setNeighborhood('MOORE'));
-        }
-        break;
-      case '4':
-        if (!withModifiers(e)) {
-          dispatch(setNeighborhood('VONNEUMANN'));
-        }
-        break;
-      case '6':
-        if (!withModifiers(e)) {
-          dispatch(setNeighborhood('HEXAGONAL'));
-        }
-        break;
-      case 'd':
-        if (!withModifiers(e)) {
-          e.preventDefault();
-          dispatch(toggleColorMode());
-        }
-        break;
-      case 'ArrowUp':
-        if (!withModifiers(e)) {
-          e.preventDefault();
-          dispatch(setSpeed({ speed: speed + 1 }));
-        }
-        break;
-      case 'ArrowDown':
-        if (!withModifiers(e)) {
-          e.preventDefault();
-          dispatch(setSpeed({ speed: speed - 1 }));
-        }
-        break;
-      case 'ArrowRight':
-        if (!withModifiers(e) && !isRunning) {
-          e.preventDefault();
-          dispatch(getNextCells());
-        }
-        break;
-      default:
-        break;
-    }
-  });
-
-  const [isOptionsOpen, setIsOptionsOpen] = React.useState(false);
-
   const canvasBaseLayerRef = React.useRef(null);
-  const canvasContainerRef = React.useRef(null);
   const canvasGridLayerRef = React.useRef(null);
   const canvasDrawLayerRef = React.useRef(null);
 
@@ -249,7 +85,6 @@ const Lifelike = ({ isMobile }) => {
     });
   }, [
     changeCanvasSize,
-    getCellDimensions,
     isMobile,
     maxHeight,
     maxWidth,
@@ -258,10 +93,18 @@ const Lifelike = ({ isMobile }) => {
     px,
   ]);
 
+  useKeyboardShortcuts({
+    canvasBaseLayerRef,
+    canvasGridLayerRef,
+    canvasDrawLayerRef,
+    fitCellsToCanvas,
+  });
+
   useAnimationFrame(() => {
     if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
       dispatch(setPreviousFrameTime());
       dispatch(getNextCells());
+      !cellsChanged && stopOnStable && dispatch(toggleIsRunning());
     }
   });
 
@@ -284,7 +127,7 @@ const Lifelike = ({ isMobile }) => {
   }, [aliveCellColor, cells, deadCellColor, drawCells, height, px, width]);
 
   React.useLayoutEffect(() => {
-    clearCanvas({ canvasBaseLayer: canvasGridLayerRef.current });
+    clearCanvas({ canvas: canvasGridLayerRef.current });
     showGridlines &&
       drawGridlines({
         canvasBaseLayer: canvasGridLayerRef.current,
@@ -304,10 +147,6 @@ const Lifelike = ({ isMobile }) => {
   ]);
 
   React.useEffect(() => {
-    dispatch(setBrush({ brushShape, brushRadius, brushFill }));
-  }, [brushFill, brushRadius, brushShape, dispatch]);
-
-  React.useEffect(() => {
     // should only run on first render
     fitCellsToCanvas();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -318,8 +157,36 @@ const Lifelike = ({ isMobile }) => {
       h="100%"
       columnGap="1rem"
       alignItems="center"
-      gridTemplateColumns={gridTemplateColumns}
-      gridTemplateAreas={gridTemplateAreas}
+      gridTemplateColumns={{
+        base: 'auto',
+        md: '22rem auto',
+      }}
+      gridTemplateAreas={{
+        base: `"."
+  "canvas"
+  "."
+  "."
+  "."
+  "."
+  "."
+  "."
+  "."
+  "."`,
+        md: `". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"
+    ". canvas"`,
+      }}
+      userSelect="none"
+      style={{
+        touchAction: 'manipulation',
+      }}
     >
       <Header
         justify="space-between"
@@ -333,50 +200,31 @@ const Lifelike = ({ isMobile }) => {
         mt="0.5rem"
         justify="space-between"
         isMobile={isMobile}
-        isOptionsOpen={isOptionsOpen}
-        setIsOptionsOpen={setIsOptionsOpen}
         canvasBaseLayerRef={canvasBaseLayerRef}
         canvasGridLayerRef={canvasGridLayerRef}
         canvasDrawLayerRef={canvasDrawLayerRef}
       />
 
-      <OptionsCollapsible
-        mt="0.5rem"
+      <MainAccordion
         isMobile={isMobile}
-        isOpen={isOptionsOpen}
+        colorMode={colorMode}
         canvasBaseLayerRef={canvasBaseLayerRef}
         canvasGridLayerRef={canvasGridLayerRef}
         canvasDrawLayerRef={canvasDrawLayerRef}
       />
-
-      <RuleCheckboxes />
-
-      <NeighborhoodRadio mt="0.5rem" direction="row" />
-
-      <OptionsCheckboxes
-        display="flex"
-        justifyContent="space-between"
-        direction="row"
-        marginTop="0.5rem"
-      />
-
-      <SpeedSlider mt="0.5rem" justifySelf="center" />
-
-      {showStats && <Monitor mt="0.5rem" />}
 
       <Canvas
-        gridArea="canvas"
-        alignSelf="start"
-        p={0}
-        m={0}
-        mt={isMobile ? '0.5rem' : '0'}
-        canvasContainerRef={canvasContainerRef}
+        isMobile={isMobile}
         canvasBaseLayerRef={canvasBaseLayerRef}
         canvasGridLayerRef={canvasGridLayerRef}
         canvasDrawLayerRef={canvasDrawLayerRef}
       />
     </Grid>
   );
+};
+
+Lifelike.propTypes = {
+  isMobile: PropTypes.bool.isRequired,
 };
 
 export default Lifelike;

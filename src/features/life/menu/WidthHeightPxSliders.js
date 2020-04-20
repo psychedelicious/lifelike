@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { clamp } from 'lodash';
 
@@ -9,8 +9,8 @@ import { Flex } from '@chakra-ui/core';
 
 import { NumberSlider } from './NumberSlider';
 import { MobilePxSlider } from './MobilePxSlider';
-import { useCanvasSizeChange } from '../canvas/useCanvasSizeChange';
-import { useCellDimensions } from '../canvas/useCellDimensions';
+import { useCanvas } from '../canvas/useCanvas';
+import { getCellDimensions } from '../getCellDimensions';
 
 const WidthHeightPxSliders = React.memo(
   ({
@@ -19,35 +19,18 @@ const WidthHeightPxSliders = React.memo(
     canvasGridLayerRef,
     canvasDrawLayerRef,
   }) => {
-    const {
-      isRunning,
-      width,
-      minWidth,
-      maxWidth,
-      height,
-      minHeight,
-      maxHeight,
-      px,
-      minPx,
-      maxPx,
-    } = useSelector(
-      (state) => ({
-        isRunning: state.life.isRunning,
-        width: state.life.width,
-        minWidth: state.life.minWidth,
-        maxWidth: state.life.maxWidth,
-        height: state.life.height,
-        minHeight: state.life.minHeight,
-        maxHeight: state.life.maxHeight,
-        px: state.life.px,
-        minPx: state.life.minPx,
-        maxPx: state.life.maxPx,
-      }),
-      shallowEqual
-    );
+    const isRunning = useSelector((state) => state.life.isRunning);
+    const width = useSelector((state) => state.life.width);
+    const minWidth = useSelector((state) => state.life.minWidth);
+    const maxWidth = useSelector((state) => state.life.maxWidth);
+    const height = useSelector((state) => state.life.height);
+    const minHeight = useSelector((state) => state.life.minHeight);
+    const maxHeight = useSelector((state) => state.life.maxHeight);
+    const px = useSelector((state) => state.life.px);
+    const minPx = useSelector((state) => state.life.minPx);
+    const maxPx = useSelector((state) => state.life.maxPx);
 
-    const changeCanvasSize = useCanvasSizeChange();
-    const getCellDimensions = useCellDimensions();
+    const { changeCanvasSize } = useCanvas();
 
     const handleWidthChange = React.useCallback(
       (val) => {
@@ -131,7 +114,6 @@ const WidthHeightPxSliders = React.memo(
         canvasBaseLayerRef,
         canvasGridLayerRef,
         canvasDrawLayerRef,
-        getCellDimensions,
         isMobile,
         maxPx,
         minPx,

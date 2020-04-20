@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { setGrid } from '../../../redux/actions';
+import { setGrid } from '../../../redux/reducers/life';
 
 export const useCanvasSizeChange = () => {
   const dispatch = useDispatch();

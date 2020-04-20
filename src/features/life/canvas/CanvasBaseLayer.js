@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 const CanvasDrawingLayer = React.memo(({ canvasBaseLayerRef }) => {
-  const { canvasWidth, canvasHeight } = useSelector((state) => ({
-    canvasWidth: state.life.canvasWidth,
-    canvasHeight: state.life.canvasHeight,
-  }));
+  const canvasWidth = useSelector((state) => state.life.canvasWidth);
+  const canvasHeight = useSelector((state) => state.life.canvasHeight);
 
   return (
     <canvas

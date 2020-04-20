@@ -1,6 +1,10 @@
 import { saveAs } from 'file-saver';
+import { useDispatch } from 'react-redux';
+import { setGrid } from '../../../redux/reducers/life';
 
 export const useCanvas = () => {
+  const dispatch = useDispatch();
+
   const drawCells = ({
     canvasBaseLayer,
     deadCellColor,
@@ -22,9 +26,9 @@ export const useCanvas = () => {
     }
   };
 
-  const clearCanvas = ({ canvasBaseLayer }) => {
-    const context = canvasBaseLayer.getContext('2d');
-    context.clearRect(0, 0, canvasBaseLayer.width, canvasBaseLayer.height);
+  const clearCanvas = ({ canvas }) => {
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   const drawGridlines = ({
@@ -68,5 +72,46 @@ export const useCanvas = () => {
     });
   };
 
-  return { drawCells, clearCanvas, drawGridlines, saveCanvasAsImage };
+  const changeCanvasSize = ({
+    canvasBaseLayerRef,
+    canvasGridLayerRef,
+    canvasDrawLayerRef,
+    width,
+    height,
+    px,
+  }) => {
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+    const newCanvasHeight = height * px;
+    const newCanvasWidth = width * px;
+
+    canvasBaseLayerRef.current.width = newCanvasWidth;
+    canvasBaseLayerRef.current.height = newCanvasHeight;
+
+    canvasGridLayerRef.current.width = newCanvasWidth;
+    canvasGridLayerRef.current.height = newCanvasHeight;
+
+    canvasDrawLayerRef.current.width = newCanvasWidth;
+    canvasDrawLayerRef.current.height = newCanvasHeight;
+
+    dispatch(
+      setGrid({
+        width: width,
+        height: height,
+        px: px,
+        canvasWidth: newCanvasWidth,
+        canvasHeight: newCanvasHeight,
+        canvasContainerWidth: newCanvasWidth + rem + 2,
+        canvasContainerHeight: newCanvasHeight + rem + 2,
+      })
+    );
+  };
+
+  return {
+    drawCells,
+    clearCanvas,
+    drawGridlines,
+    saveCanvasAsImage,
+    changeCanvasSize,
+  };
 };

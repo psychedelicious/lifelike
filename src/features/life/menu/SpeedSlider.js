@@ -1,10 +1,10 @@
 import React from 'react';
-import { shallowEqual, useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { clamp } from 'lodash';
 
 import { IoIosSpeedometer } from 'react-icons/io';
-import { setSpeed } from '../../../redux/actions';
+import { setSpeed } from '../../../redux/reducers/life';
 
 import {
   Box,
@@ -17,15 +17,10 @@ import {
 } from '@chakra-ui/core';
 
 const SpeedSlider = React.memo(({ ...rest }) => {
-  const { speed, msDelay, minSpeed, maxSpeed } = useSelector(
-    (state) => ({
-      speed: state.life.speed,
-      msDelay: state.life.msDelay,
-      minSpeed: state.life.minSpeed,
-      maxSpeed: state.life.maxSpeed,
-    }),
-    shallowEqual
-  );
+  const speed = useSelector((state) => state.life.speed);
+  const msDelay = useSelector((state) => state.life.msDelay);
+  const minSpeed = useSelector((state) => state.life.minSpeed);
+  const maxSpeed = useSelector((state) => state.life.maxSpeed);
 
   const dispatch = useDispatch();
 

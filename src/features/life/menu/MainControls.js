@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { useCanvasSizeChange } from '../canvas/useCanvasSizeChange';
-import { useCellDimensions } from '../canvas/useCellDimensions';
+import { useCanvas } from '../canvas/useCanvas';
+import { getCellDimensions } from '../getCellDimensions';
+
+import ConfirmDialogue from './ConfirmDialogue';
 
 import {
   FaPlay,
@@ -13,9 +15,9 @@ import {
   FaTrash,
   FaRandom,
   FaExpand,
-  FaPaintBrush,
-  FaAngleDoubleUp,
-  FaAngleDoubleDown,
+  FaBackward,
+  FaForward,
+  FaPencilAlt,
 } from 'react-icons/fa';
 import { Flex, IconButton } from '@chakra-ui/core';
 
@@ -24,44 +26,62 @@ import {
   getNextCells,
   clearCells,
   randomizeCells,
-  toggleInEditMode,
-} from '../../../redux/actions';
+  incrementSpeed,
+  decrementSpeed,
+} from '../../../redux/reducers/life';
+
+import { toggleInEditMode } from '../../../redux/reducers/drawing';
+import {
+  useGlobalKeyDown,
+  useWithModifiers,
+} from '../../../hooks/useWindowEvent';
 
 const MainControls = React.memo(
   ({
     isMobile,
-    isOptionsOpen,
-    setIsOptionsOpen,
     canvasBaseLayerRef,
     canvasGridLayerRef,
     canvasDrawLayerRef,
     ...rest
   }) => {
-    const {
-      isRunning,
-      inEditMode,
-      minWidth,
-      maxWidth,
-      minHeight,
-      maxHeight,
-      px,
-    } = useSelector(
-      (state) => ({
-        isRunning: state.life.isRunning,
-        inEditMode: state.life.inEditMode,
-        minWidth: state.life.minWidth,
-        maxWidth: state.life.maxWidth,
-        minHeight: state.life.minHeight,
-        maxHeight: state.life.maxHeight,
-        px: state.life.px,
-      }),
-      shallowEqual
-    );
-
-    const changeCanvasSize = useCanvasSizeChange();
-    const getCellDimensions = useCellDimensions();
-
     const dispatch = useDispatch();
+
+    const isRunning = useSelector((state) => state.life.isRunning);
+    const minWidth = useSelector((state) => state.life.minWidth);
+    const maxWidth = useSelector((state) => state.life.maxWidth);
+    const minHeight = useSelector((state) => state.life.minHeight);
+    const maxHeight = useSelector((state) => state.life.maxHeight);
+    const px = useSelector((state) => state.life.px);
+    const speed = useSelector((state) => state.life.speed);
+
+    const inEditMode = useSelector((state) => state.drawing.inEditMode);
+
+    const withModifiers = useWithModifiers();
+
+    useGlobalKeyDown((e) => {
+      switch (e.key) {
+        case 'c':
+          !withModifiers(e) && setIsClearCellsConfirmOpen(true);
+          break;
+        case 'r':
+          !withModifiers(e) && setIsRandomizeCellsConfirmOpen(true);
+          break;
+        default:
+          break;
+      }
+    });
+
+    const [
+      isClearCellsConfirmOpen,
+      setIsClearCellsConfirmOpen,
+    ] = React.useState(false);
+
+    const [
+      isRandomizeCellsConfirmOpen,
+      setIsRandomizeCellsConfirmOpen,
+    ] = React.useState(false);
+
+    const { changeCanvasSize } = useCanvas();
 
     const handleFitCellsToCanvas = React.useCallback(() => {
       const { newWidth, newHeight } = getCellDimensions({
@@ -92,7 +112,6 @@ const MainControls = React.memo(
       canvasGridLayerRef,
       canvasDrawLayerRef,
       changeCanvasSize,
-      getCellDimensions,
     ]);
 
     const handleToggleIsRunning = React.useCallback(
@@ -119,64 +138,84 @@ const MainControls = React.memo(
       [dispatch]
     );
 
-    const handleToggleOptions = React.useCallback(
-      () => setIsOptionsOpen((isOptionsOpen) => !isOptionsOpen),
-      [setIsOptionsOpen]
-    );
+    const style = { touchAction: 'manipulation' };
 
     return (
       <Flex {...rest}>
         <IconButton
-          touchAction="manipulation"
+          style={style}
           icon={isRunning ? FaPause : FaPlay}
           variant="solid"
           aria-label="start/stop"
           onClick={handleToggleIsRunning}
         />
+
         <IconButton
-          touchAction="manipulation"
+          style={style}
           isDisabled={isRunning}
           icon={FaStepForward}
           variant="solid"
           aria-label="tick"
           onClick={handleGetNextCells}
         />
+
         <IconButton
-          touchAction="manipulation"
+          style={style}
+          isDisabled={speed === 0}
+          icon={FaBackward}
+          variant="solid"
+          aria-label="decrease speed"
+          onPointerDown={() => dispatch(decrementSpeed())}
+        />
+
+        <IconButton
+          style={style}
+          isDisabled={speed === 100}
+          icon={FaForward}
+          variant="solid"
+          aria-label="increase speed"
+          onPointerDown={() => dispatch(incrementSpeed())}
+        />
+
+        <ConfirmDialogue
+          style={style}
           icon={FaTrash}
-          variant="solid"
-          aria-label="clear all cells"
-          onClick={handleClearCells}
+          header="clear grid"
+          aria="clear grid"
+          message="are you sure you want to clear the grid?"
+          confirmedCallback={handleClearCells}
+          isOpen={isClearCellsConfirmOpen}
+          setIsOpen={setIsClearCellsConfirmOpen}
         />
-        <IconButton
-          touchAction="manipulation"
+
+        <ConfirmDialogue
+          style={style}
           icon={FaRandom}
-          variant="solid"
-          aria-label="randomize all cells"
-          onClick={handleRandomizeCells}
+          header="randomize grid"
+          aria="randomize grid"
+          message="are you sure you want to randomize the grid?"
+          confirmedCallback={handleRandomizeCells}
+          isOpen={isRandomizeCellsConfirmOpen}
+          setIsOpen={setIsRandomizeCellsConfirmOpen}
         />
+
+        {!isMobile && (
+          <IconButton
+            style={style}
+            isDisabled={isRunning}
+            icon={FaExpand}
+            variant="solid"
+            aria-label="expand/shrink grid to fit"
+            onClick={handleFitCellsToCanvas}
+          />
+        )}
+
         <IconButton
-          touchAction="manipulation"
-          isDisabled={isRunning}
-          icon={FaExpand}
-          variant="solid"
-          aria-label="expand/shrink grid to fit"
-          onClick={handleFitCellsToCanvas}
-        />
-        <IconButton
-          touchAction="manipulation"
-          isDisabled={isRunning}
-          icon={FaPaintBrush}
+          style={style}
+          icon={FaPencilAlt}
           variant={inEditMode ? 'outline' : 'ghost'}
-          aria-label="expand/shrink grid to fit"
+          aria-label="toggle drawing mode"
           onClick={handleToggleInEditMode}
-        />
-        <IconButton
-          touchAction="manipulation"
-          icon={isOptionsOpen ? FaAngleDoubleUp : FaAngleDoubleDown}
-          variant={isOptionsOpen ? 'outline' : 'ghost'}
-          aria-label="show/hide options"
-          onClick={handleToggleOptions}
         />
       </Flex>
     );
@@ -185,8 +224,6 @@ const MainControls = React.memo(
 
 MainControls.propTypes = {
   isMobile: PropTypes.bool.isRequired,
-  isOptionsOpen: PropTypes.bool.isRequired,
-  setIsOptionsOpen: PropTypes.func.isRequired,
   canvasBaseLayerRef: PropTypes.object.isRequired,
   canvasGridLayerRef: PropTypes.object.isRequired,
   canvasDrawLayerRef: PropTypes.object.isRequired,
