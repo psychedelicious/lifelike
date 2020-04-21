@@ -1,10 +1,11 @@
 import { clamp } from 'lodash';
-import { lifelikeTheme } from '../../../theme';
+import { lifelikeTheme } from 'theme';
 
-import { Neighborhoods } from '../../../features/life/neighborhoods';
-import { createCells } from './createCells';
-import { getNextCells as stepCells } from './getNextCells';
-import { speedToMs, getDensity } from './utilities';
+import { Neighborhoods } from 'features/life/neighborhoods';
+
+import { createCells } from 'store/reducers/life/createCells';
+import { getNextCells as stepCells } from 'store/reducers/life/getNextCells';
+import { speedToMs, getDensity } from 'store/reducers/life/utilities';
 
 const CLEAR_CELLS = 'CLEAR_CELLS';
 const DECREMENT_SPEED = 'DECREMENT_SPEED';
@@ -48,7 +49,6 @@ const initialState = {
   canvasHeight: 0,
   canvasContainerWidth: 0,
   canvasContainerHeight: 0,
-  canvasOverlayText: [],
   previousFrameTime: 0,
   speed: 70,
   msDelay: speedToMs(70),

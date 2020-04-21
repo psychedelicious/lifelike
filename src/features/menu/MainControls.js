@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { useCanvas } from '../canvas/useCanvas';
-import { getCellDimensions } from '../getCellDimensions';
+import ConfirmDialogue from 'features/menu/ConfirmDialogue';
 
-import ConfirmDialogue from './ConfirmDialogue';
+import { useCanvas } from 'features/canvas/useCanvas';
+
+import { getCellDimensions } from 'features/life/getCellDimensions';
 
 import {
   FaPlay,
@@ -28,13 +29,13 @@ import {
   randomizeCells,
   incrementSpeed,
   decrementSpeed,
-} from '../../../redux/reducers/life';
+} from 'store/reducers/life';
 
-import { toggleInEditMode } from '../../../redux/reducers/drawing';
+import { toggleInEditMode } from 'store/reducers/drawing';
 import {
   useGlobalKeyDown,
   useWithModifiers,
-} from '../../../hooks/useWindowEvent';
+} from 'hooks/useWindowEvent';
 
 const MainControls = React.memo(
   ({

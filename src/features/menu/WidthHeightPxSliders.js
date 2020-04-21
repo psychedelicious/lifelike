@@ -7,10 +7,10 @@ import { AiOutlineColumnHeight, AiOutlineColumnWidth } from 'react-icons/ai';
 import { GiResize } from 'react-icons/gi';
 import { Flex } from '@chakra-ui/core';
 
-import { NumberSlider } from './NumberSlider';
-import { MobilePxSlider } from './MobilePxSlider';
-import { useCanvas } from '../canvas/useCanvas';
-import { getCellDimensions } from '../getCellDimensions';
+import { NumberSlider } from 'features/menu/NumberSlider';
+import { MobilePxSlider } from 'features/menu/MobilePxSlider';
+import { useCanvas } from 'features/canvas/useCanvas';
+import { getCellDimensions } from 'features/life/getCellDimensions';
 
 const WidthHeightPxSliders = React.memo(
   ({

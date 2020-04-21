@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import { getBrushPoints } from '../../geometry/getBrushPoints';
+import { getBrushPoints } from './getBrushPoints';
 
 const SET_BRUSH = 'SET_BRUSH';
 const TOGGLE_IN_EDIT_MODE = 'TOGGLE_IN_EDIT_MODE';

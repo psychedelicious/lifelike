@@ -1,18 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { useSelector, useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
 
-import { useSelector, useDispatch } from 'react-redux';
+import CanvasBaseLayer from 'features/canvas/CanvasBaseLayer';
+import CanvasGridLayer from 'features/canvas/CanvasGridLayer';
+import CanvasDrawingLayer from 'features/canvas/CanvasDrawingLayer';
+import { getPointsOnLine } from 'features/canvas/getPointsOnLine';
 
-import CanvasBaseLayer from './CanvasBaseLayer';
-import CanvasGridLayer from './CanvasGridLayer';
-import CanvasDrawingLayer from './CanvasDrawingLayer';
-import Numbers from '../Numbers';
+import Numbers from 'features/life/Numbers';
 
-import { setArrayOfCells } from '../../../redux/reducers/life';
-
-import { getPointsOnLine } from '../../../geometry/getPointsOnLine';
+import { setArrayOfCells } from 'store/reducers/life';
 
 const Canvas = React.memo(
   ({

@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
 
-import { InfoModal } from './InfoModal';
-import { SaveCanvasAsImageButton } from './SaveCanvasAsImageButton';
+import { InfoModal } from 'features/menu/InfoModal';
+import { SaveCanvasAsImageButton } from 'features/menu/SaveCanvasAsImageButton';
 
 const Header = React.memo(
   ({ isMobile, canvasBaseLayerRef, canvasGridLayerRef, ...rest }) => {

@@ -6,27 +6,32 @@ import PropTypes from 'prop-types';
 import { Grid, useColorMode } from '@chakra-ui/core';
 
 // Components
-import Canvas from './canvas/Canvas';
-import Header from './menu/Header';
-import MainControls from './menu/MainControls';
+import Canvas from 'features/canvas/Canvas';
+import Header from 'features/menu/Header';
+import MainControls from 'features/menu/MainControls';
 
 // Hooks
-import { useAnimationFrame } from '../../hooks/useAnimationFrame';
-import { useCanvas } from './canvas/useCanvas';
-import { getCellDimensions } from './getCellDimensions';
-import { useKeyboardShortcuts } from './useKeyboardShortcuts';
+import { useAnimationFrame } from 'hooks/useAnimationFrame';
+import { useCanvas } from 'features/canvas/useCanvas';
+import { getCellDimensions } from 'features/life/getCellDimensions';
+import { useKeyboardShortcuts } from 'features/life/useKeyboardShortcuts';
 
 import {
   getNextCells,
   setColors,
   setPreviousFrameTime,
   toggleIsRunning,
-} from '../../redux/reducers/life';
+} from 'store/reducers/life';
 
-import MainAccordion from './menu/MainAccordion';
+import MainAccordion from 'features/menu/MainAccordion';
 
 const Lifelike = ({ isMobile }) => {
-  const { drawCells, drawGridlines, clearCanvas, changeCanvasSize } = useCanvas();
+  const {
+    drawCells,
+    drawGridlines,
+    clearCanvas,
+    changeCanvasSize,
+  } = useCanvas();
 
   const { colorMode } = useColorMode();
 

@@ -8,12 +8,12 @@ import {
   setNeighborhood,
   setSpeed,
   getNextCells,
-} from '../../redux/reducers/life';
+} from 'store/reducers/life';
 
-import { toggleInEditMode } from '../../redux/reducers/drawing';
+import { toggleInEditMode } from 'store/reducers/drawing';
 
-import { useGlobalKeyDown, useWithModifiers } from '../../hooks/useWindowEvent';
-import { useCanvas } from './canvas/useCanvas';
+import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
+import { useCanvas } from 'features/canvas/useCanvas';
 
 export const withModifiers = (e) => {
   return e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
@@ -77,17 +77,17 @@ export const useKeyboardShortcuts = ({
         break;
       case 'm':
         if (!withModifiers(e)) {
-          dispatch(setNeighborhood('MOORE'));
+          dispatch(setNeighborhood({ neighborhood: 'MOORE' }));
         }
         break;
       case 'n':
         if (!withModifiers(e)) {
-          dispatch(setNeighborhood('VONNEUMANN'));
+          dispatch(setNeighborhood({ neighborhood: 'VONNEUMANN' }));
         }
         break;
       case 'b':
         if (!withModifiers(e)) {
-          dispatch(setNeighborhood('HEXAGONAL'));
+          dispatch(setNeighborhood({ neighborhood: 'HEXAGONAL' }));
         }
         break;
       case 'ArrowUp':

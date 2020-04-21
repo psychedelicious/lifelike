@@ -1,6 +1,6 @@
 import { saveAs } from 'file-saver';
 import { useDispatch } from 'react-redux';
-import { setGrid } from '../../../redux/reducers/life';
+import { setGrid } from 'store/reducers/life';
 
 export const useCanvas = () => {
   const dispatch = useDispatch();

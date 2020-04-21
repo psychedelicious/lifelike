@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { setBorn, setSurvive } from '../../../redux/reducers/life';
 
 import {
   ControlBox,
@@ -11,6 +9,8 @@ import {
   Text,
   useColorMode,
 } from '@chakra-ui/core';
+
+import { setBorn, setSurvive } from 'store/reducers/life';
 
 const RuleCheckboxRow = React.memo(
   ({ ruleArray, ruleType, onChange, colorMode, ...rest }) => {

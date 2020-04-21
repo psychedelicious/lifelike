@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import {
   Accordion,
   AccordionItem,
@@ -8,11 +9,12 @@ import {
   AccordionIcon,
   AccordionPanel,
 } from '@chakra-ui/core';
-import RuleCheckboxes from './RuleCheckboxes';
-import NeighborhoodRadio from './NeighborhoodRadio';
-import WidthHeightPxSliders from './WidthHeightPxSliders';
-import DrawOptions from './DrawOptions';
-import OptionsCheckboxes from './OptionsCheckboxes';
+
+import RuleCheckboxes from 'features/menu/RuleCheckboxes';
+import NeighborhoodRadio from 'features/menu/NeighborhoodRadio';
+import WidthHeightPxSliders from 'features/menu/WidthHeightPxSliders';
+import DrawOptions from 'features/menu/DrawOptions';
+import OptionsCheckboxes from 'features/menu/OptionsCheckboxes';
 
 const MainAccordion = React.memo(
   ({

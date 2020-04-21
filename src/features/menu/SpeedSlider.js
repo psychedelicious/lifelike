@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { clamp } from 'lodash';
 
 import { IoIosSpeedometer } from 'react-icons/io';
-import { setSpeed } from '../../../redux/reducers/life';
+import { setSpeed } from 'store/reducers/life';
 
 import {
   Box,

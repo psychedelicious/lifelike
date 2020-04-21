@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { IoMdImage } from 'react-icons/io';
 import { IconButton } from '@chakra-ui/core';
 
-import { useCanvas } from '../canvas/useCanvas';
+import { useCanvas } from 'features/canvas/useCanvas';
 
 export const SaveCanvasAsImageButton = React.memo(
   ({ canvasBaseLayerRef, canvasGridLayerRef }) => {

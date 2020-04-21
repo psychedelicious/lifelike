@@ -7,9 +7,9 @@ import {
   toggleWrap,
   toggleShowHUD,
   toggleStopOnStable,
-} from '../../../redux/reducers/life';
+} from 'store/reducers/life';
 
-import { StyledCheckbox } from './StyledCheckbox';
+import { StyledCheckbox } from 'features/menu/StyledCheckbox';
 
 const OptionsCheckboxes = React.memo(({ ...rest }) => {
   const showGridlines = useSelector((state) => state.life.showGridlines);

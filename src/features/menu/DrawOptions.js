@@ -2,12 +2,13 @@ import React from 'react';
 import { clamp } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { FaPaintBrush } from 'react-icons/fa';
 import { Radio, RadioGroup, Text } from '@chakra-ui/core';
 
-import { FaPaintBrush } from 'react-icons/fa';
-import { NumberSlider } from './NumberSlider';
-import { StyledCheckbox } from './StyledCheckbox';
-import { toggleIsInvertDraw, setBrush } from '../../../redux/reducers/drawing';
+import { NumberSlider } from 'features/menu/NumberSlider';
+import { StyledCheckbox } from 'features/menu/StyledCheckbox';
+
+import { toggleIsInvertDraw, setBrush } from 'store/reducers/drawing';
 
 const brushFillOptions = ['solid', 'outline', 'random', 'spray'];
 const brushShapeOptions = ['square', 'circle', 'pencil'];
