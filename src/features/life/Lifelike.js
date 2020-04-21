@@ -21,6 +21,7 @@ import {
   setColors,
   setPreviousFrameTime,
   toggleIsRunning,
+  setFps,
 } from 'store/reducers/life';
 
 import MainAccordion from 'features/menu/MainAccordion';
@@ -34,6 +35,7 @@ const Lifelike = ({ isMobile }) => {
   } = useCanvas();
 
   const { colorMode } = useColorMode();
+  const dispatch = useDispatch();
 
   const cells = useSelector((state) => state.life.cells);
   const cellsChanged = useSelector((state) => state.life.cellsChanged);
@@ -64,7 +66,10 @@ const Lifelike = ({ isMobile }) => {
   const showGridlines = useSelector((state) => state.life.showGridlines);
   const width = useSelector((state) => state.life.width);
 
-  const dispatch = useDispatch();
+  // refs to keep track of fps with minimal performance and GC impact
+  const lastTick = React.useRef(0);
+  const now = React.useRef(0);
+  const lastFpsUpdate = React.useRef(0);
 
   const canvasBaseLayerRef = React.useRef(null);
   const canvasGridLayerRef = React.useRef(null);
@@ -109,6 +114,18 @@ const Lifelike = ({ isMobile }) => {
     if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
       dispatch(setPreviousFrameTime());
       dispatch(getNextCells());
+
+      now.current = window.performance.now();
+
+      if (now.current - lastFpsUpdate.current > 500) {
+        dispatch(
+          setFps(Math.round(10000 / (now.current - lastTick.current)) / 10)
+        );
+        lastFpsUpdate.current = now.current;
+      }
+
+      lastTick.current = now.current;
+
       !cellsChanged && stopOnStable && dispatch(toggleIsRunning());
     }
   });

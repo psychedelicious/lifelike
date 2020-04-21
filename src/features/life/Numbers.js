@@ -38,6 +38,7 @@ const Numbers = React.memo(() => {
   const height = useSelector((state) => state.life.height);
   const msDelay = useSelector((state) => state.life.msDelay);
   const speed = useSelector((state) => state.life.speed);
+  const fps = useSelector((state) => state.life.fps);
   const population = useSelector((state) => state.life.population);
   const px = useSelector((state) => state.life.px);
   const width = useSelector((state) => state.life.width);
@@ -64,6 +65,7 @@ const Numbers = React.memo(() => {
       <NumberDisplay name={'population'} value={population} />
       <NumberDisplay name={'density'} value={`${density}%`} />
       <NumberDisplay name={'delay'} value={formatDelay(speed, msDelay)} />
+      <NumberDisplay name={'fps'} value={fps} />
     </div>
   );
 });

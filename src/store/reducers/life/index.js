@@ -15,6 +15,7 @@ const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
 const SET_ARRAY_OF_CELLS = 'SET_ARRAY_OF_CELLS';
 const SET_BORN = 'SET_BORN';
 const SET_COLORS = 'SET_COLORS';
+const SET_FPS = 'SET_FPS';
 const SET_GRID = 'SET_GRID';
 const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 const SET_PREVIOUS_FRAMETIME = 'SET_PREVIOUS_FRAMETIME';
@@ -52,6 +53,7 @@ const initialState = {
   previousFrameTime: 0,
   speed: 70,
   msDelay: speedToMs(70),
+  fps: 0,
   lightModeColors: {
     deadCellColor: lifelikeTheme.colors.gray['50'],
     aliveCellColor: lifelikeTheme.colors.blue['700'],
@@ -77,6 +79,11 @@ const initialState = {
 
 export default function life(state = initialState, action) {
   switch (action.type) {
+    case SET_FPS:
+      return {
+        ...state,
+        fps: action.fps,
+      };
     case SET_BORN:
       return {
         ...state,
@@ -347,4 +354,9 @@ export const setColors = ({
 export const setArrayOfCells = ({ arrayOfCells, invertState }) => ({
   type: SET_ARRAY_OF_CELLS,
   payload: { arrayOfCells, invertState },
+});
+
+export const setFps = (fps) => ({
+  type: SET_FPS,
+  fps,
 });
