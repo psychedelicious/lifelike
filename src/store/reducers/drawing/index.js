@@ -7,13 +7,15 @@ const TOGGLE_IS_INVERT_DRAW = 'TOGGLE_IS_INVERT_DRAW';
 
 const initialState = {
   brushShape: 'circle',
+  validBrushShapes: ['square', 'circle', 'pencil'],
   brushRadius: 1,
-  brushPoints: [],
-  brushFill: 'solid',
-  inEditMode: false,
-  isInvertDraw: false,
   minBrushRadius: 1,
   maxBrushRadius: 50,
+  brushPoints: [],
+  brushFill: 'solid',
+  validBrushFills: ['solid', 'outline', 'random', 'spray'],
+  inEditMode: false,
+  isInvertDraw: false,
 };
 
 export default function drawing(state = initialState, action) {

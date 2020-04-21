@@ -10,13 +10,14 @@ import { StyledCheckbox } from 'features/menu/StyledCheckbox';
 
 import { toggleIsInvertDraw, setBrush } from 'store/reducers/drawing';
 
-const brushFillOptions = ['solid', 'outline', 'random', 'spray'];
-const brushShapeOptions = ['square', 'circle', 'pencil'];
-
 const DrawOptions = React.memo(() => {
   const brushFill = useSelector((state) => state.drawing.brushFill);
+  const validBrushFills = useSelector((state) => state.drawing.validBrushFills);
   const brushRadius = useSelector((state) => state.drawing.brushRadius);
   const brushShape = useSelector((state) => state.drawing.brushShape);
+  const validBrushShapes = useSelector(
+    (state) => state.drawing.validBrushShapes
+  );
   const isInvertDraw = useSelector((state) => state.drawing.isInvertDraw);
   const maxBrushRadius = useSelector((state) => state.drawing.maxBrushRadius);
   const minBrushRadius = useSelector((state) => state.drawing.minBrushRadius);
@@ -80,7 +81,7 @@ const DrawOptions = React.memo(() => {
       />
 
       <RadioGroup onChange={handleBrushShapeChange} value={brushShape} isInline>
-        {brushShapeOptions.map((opt) => (
+        {validBrushShapes.map((opt) => (
           <Radio key={opt} value={opt}>
             <Text fontSize="sm">{opt}</Text>
           </Radio>
@@ -88,7 +89,7 @@ const DrawOptions = React.memo(() => {
       </RadioGroup>
 
       <RadioGroup onChange={handleBrushFillChange} value={brushFill} isInline>
-        {brushFillOptions.map((opt) => (
+        {validBrushFills.map((opt) => (
           <Radio key={opt} isDisabled={brushShape === 'pencil'} value={opt}>
             <Text fontSize="sm">{opt}</Text>
           </Radio>
