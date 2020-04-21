@@ -2,8 +2,9 @@ import { clamp } from 'lodash';
 import { getBrushPoints } from './getBrushPoints';
 
 const SET_BRUSH = 'SET_BRUSH';
-const TOGGLE_IN_EDIT_MODE = 'TOGGLE_IN_EDIT_MODE';
+const TOGGLE_IS_IN_DRAW_MODE = 'TOGGLE_IS_IN_DRAW_MODE';
 const TOGGLE_IS_INVERT_DRAW = 'TOGGLE_IS_INVERT_DRAW';
+const TOGGLE_SHOULD_DRAW_CROSSHAIRS = 'TOGGLE_SHOULD_DRAW_CROSSHAIRS';
 
 const initialState = {
   brushShape: 'circle',
@@ -14,8 +15,9 @@ const initialState = {
   brushPoints: [],
   brushFill: 'solid',
   validBrushFills: ['solid', 'outline', 'random', 'spray'],
-  inEditMode: false,
+  isInDrawMode: false,
   isInvertDraw: false,
+  shouldDrawCrosshairs: true,
 };
 
 export default function drawing(state = initialState, action) {
@@ -42,16 +44,22 @@ export default function drawing(state = initialState, action) {
         brushPoints: newBrushPoints,
       };
     }
-    case TOGGLE_IN_EDIT_MODE: {
+    case TOGGLE_IS_IN_DRAW_MODE: {
       return {
         ...state,
-        inEditMode: !state.inEditMode,
+        isInDrawMode: !state.isInDrawMode,
       };
     }
     case TOGGLE_IS_INVERT_DRAW: {
       return {
         ...state,
         isInvertDraw: !state.isInvertDraw,
+      };
+    }
+    case TOGGLE_SHOULD_DRAW_CROSSHAIRS: {
+      return {
+        ...state,
+        shouldDrawCrosshairs: !state.shouldDrawCrosshairs,
       };
     }
     default:
@@ -66,6 +74,10 @@ export const setBrush = ({ brushShape, brushRadius, brushFill }) => ({
   brushFill,
 });
 
-export const toggleInEditMode = () => ({ type: TOGGLE_IN_EDIT_MODE });
+export const toggleIsInDrawMode = () => ({ type: TOGGLE_IS_IN_DRAW_MODE });
 
 export const toggleIsInvertDraw = () => ({ type: TOGGLE_IS_INVERT_DRAW });
+
+export const toggleShouldDrawCrosshairs = () => ({
+  type: TOGGLE_SHOULD_DRAW_CROSSHAIRS,
+});

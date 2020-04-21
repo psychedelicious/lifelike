@@ -22,10 +22,11 @@ const SET_PREVIOUS_FRAMETIME = 'SET_PREVIOUS_FRAMETIME';
 const SET_SPEED = 'SET_SPEED';
 const SET_SURVIVE = 'SET_SURVIVE';
 const TOGGLE_IS_RUNNING = 'TOGGLE_IS_RUNNING';
-const TOGGLE_SHOW_GRIDLINES = 'TOGGLE_SHOW_GRIDLINES';
-const TOGGLE_SHOW_HUD = 'TOGGLE_SHOW_HUD';
-const TOGGLE_STOP_ON_STABLE = 'TOGGLE_STOP_ON_STABLE';
-const TOGGLE_WRAP = 'TOGGLE_WRAP';
+const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
+const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
+const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
+  'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
+const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
 
 const initialState = {
   cells: [],
@@ -37,11 +38,11 @@ const initialState = {
   neighborhood: Neighborhoods.MOORE,
   born: [false, false, false, true, false, false, false, false, false],
   survive: [false, false, true, true, false, false, false, false, false],
-  wrap: true,
-  showGridlines: false,
+  shouldWrap: true,
+  shouldShowGridlines: false,
   isRunning: false,
-  stopOnStable: false,
-  showHUD: false,
+  shouldPauseOnStableState: false,
+  shouldShowHUD: false,
   generation: 0,
   population: 0,
   density: 0,
@@ -133,25 +134,25 @@ export default function life(state = initialState, action) {
         ...state,
         isRunning: !state.isRunning,
       };
-    case TOGGLE_WRAP:
+    case TOGGLE_SHOULD_WRAP:
       return {
         ...state,
-        wrap: !state.wrap,
+        shouldWrap: !state.shouldWrap,
       };
-    case TOGGLE_SHOW_GRIDLINES:
+    case TOGGLE_SHOULD_SHOW_GRIDLINES:
       return {
         ...state,
-        showGridlines: !state.showGridlines,
+        shouldShowGridlines: !state.shouldShowGridlines,
       };
-    case TOGGLE_SHOW_HUD:
+    case TOGGLE_SHOULD_SHOW_HUD:
       return {
         ...state,
-        showHUD: !state.showHUD,
+        shouldShowHUD: !state.shouldShowHUD,
       };
-    case TOGGLE_STOP_ON_STABLE:
+    case TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE:
       return {
         ...state,
-        stopOnStable: !state.stopOnStable,
+        shouldPauseOnStableState: !state.shouldPauseOnStableState,
       };
     case SET_NEIGHBORHOOD:
       return {
@@ -195,7 +196,7 @@ export default function life(state = initialState, action) {
         state.height,
         state.born,
         state.survive,
-        state.wrap,
+        state.shouldWrap,
         state.neighborhood
       );
       return {
@@ -243,7 +244,7 @@ export default function life(state = initialState, action) {
       let newArrayOfCells = [...state.cells];
 
       action.payload.arrayOfCells.forEach(({ x, y }) => {
-        if (state.wrap) {
+        if (state.shouldWrap) {
           if (x < 0) {
             x = state.width + x;
           } else if (x >= state.width) {
@@ -283,13 +284,17 @@ export default function life(state = initialState, action) {
 
 export const toggleIsRunning = () => ({ type: TOGGLE_IS_RUNNING });
 
-export const toggleWrap = () => ({ type: TOGGLE_WRAP });
+export const toggleShouldWrap = () => ({ type: TOGGLE_SHOULD_WRAP });
 
-export const toggleShowHUD = () => ({ type: TOGGLE_SHOW_HUD });
+export const toggleShouldShowHUD = () => ({ type: TOGGLE_SHOULD_SHOW_HUD });
 
-export const toggleShowGridlines = () => ({ type: TOGGLE_SHOW_GRIDLINES });
+export const toggleShouldShowGridlines = () => ({
+  type: TOGGLE_SHOULD_SHOW_GRIDLINES,
+});
 
-export const toggleStopOnStable = () => ({ type: TOGGLE_STOP_ON_STABLE });
+export const toggleShouldPauseOnStableState = () => ({
+  type: TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE,
+});
 
 export const setGrid = ({
   width,

@@ -22,13 +22,17 @@ const Canvas = React.memo(
     const canvasWidth = useSelector((state) => state.life.canvasWidth);
     const canvasHeight = useSelector((state) => state.life.canvasHeight);
     const px = useSelector((state) => state.life.px);
-    const wrap = useSelector((state) => state.life.wrap);
+    const shouldWrap = useSelector((state) => state.life.shouldWrap);
     const width = useSelector((state) => state.life.width);
     const height = useSelector((state) => state.life.height);
-    const showHUD = useSelector((state) => state.life.showHUD);
+    const shouldShowHUD = useSelector((state) => state.life.shouldShowHUD);
 
-    const inEditMode = useSelector((state) => state.drawing.inEditMode);
+    const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
     const isInvertDraw = useSelector((state) => state.drawing.isInvertDraw);
+    const shouldDrawCrosshairs = useSelector(
+      (state) => state.drawing.shouldDrawCrosshairs
+    );
+
     const brushPoints = useSelector(
       (state) => state.drawing.brushPoints,
       isEqual
@@ -45,7 +49,7 @@ const Canvas = React.memo(
 
     const handleCanvasPointerMove = React.useCallback(
       (e) => {
-        if (inEditMode) {
+        if (isInDrawMode) {
           const canvasX = e.layerX - 1;
           const canvasY = e.layerY - 1;
           mousePosX.current = Math.floor(canvasX / px);
@@ -64,7 +68,7 @@ const Canvas = React.memo(
             isAltKey !== isInvertDraw ? '#FF000075' : '#00FF0075';
 
           brushCells.forEach((cell) => {
-            if (wrap) {
+            if (shouldWrap) {
               let _x = cell.x,
                 _y = cell.y;
 
@@ -93,9 +97,22 @@ const Canvas = React.memo(
             }
           });
 
-          context.fillStyle = isAltKey !== isInvertDraw ? '#FF0000' : '#00FF00';
-          context.fillRect(0, canvasY, canvasWidth, 1);
-          context.fillRect(canvasX, 0, 1, canvasHeight);
+          if (shouldDrawCrosshairs) {
+            context.fillStyle =
+              isAltKey !== isInvertDraw ? '#FF0000' : '#00FF00';
+            context.fillRect(
+              mousePosX.current * px + px / 2,
+              0,
+              1,
+              canvasHeight
+            );
+            context.fillRect(
+              0,
+              mousePosY.current * px + px / 2,
+              canvasWidth,
+              1
+            );
+          }
 
           if (e.buttons && !mouseDraggedIn.current) {
             dispatch(
@@ -113,20 +130,21 @@ const Canvas = React.memo(
         dispatch,
         width,
         height,
-        wrap,
+        shouldWrap,
         brushPoints,
         canvasHeight,
         canvasWidth,
-        inEditMode,
+        isInDrawMode,
         isInvertDraw,
         px,
         canvasDrawLayerRef,
+        shouldDrawCrosshairs,
       ]
     );
 
     const handleCanvasPointerDown = React.useCallback(
       (e) => {
-        if (inEditMode) {
+        if (isInDrawMode) {
           mouseDraggedIn.current = false;
           const canvasX = e.layerX - 1;
           const canvasY = e.layerY - 1;
@@ -169,16 +187,16 @@ const Canvas = React.memo(
           lastMousePosY.current = mousePosY.current;
         }
       },
-      [dispatch, brushPoints, inEditMode, isInvertDraw, px]
+      [dispatch, brushPoints, isInDrawMode, isInvertDraw, px]
     );
 
     const handleCanvasPointerLeave = React.useCallback(() => {
-      if (inEditMode) {
+      if (isInDrawMode) {
         const context = canvasDrawLayerRef.current.getContext('2d');
 
         context.clearRect(0, 0, canvasWidth, canvasHeight);
       }
-    }, [canvasWidth, canvasHeight, inEditMode, canvasDrawLayerRef]);
+    }, [canvasWidth, canvasHeight, isInDrawMode, canvasDrawLayerRef]);
 
     const handleCanvasPointerEnter = React.useCallback((e) => {
       if (e.buttons) {
@@ -246,13 +264,13 @@ const Canvas = React.memo(
           display: 'flex',
           flex: '1 0 auto',
           userSelect: 'none',
-          touchAction: inEditMode ? 'none' : 'auto',
+          touchAction: isInDrawMode ? 'none' : 'auto',
         }}
       >
         <CanvasBaseLayer canvasBaseLayerRef={canvasBaseLayerRef} />
         <CanvasGridLayer canvasGridLayerRef={canvasGridLayerRef} />
         <CanvasDrawingLayer canvasDrawLayerRef={canvasDrawLayerRef} />
-        {showHUD && <Numbers />}
+        {shouldShowHUD && <Numbers />}
       </div>
     );
   }

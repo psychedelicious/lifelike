@@ -3,62 +3,69 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Flex } from '@chakra-ui/core';
 
 import {
-  toggleShowGridlines,
-  toggleWrap,
-  toggleShowHUD,
-  toggleStopOnStable,
+  toggleShouldShowGridlines,
+  toggleShouldWrap,
+  toggleShouldShowHUD,
+  toggleShouldPauseOnStableState,
 } from 'store/reducers/life';
 
 import { StyledCheckbox } from 'features/menu/StyledCheckbox';
 
 const OptionsCheckboxes = React.memo(({ ...rest }) => {
-  const showGridlines = useSelector((state) => state.life.showGridlines);
-  const wrap = useSelector((state) => state.life.wrap);
-  const showHUD = useSelector((state) => state.life.showHUD);
-  const stopOnStable = useSelector((state) => state.life.stopOnStable);
+  const shouldShowGridlines = useSelector((state) => state.life.shouldShowGridlines);
+  const shouldWrap = useSelector((state) => state.life.shouldWrap);
+  const shouldShowHUD = useSelector((state) => state.life.shouldShowHUD);
+  const shouldPauseOnStableState = useSelector(
+    (state) => state.life.shouldPauseOnStableState
+  );
 
   const dispatch = useDispatch();
 
-  const handleToggleShowGridlines = React.useCallback(() => {
-    dispatch(toggleShowGridlines());
+  const handleToggleShouldShowGridlines = React.useCallback(() => {
+    dispatch(toggleShouldShowGridlines());
   }, [dispatch]);
 
   const handleToggleWrap = React.useCallback(() => {
-    dispatch(toggleWrap());
+    dispatch(toggleShouldWrap());
   }, [dispatch]);
 
-  const handleToggleShowHUD = React.useCallback(() => {
-    dispatch(toggleShowHUD());
+  const handleToggleShouldShowHUD = React.useCallback(() => {
+    dispatch(toggleShouldShowHUD());
   }, [dispatch]);
 
-  const handleToggleStopOnStable = React.useCallback(() => {
-    dispatch(toggleStopOnStable());
+  const handleToggleShouldPauseOnStableState = React.useCallback(() => {
+    dispatch(toggleShouldPauseOnStableState());
   }, [dispatch]);
 
   return (
-    <Flex {...rest}>
+    <Flex
+      {...rest}
+      justifyContent="space-between"
+      direction="row"
+      flexWrap="wrap"
+    >
       <StyledCheckbox
-        isChecked={showGridlines}
-        onChange={handleToggleShowGridlines}
+        isChecked={shouldShowGridlines}
+        onChange={handleToggleShouldShowGridlines}
         label="gridlines"
       />
 
       <StyledCheckbox
-        isChecked={wrap}
+        isChecked={shouldWrap}
         onChange={handleToggleWrap}
         label="wrap"
       />
 
       <StyledCheckbox
-        isChecked={stopOnStable}
-        onChange={handleToggleStopOnStable}
-        label="autopause"
+        isChecked={shouldShowHUD}
+        onChange={handleToggleShouldShowHUD}
+        label="HUD"
       />
 
       <StyledCheckbox
-        isChecked={showHUD}
-        onChange={handleToggleShowHUD}
-        label="HUD"
+        isChecked={shouldPauseOnStableState}
+        onChange={handleToggleShouldPauseOnStableState}
+        label="pause on stable state"
       />
     </Flex>
   );

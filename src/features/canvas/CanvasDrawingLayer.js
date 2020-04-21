@@ -3,17 +3,16 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 const CanvasDrawingLayer = React.memo(({ canvasDrawLayerRef }) => {
-  const isRunning = useSelector((state) => state.life.isRunning);
   const canvasWidth = useSelector((state) => state.life.canvasWidth);
   const canvasHeight = useSelector((state) => state.life.canvasHeight);
 
-  const inEditMode = useSelector((state) => state.drawing.inEditMode);
+  const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
 
   return (
     <canvas
       ref={canvasDrawLayerRef}
       style={{
-        cursor: !isRunning && inEditMode ? 'none' : 'initial',
+        cursor: isInDrawMode ? 'none' : 'initial',
         position: 'absolute',
         top: '0',
         left: '0',

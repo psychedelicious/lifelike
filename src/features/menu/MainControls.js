@@ -31,7 +31,7 @@ import {
   decrementSpeed,
 } from 'store/reducers/life';
 
-import { toggleInEditMode } from 'store/reducers/drawing';
+import { toggleIsInDrawMode } from 'store/reducers/drawing';
 import {
   useGlobalKeyDown,
   useWithModifiers,
@@ -55,7 +55,7 @@ const MainControls = React.memo(
     const px = useSelector((state) => state.life.px);
     const speed = useSelector((state) => state.life.speed);
 
-    const inEditMode = useSelector((state) => state.drawing.inEditMode);
+    const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
 
     const withModifiers = useWithModifiers();
 
@@ -134,8 +134,8 @@ const MainControls = React.memo(
       [dispatch]
     );
 
-    const handleToggleInEditMode = React.useCallback(
-      () => dispatch(toggleInEditMode()),
+    const handleToggleIsInDrawMode = React.useCallback(
+      () => dispatch(toggleIsInDrawMode()),
       [dispatch]
     );
 
@@ -214,9 +214,9 @@ const MainControls = React.memo(
         <IconButton
           style={style}
           icon={FaPencilAlt}
-          variant={inEditMode ? 'outline' : 'ghost'}
+          variant={isInDrawMode ? 'outline' : 'ghost'}
           aria-label="toggle drawing mode"
-          onClick={handleToggleInEditMode}
+          onClick={handleToggleIsInDrawMode}
         />
       </Flex>
     );

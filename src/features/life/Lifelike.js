@@ -39,7 +39,7 @@ const Lifelike = ({ isMobile }) => {
 
   const cells = useSelector((state) => state.life.cells);
   const cellsChanged = useSelector((state) => state.life.cellsChanged);
-  const stopOnStable = useSelector((state) => state.life.stopOnStable);
+  const shouldPauseOnStableState = useSelector((state) => state.life.shouldPauseOnStableState);
 
   const aliveCellColor = useSelector((state) => state.life.aliveCellColor);
   const darkModeColors = useSelector(
@@ -63,7 +63,7 @@ const Lifelike = ({ isMobile }) => {
     (state) => state.life.previousFrameTime
   );
   const px = useSelector((state) => state.life.px);
-  const showGridlines = useSelector((state) => state.life.showGridlines);
+  const shouldShowGridlines = useSelector((state) => state.life.shouldShowGridlines);
   const width = useSelector((state) => state.life.width);
 
   // refs to keep track of fps with minimal performance and GC impact
@@ -118,15 +118,13 @@ const Lifelike = ({ isMobile }) => {
       now.current = window.performance.now();
 
       if (now.current - lastFpsUpdate.current > 500) {
-        dispatch(
-          setFps(Math.round(10000 / (now.current - lastTick.current)) / 10)
-        );
+        dispatch(setFps(Math.round(1000 / (now.current - lastTick.current))));
         lastFpsUpdate.current = now.current;
       }
 
       lastTick.current = now.current;
 
-      !cellsChanged && stopOnStable && dispatch(toggleIsRunning());
+      !cellsChanged && shouldPauseOnStableState && dispatch(toggleIsRunning());
     }
   });
 
@@ -150,7 +148,7 @@ const Lifelike = ({ isMobile }) => {
 
   React.useLayoutEffect(() => {
     clearCanvas({ canvas: canvasGridLayerRef.current });
-    showGridlines &&
+    shouldShowGridlines &&
       drawGridlines({
         canvasBaseLayer: canvasGridLayerRef.current,
         gridlineColor,
@@ -164,7 +162,7 @@ const Lifelike = ({ isMobile }) => {
     gridlineColor,
     height,
     px,
-    showGridlines,
+    shouldShowGridlines,
     width,
   ]);
 

@@ -2,15 +2,15 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
   toggleIsRunning,
-  toggleShowGridlines,
-  toggleWrap,
-  toggleShowHUD,
+  toggleShouldShowGridlines,
+  toggleShouldWrap,
+  toggleShouldShowHUD,
   setNeighborhood,
   setSpeed,
   getNextCells,
 } from 'store/reducers/life';
 
-import { toggleInEditMode } from 'store/reducers/drawing';
+import { toggleIsInDrawMode } from 'store/reducers/drawing';
 
 import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
 import { useCanvas } from 'features/canvas/useCanvas';
@@ -48,18 +48,18 @@ export const useKeyboardShortcuts = ({
         break;
       case 'g':
         if (!withModifiers(e)) {
-          dispatch(toggleShowGridlines());
+          dispatch(toggleShouldShowGridlines());
         }
         break;
       case 'd':
         if (!withModifiers(e)) {
           clearCanvas({ canvas: canvasDrawLayerRef.current });
-          dispatch(toggleInEditMode());
+          dispatch(toggleIsInDrawMode());
         }
         break;
       case 'w':
         if (!withModifiers(e)) {
-          dispatch(toggleWrap());
+          dispatch(toggleShouldWrap());
         }
         break;
       case 's':
@@ -72,7 +72,7 @@ export const useKeyboardShortcuts = ({
         break;
       case 'h':
         if (!withModifiers(e)) {
-          dispatch(toggleShowHUD());
+          dispatch(toggleShouldShowHUD());
         }
         break;
       case 'm':

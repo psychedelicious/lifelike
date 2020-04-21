@@ -8,7 +8,11 @@ import { Radio, RadioGroup, Text } from '@chakra-ui/core';
 import { NumberSlider } from 'features/menu/NumberSlider';
 import { StyledCheckbox } from 'features/menu/StyledCheckbox';
 
-import { toggleIsInvertDraw, setBrush } from 'store/reducers/drawing';
+import {
+  toggleIsInvertDraw,
+  setBrush,
+  toggleShouldDrawCrosshairs,
+} from 'store/reducers/drawing';
 
 const DrawOptions = React.memo(() => {
   const brushFill = useSelector((state) => state.drawing.brushFill);
@@ -19,6 +23,9 @@ const DrawOptions = React.memo(() => {
     (state) => state.drawing.validBrushShapes
   );
   const isInvertDraw = useSelector((state) => state.drawing.isInvertDraw);
+  const shouldDrawCrosshairs = useSelector(
+    (state) => state.drawing.shouldDrawCrosshairs
+  );
   const maxBrushRadius = useSelector((state) => state.drawing.maxBrushRadius);
   const minBrushRadius = useSelector((state) => state.drawing.minBrushRadius);
 
@@ -26,6 +33,10 @@ const DrawOptions = React.memo(() => {
 
   const handleToggleIsInvertDraw = React.useCallback(() => {
     dispatch(toggleIsInvertDraw());
+  }, [dispatch]);
+
+  const handleToggleShouldDrawCrosshairs = React.useCallback(() => {
+    dispatch(toggleShouldDrawCrosshairs());
   }, [dispatch]);
 
   const handleBrushShapeChange = React.useCallback(
@@ -78,6 +89,11 @@ const DrawOptions = React.memo(() => {
         label="erase"
         isChecked={isInvertDraw}
         onChange={handleToggleIsInvertDraw}
+      />
+      <StyledCheckbox
+        label="crosshairs"
+        isChecked={shouldDrawCrosshairs}
+        onChange={handleToggleShouldDrawCrosshairs}
       />
 
       <RadioGroup onChange={handleBrushShapeChange} value={brushShape} isInline>

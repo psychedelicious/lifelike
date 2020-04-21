@@ -4,7 +4,7 @@ export const getNextCells = (
   height,
   born,
   survive,
-  wrap,
+  shouldWrap,
   neighborhood
 ) => {
   let newCells = Array.from(Array(width), () => new Array(height));
@@ -22,7 +22,7 @@ export const getNextCells = (
         _x = x + coord[0];
         _y = y + coord[1];
 
-        if (wrap) {
+        if (shouldWrap) {
           if (_x < 0) {
             // wrap to the west
             _x = width + _x;

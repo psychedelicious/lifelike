@@ -119,16 +119,12 @@ const MainAccordion = React.memo(
             }}
           >
             <Box flex="1" textAlign="left" fontSize="sm" fontWeight="300">
-              other options
+              options
             </Box>
             <AccordionIcon />
           </AccordionHeader>
           <AccordionPanel p="0.5rem 0.5rem 0.5rem 0.5rem">
-            <OptionsCheckboxes
-              display="flex"
-              justifyContent="space-between"
-              direction="row"
-            />
+            <OptionsCheckboxes />
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
