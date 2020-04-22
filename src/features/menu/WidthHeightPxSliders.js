@@ -5,12 +5,13 @@ import { clamp } from 'lodash';
 
 import { AiOutlineColumnHeight, AiOutlineColumnWidth } from 'react-icons/ai';
 import { GiResize } from 'react-icons/gi';
-import { Flex } from '@chakra-ui/core';
+import { Flex, Button } from '@chakra-ui/core';
 
 import { NumberSlider } from 'features/menu/NumberSlider';
 import { MobilePxSlider } from 'features/menu/MobilePxSlider';
 import { useCanvas } from 'features/canvas/useCanvas';
 import { getCellDimensions } from 'features/life/getCellDimensions';
+import { FaExpand } from 'react-icons/fa';
 
 const WidthHeightPxSliders = React.memo(
   ({
@@ -127,6 +128,37 @@ const WidthHeightPxSliders = React.memo(
       ]
     );
 
+    const handleFitCellsToCanvas = React.useCallback(() => {
+      const { newWidth, newHeight } = getCellDimensions({
+        isMobile,
+        canvasBaseLayerRef,
+        minWidth,
+        maxWidth,
+        minHeight,
+        maxHeight,
+        px,
+      });
+      changeCanvasSize({
+        canvasBaseLayerRef,
+        canvasGridLayerRef,
+        canvasDrawLayerRef,
+        height: newHeight,
+        width: newWidth,
+        px,
+      });
+    }, [
+      isMobile,
+      minWidth,
+      maxWidth,
+      minHeight,
+      maxHeight,
+      px,
+      canvasBaseLayerRef,
+      canvasGridLayerRef,
+      canvasDrawLayerRef,
+      changeCanvasSize,
+    ]);
+
     return (
       <>
         {!isMobile ? (
@@ -157,6 +189,20 @@ const WidthHeightPxSliders = React.memo(
               isDisabled={isRunning}
               icon={GiResize}
             />
+
+            <Button
+              style={{ userSelect: 'none' }}
+              leftIcon={FaExpand}
+              isDisabled={isRunning}
+              variant="solid"
+              size="sm"
+              my="0.25rem"
+              aria-label="expand/shrink grid to fit"
+              fontWeight="400"
+              onClick={handleFitCellsToCanvas}
+            >
+              fit grid to screen
+            </Button>
           </Flex>
         ) : (
           <MobilePxSlider

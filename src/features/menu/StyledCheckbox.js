@@ -5,7 +5,7 @@ import { Checkbox, Text } from '@chakra-ui/core';
 
 export const StyledCheckbox = React.memo(({ label, ...rest }) => {
   return (
-    <Checkbox {...rest} mr="0.5rem">
+    <Checkbox {...rest} mr="1rem">
       <Text fontSize="sm">{label}</Text>
     </Checkbox>
   );

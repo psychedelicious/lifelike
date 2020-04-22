@@ -6,11 +6,16 @@ import {
   toggleShouldWrap,
   toggleShouldShowHUD,
   setNeighborhood,
-  setSpeed,
   getNextCells,
+  translateCells,
+  incrementSpeed,
+  decrementSpeed,
 } from 'store/reducers/life';
 
-import { toggleIsInDrawMode } from 'store/reducers/drawing';
+import {
+  toggleIsInDrawMode,
+  toggleIsInTranslateMode,
+} from 'store/reducers/drawing';
 
 import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
 import { useCanvas } from 'features/canvas/useCanvas';
@@ -26,7 +31,10 @@ export const useKeyboardShortcuts = ({
   fitCellsToCanvas,
 }) => {
   const isRunning = useSelector((state) => state.life.isRunning);
-  const speed = useSelector((state) => state.life.speed);
+
+  const isInTranslateMode = useSelector(
+    (state) => state.drawing.isInTranslateMode
+  );
 
   const dispatch = useDispatch();
   const { clearCanvas, saveCanvasAsImage } = useCanvas();
@@ -90,22 +98,58 @@ export const useKeyboardShortcuts = ({
           dispatch(setNeighborhood({ neighborhood: 'HEXAGONAL' }));
         }
         break;
-      case 'ArrowUp':
+      case 't':
         if (!withModifiers(e)) {
+          dispatch(toggleIsInTranslateMode());
+        }
+        break;
+      case 'ArrowUp':
+        if (isInTranslateMode) {
+          dispatch(
+            translateCells({
+              deltaX: 0,
+              deltaY: e.shiftKey ? -10 : -1,
+            })
+          );
+        } else if (!withModifiers(e)) {
           e.preventDefault();
-          dispatch(setSpeed({ speed: speed + 1 }));
+          dispatch(incrementSpeed());
         }
         break;
       case 'ArrowDown':
-        if (!withModifiers(e)) {
+        if (isInTranslateMode) {
+          dispatch(
+            translateCells({
+              deltaX: 0,
+              deltaY: e.shiftKey ? 10 : 1,
+            })
+          );
+        } else if (!withModifiers(e)) {
           e.preventDefault();
-          dispatch(setSpeed({ speed: speed - 1 }));
+          dispatch(decrementSpeed());
         }
         break;
       case 'ArrowRight':
-        if (!withModifiers(e) && !isRunning) {
+        if (isInTranslateMode) {
+          dispatch(
+            translateCells({
+              deltaX: e.shiftKey ? 10 : 1,
+              deltaY: 0,
+            })
+          );
+        } else if (!withModifiers(e) && !isRunning) {
           e.preventDefault();
           dispatch(getNextCells());
+        }
+        break;
+      case 'ArrowLeft':
+        if (isInTranslateMode) {
+          dispatch(
+            translateCells({
+              deltaX: e.shiftKey ? -10 : -1,
+              deltaY: 0,
+            })
+          );
         }
         break;
       default:

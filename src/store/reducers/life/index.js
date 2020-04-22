@@ -13,12 +13,13 @@ const GET_NEXT_CELLS = 'GET_NEXT_CELLS';
 const INCREMENT_SPEED = 'INCREMENT_SPEED';
 const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
 const SET_ARRAY_OF_CELLS = 'SET_ARRAY_OF_CELLS';
+const TRANSLATE_CELLS = 'TRANSLATE_CELLS';
 const SET_BORN = 'SET_BORN';
-const SET_COLORS = 'SET_COLORS';
+const SET_COLOR_MODE = 'SET_COLOR_MODE';
 const SET_FPS = 'SET_FPS';
+const SET_PREVIOUS_FRAMETIME = 'SET_PREVIOUS_FRAMETIME';
 const SET_GRID = 'SET_GRID';
 const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
-const SET_PREVIOUS_FRAMETIME = 'SET_PREVIOUS_FRAMETIME';
 const SET_SPEED = 'SET_SPEED';
 const SET_SURVIVE = 'SET_SURVIVE';
 const TOGGLE_IS_RUNNING = 'TOGGLE_IS_RUNNING';
@@ -26,6 +27,7 @@ const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
 const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
 const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
   'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
+const TOGGLE_SHOULD_SWAP_CELL_COLORS = 'TOGGLE_SHOULD_SWAP_CELL_COLORS';
 const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
 
 const initialState = {
@@ -51,23 +53,23 @@ const initialState = {
   canvasHeight: 0,
   canvasContainerWidth: 0,
   canvasContainerHeight: 0,
-  previousFrameTime: 0,
   speed: 70,
   msDelay: speedToMs(70),
   fps: 0,
+  previousFrameTime: 0,
   lightModeColors: {
-    deadCellColor: lifelikeTheme.colors.gray['50'],
-    aliveCellColor: lifelikeTheme.colors.blue['700'],
-    gridlineColor: `${lifelikeTheme.colors.gray['500']}80`,
+    deadCellColor: lifelikeTheme.colors.white,
+    aliveCellColor: lifelikeTheme.colors.blue['600'],
+    gridlineColor: `${lifelikeTheme.colors.blue['500']}80`,
   },
   darkModeColors: {
     deadCellColor: lifelikeTheme.colors.blue['100'],
-    aliveCellColor: lifelikeTheme.colors.gray['800'],
-    gridlineColor: `${lifelikeTheme.colors.gray['600']}80`,
+    aliveCellColor: '#1A202C', // the Chakra UI background color
+    gridlineColor: `${lifelikeTheme.colors.blue['600']}80`,
   },
-  deadCellColor: null,
-  aliveCellColor: null,
-  gridlineColor: null,
+  shouldSwapCellColors: false,
+  colorMode: null,
+  colors: {},
   minWidth: 1,
   maxWidth: 2000,
   minHeight: 1,
@@ -159,12 +161,6 @@ export default function life(state = initialState, action) {
         ...state,
         neighborhood: Neighborhoods[action.neighborhood],
       };
-    case SET_PREVIOUS_FRAMETIME: {
-      return {
-        ...state,
-        previousFrameTime: action.previousFrameTime,
-      };
-    }
     case SET_SPEED: {
       return {
         ...state,
@@ -187,6 +183,12 @@ export default function life(state = initialState, action) {
         ...state,
         speed: newSpeed,
         msDelay: speedToMs(newSpeed),
+      };
+    }
+    case SET_PREVIOUS_FRAMETIME: {
+      return {
+        ...state,
+        previousFrameTime: action.previousFrameTime,
       };
     }
     case GET_NEXT_CELLS: {
@@ -232,18 +234,77 @@ export default function life(state = initialState, action) {
         ),
       };
     }
-    case SET_COLORS: {
+    case SET_COLOR_MODE: {
+      const { colorMode } = action;
+      const { shouldSwapCellColors } = state;
+      let aliveCellColor, deadCellColor, gridlineColor;
+
+      if (colorMode === 'light') {
+        if (shouldSwapCellColors) {
+          aliveCellColor = state.lightModeColors.deadCellColor;
+          deadCellColor = state.lightModeColors.aliveCellColor;
+        } else {
+          aliveCellColor = state.lightModeColors.aliveCellColor;
+          deadCellColor = state.lightModeColors.deadCellColor;
+        }
+        gridlineColor = state.lightModeColors.gridlineColor;
+      } else {
+        if (shouldSwapCellColors) {
+          aliveCellColor = state.darkModeColors.deadCellColor;
+          deadCellColor = state.darkModeColors.aliveCellColor;
+        } else {
+          aliveCellColor = state.darkModeColors.aliveCellColor;
+          deadCellColor = state.darkModeColors.deadCellColor;
+        }
+        gridlineColor = state.darkModeColors.gridlineColor;
+      }
+
       return {
         ...state,
-        aliveCellColor: action.payload.aliveCellColor ?? state.aliveCellColor,
-        deadCellColor: action.payload.deadCellColor ?? state.deadCellColor,
-        gridlineColor: action.payload.gridlineColor ?? state.gridlineColor,
+        colorMode: colorMode,
+        colors: {
+          aliveCellColor,
+          deadCellColor,
+          gridlineColor,
+        },
+      };
+    }
+    case TOGGLE_SHOULD_SWAP_CELL_COLORS: {
+      const shouldSwapCellColors = !state.shouldSwapCellColors;
+      const { colorMode } = state;
+
+      let aliveCellColor, deadCellColor, gridlineColor;
+
+      if (colorMode === 'light') {
+        if (shouldSwapCellColors) {
+          aliveCellColor = state.lightModeColors.deadCellColor;
+          deadCellColor = state.lightModeColors.aliveCellColor;
+        } else {
+          aliveCellColor = state.lightModeColors.aliveCellColor;
+          deadCellColor = state.lightModeColors.deadCellColor;
+        }
+        gridlineColor = state.lightModeColors.gridlineColor;
+      } else {
+        if (shouldSwapCellColors) {
+          aliveCellColor = state.darkModeColors.deadCellColor;
+          deadCellColor = state.darkModeColors.aliveCellColor;
+        } else {
+          aliveCellColor = state.darkModeColors.aliveCellColor;
+          deadCellColor = state.darkModeColors.deadCellColor;
+        }
+        gridlineColor = state.darkModeColors.gridlineColor;
+      }
+
+      return {
+        ...state,
+        shouldSwapCellColors,
+        colors: { aliveCellColor, deadCellColor, gridlineColor },
       };
     }
     case SET_ARRAY_OF_CELLS: {
       let newArrayOfCells = [...state.cells];
 
-      action.payload.arrayOfCells.forEach(({ x, y }) => {
+      action.arrayOfCells.forEach(({ x, y }) => {
         if (state.shouldWrap) {
           if (x < 0) {
             x = state.width + x;
@@ -257,17 +318,17 @@ export default function life(state = initialState, action) {
             y = y - state.height;
           }
 
-          newArrayOfCells[x][y] = action.payload.invertState ? 0 : 1;
+          newArrayOfCells[x][y] = action.invertState ? 0 : 1;
         } else {
           if (x >= 0 && x < state.width && y >= 0 && y < state.height) {
-            newArrayOfCells[x][y] = action.payload.invertState ? 0 : 1;
+            newArrayOfCells[x][y] = action.invertState ? 0 : 1;
           }
         }
       });
 
       let newPopulation = newArrayOfCells
         .flat()
-        .reduce((acc, val) => acc + val, 0);
+        .reduce((sum, val) => sum + val, 0);
 
       return {
         ...state,
@@ -275,6 +336,51 @@ export default function life(state = initialState, action) {
         population: newPopulation,
         cellsChanged: true,
         density: getDensity(newPopulation, state.width, state.height),
+      };
+    }
+    case TRANSLATE_CELLS: {
+      const { width, height } = state;
+      const { deltaX, deltaY } = action;
+
+      let translatedCells = Array.from(Array(width), () => new Array(height));
+
+      if (state.shouldWrap) {
+        for (let x = 0; x < width; x++) {
+          for (let y = 0; y < height; y++) {
+            let _x = x + deltaX;
+            let _y = y + deltaY;
+
+            if (x + deltaX < 0) {
+              _x = state.width + x + deltaX;
+            } else if (x + deltaX >= state.width) {
+              _x = x + deltaX - state.width;
+            }
+
+            if (y + deltaY < 0) {
+              _y = state.height + y + deltaY;
+            } else if (y + deltaY >= state.height) {
+              _y = y + deltaY - state.height;
+            }
+
+            translatedCells[_x][_y] = state.cells[x][y];
+          }
+        }
+      } else {
+        for (let x = 0; x < width; x++) {
+          for (let y = 0; y < height; y++) {
+            let _x = x - deltaX;
+            let _y = y - deltaY;
+
+            translatedCells[x][y] =
+              _x >= 0 && _x < width && _y >= 0 && _y < height
+                ? state.cells[_x][_y]
+                : 0;
+          }
+        }
+      }
+      return {
+        ...state,
+        cells: translatedCells,
       };
     }
     default:
@@ -327,6 +433,11 @@ export const decrementSpeed = () => ({
   type: DECREMENT_SPEED,
 });
 
+export const setPreviousFrameTime = (previousFrameTime) => ({
+  type: SET_PREVIOUS_FRAMETIME,
+  previousFrameTime,
+});
+
 export const setNeighborhood = ({ neighborhood }) => ({
   type: SET_NEIGHBORHOOD,
   neighborhood,
@@ -340,28 +451,30 @@ export const clearCells = () => ({ type: CLEAR_CELLS });
 
 export const randomizeCells = () => ({ type: RANDOMIZE_CELLS });
 
-export const setPreviousFrameTime = () => ({
-  type: SET_PREVIOUS_FRAMETIME,
-  previousFrameTime: window.performance.now(),
-});
-
 export const getNextCells = () => ({ type: GET_NEXT_CELLS });
 
-export const setColors = ({
-  aliveCellColor,
-  deadCellColor,
-  gridlineColor,
-}) => ({
-  type: SET_COLORS,
-  payload: { aliveCellColor, deadCellColor, gridlineColor },
+export const setColorMode = ({ colorMode }) => ({
+  type: SET_COLOR_MODE,
+  colorMode,
+});
+
+export const toggleShouldSwapCellColors = () => ({
+  type: TOGGLE_SHOULD_SWAP_CELL_COLORS,
 });
 
 export const setArrayOfCells = ({ arrayOfCells, invertState }) => ({
   type: SET_ARRAY_OF_CELLS,
-  payload: { arrayOfCells, invertState },
+  arrayOfCells,
+  invertState,
 });
 
 export const setFps = (fps) => ({
   type: SET_FPS,
   fps,
+});
+
+export const translateCells = ({ deltaX, deltaY }) => ({
+  type: TRANSLATE_CELLS,
+  deltaX,
+  deltaY,
 });

@@ -5,20 +5,16 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import ConfirmDialogue from 'features/menu/ConfirmDialogue';
 
-import { useCanvas } from 'features/canvas/useCanvas';
-
-import { getCellDimensions } from 'features/life/getCellDimensions';
-
 import {
   FaPlay,
   FaPause,
   FaStepForward,
   FaTrash,
   FaRandom,
-  FaExpand,
   FaBackward,
   FaForward,
   FaPencilAlt,
+  FaArrowsAlt,
 } from 'react-icons/fa';
 import { Flex, IconButton } from '@chakra-ui/core';
 
@@ -31,11 +27,11 @@ import {
   decrementSpeed,
 } from 'store/reducers/life';
 
-import { toggleIsInDrawMode } from 'store/reducers/drawing';
 import {
-  useGlobalKeyDown,
-  useWithModifiers,
-} from 'hooks/useWindowEvent';
+  toggleIsInDrawMode,
+  toggleIsInTranslateMode,
+} from 'store/reducers/drawing';
+import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
 
 const MainControls = React.memo(
   ({
@@ -48,14 +44,12 @@ const MainControls = React.memo(
     const dispatch = useDispatch();
 
     const isRunning = useSelector((state) => state.life.isRunning);
-    const minWidth = useSelector((state) => state.life.minWidth);
-    const maxWidth = useSelector((state) => state.life.maxWidth);
-    const minHeight = useSelector((state) => state.life.minHeight);
-    const maxHeight = useSelector((state) => state.life.maxHeight);
-    const px = useSelector((state) => state.life.px);
     const speed = useSelector((state) => state.life.speed);
 
     const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
+    const isInTranslateMode = useSelector(
+      (state) => state.drawing.isInTranslateMode
+    );
 
     const withModifiers = useWithModifiers();
 
@@ -82,39 +76,6 @@ const MainControls = React.memo(
       setIsRandomizeCellsConfirmOpen,
     ] = React.useState(false);
 
-    const { changeCanvasSize } = useCanvas();
-
-    const handleFitCellsToCanvas = React.useCallback(() => {
-      const { newWidth, newHeight } = getCellDimensions({
-        isMobile,
-        canvasBaseLayerRef,
-        minWidth,
-        maxWidth,
-        minHeight,
-        maxHeight,
-        px,
-      });
-      changeCanvasSize({
-        canvasBaseLayerRef,
-        canvasGridLayerRef,
-        canvasDrawLayerRef,
-        height: newHeight,
-        width: newWidth,
-        px,
-      });
-    }, [
-      isMobile,
-      minWidth,
-      maxWidth,
-      minHeight,
-      maxHeight,
-      px,
-      canvasBaseLayerRef,
-      canvasGridLayerRef,
-      canvasDrawLayerRef,
-      changeCanvasSize,
-    ]);
-
     const handleToggleIsRunning = React.useCallback(
       () => dispatch(toggleIsRunning()),
       [dispatch]
@@ -139,47 +100,54 @@ const MainControls = React.memo(
       [dispatch]
     );
 
-    const style = { touchAction: 'manipulation' };
+    const handleToggleIsInTranslateMode = React.useCallback(
+      () => dispatch(toggleIsInTranslateMode()),
+      [dispatch]
+    );
 
     return (
       <Flex {...rest}>
         <IconButton
-          style={style}
+          style={{ touchAction: 'manipulation' }}
           icon={isRunning ? FaPause : FaPlay}
           variant="solid"
           aria-label="start/stop"
           onClick={handleToggleIsRunning}
+          variantColor="blue"
         />
 
         <IconButton
-          style={style}
+          style={{ touchAction: 'manipulation' }}
           isDisabled={isRunning}
           icon={FaStepForward}
           variant="solid"
           aria-label="tick"
           onClick={handleGetNextCells}
+          variantColor="blue"
         />
 
         <IconButton
-          style={style}
+          style={{ touchAction: 'manipulation' }}
           isDisabled={speed === 0}
           icon={FaBackward}
           variant="solid"
           aria-label="decrease speed"
           onPointerDown={() => dispatch(decrementSpeed())}
+          variantColor="blue"
         />
 
         <IconButton
-          style={style}
+          style={{ touchAction: 'manipulation' }}
           isDisabled={speed === 100}
           icon={FaForward}
           variant="solid"
           aria-label="increase speed"
           onPointerDown={() => dispatch(incrementSpeed())}
+          variantColor="blue"
         />
 
         <ConfirmDialogue
-          style={style}
+          style={{ touchAction: 'manipulation' }}
           icon={FaTrash}
           header="clear grid"
           aria="clear grid"
@@ -187,10 +155,11 @@ const MainControls = React.memo(
           confirmedCallback={handleClearCells}
           isOpen={isClearCellsConfirmOpen}
           setIsOpen={setIsClearCellsConfirmOpen}
+          variantColor="blue"
         />
 
         <ConfirmDialogue
-          style={style}
+          style={{ touchAction: 'manipulation' }}
           icon={FaRandom}
           header="randomize grid"
           aria="randomize grid"
@@ -198,25 +167,25 @@ const MainControls = React.memo(
           confirmedCallback={handleRandomizeCells}
           isOpen={isRandomizeCellsConfirmOpen}
           setIsOpen={setIsRandomizeCellsConfirmOpen}
+          variantColor="blue"
         />
 
-        {!isMobile && (
-          <IconButton
-            style={style}
-            isDisabled={isRunning}
-            icon={FaExpand}
-            variant="solid"
-            aria-label="expand/shrink grid to fit"
-            onClick={handleFitCellsToCanvas}
-          />
-        )}
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          icon={FaArrowsAlt}
+          variant={isInTranslateMode ? 'outline' : 'link'}
+          aria-label="toggle translate mode"
+          onClick={handleToggleIsInTranslateMode}
+          variantColor="blue"
+        />
 
         <IconButton
-          style={style}
+          style={{ touchAction: 'manipulation' }}
           icon={FaPencilAlt}
-          variant={isInDrawMode ? 'outline' : 'ghost'}
+          variant={isInDrawMode ? 'outline' : 'link'}
           aria-label="toggle drawing mode"
           onClick={handleToggleIsInDrawMode}
+          variantColor="blue"
         />
       </Flex>
     );

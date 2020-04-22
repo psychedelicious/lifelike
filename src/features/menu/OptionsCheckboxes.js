@@ -7,16 +7,22 @@ import {
   toggleShouldWrap,
   toggleShouldShowHUD,
   toggleShouldPauseOnStableState,
+  toggleShouldSwapCellColors,
 } from 'store/reducers/life';
 
 import { StyledCheckbox } from 'features/menu/StyledCheckbox';
 
 const OptionsCheckboxes = React.memo(({ ...rest }) => {
-  const shouldShowGridlines = useSelector((state) => state.life.shouldShowGridlines);
+  const shouldShowGridlines = useSelector(
+    (state) => state.life.shouldShowGridlines
+  );
   const shouldWrap = useSelector((state) => state.life.shouldWrap);
   const shouldShowHUD = useSelector((state) => state.life.shouldShowHUD);
   const shouldPauseOnStableState = useSelector(
     (state) => state.life.shouldPauseOnStableState
+  );
+  const shouldSwapCellColors = useSelector(
+    (state) => state.life.shouldSwapCellColors
   );
 
   const dispatch = useDispatch();
@@ -37,13 +43,12 @@ const OptionsCheckboxes = React.memo(({ ...rest }) => {
     dispatch(toggleShouldPauseOnStableState());
   }, [dispatch]);
 
+  const handleToggleShouldSwapCellColors = React.useCallback(() => {
+    dispatch(toggleShouldSwapCellColors());
+  }, [dispatch]);
+
   return (
-    <Flex
-      {...rest}
-      justifyContent="space-between"
-      direction="row"
-      flexWrap="wrap"
-    >
+    <Flex {...rest} direction="row" flexWrap="wrap">
       <StyledCheckbox
         isChecked={shouldShowGridlines}
         onChange={handleToggleShouldShowGridlines}
@@ -66,6 +71,12 @@ const OptionsCheckboxes = React.memo(({ ...rest }) => {
         isChecked={shouldPauseOnStableState}
         onChange={handleToggleShouldPauseOnStableState}
         label="pause on stable state"
+      />
+
+      <StyledCheckbox
+        isChecked={shouldSwapCellColors}
+        onChange={handleToggleShouldSwapCellColors}
+        label="swap cell colors"
       />
     </Flex>
   );

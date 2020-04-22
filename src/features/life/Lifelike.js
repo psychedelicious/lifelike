@@ -3,7 +3,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Chakra UI
-import { Grid, useColorMode } from '@chakra-ui/core';
+import { Grid, useColorMode, Button } from '@chakra-ui/core';
 
 // Components
 import Canvas from 'features/canvas/Canvas';
@@ -18,13 +18,16 @@ import { useKeyboardShortcuts } from 'features/life/useKeyboardShortcuts';
 
 import {
   getNextCells,
-  setColors,
+  setColorMode,
   setPreviousFrameTime,
   toggleIsRunning,
   setFps,
 } from 'store/reducers/life';
 
 import MainAccordion from 'features/menu/MainAccordion';
+// const CCapture = require('ccapture.js');
+
+import CCapture from 'ccapture.js';
 
 const Lifelike = ({ isMobile }) => {
   const {
@@ -39,19 +42,14 @@ const Lifelike = ({ isMobile }) => {
 
   const cells = useSelector((state) => state.life.cells);
   const cellsChanged = useSelector((state) => state.life.cellsChanged);
-  const shouldPauseOnStableState = useSelector((state) => state.life.shouldPauseOnStableState);
-
-  const aliveCellColor = useSelector((state) => state.life.aliveCellColor);
-  const darkModeColors = useSelector(
-    (state) => state.life.darkModeColors,
-    shallowEqual
+  const shouldPauseOnStableState = useSelector(
+    (state) => state.life.shouldPauseOnStableState
   );
-  const deadCellColor = useSelector((state) => state.life.deadCellColor);
-  const gridlineColor = useSelector((state) => state.life.gridlineColor);
   const height = useSelector((state) => state.life.height);
   const isRunning = useSelector((state) => state.life.isRunning);
-  const lightModeColors = useSelector(
-    (state) => state.life.lightModeColors,
+
+  const { aliveCellColor, deadCellColor, gridlineColor } = useSelector(
+    (state) => state.life.colors,
     shallowEqual
   );
   const maxHeight = useSelector((state) => state.life.maxHeight);
@@ -63,13 +61,13 @@ const Lifelike = ({ isMobile }) => {
     (state) => state.life.previousFrameTime
   );
   const px = useSelector((state) => state.life.px);
-  const shouldShowGridlines = useSelector((state) => state.life.shouldShowGridlines);
+  const shouldShowGridlines = useSelector(
+    (state) => state.life.shouldShowGridlines
+  );
   const width = useSelector((state) => state.life.width);
-
-  // refs to keep track of fps with minimal performance and GC impact
-  const lastTick = React.useRef(0);
-  const now = React.useRef(0);
-  const lastFpsUpdate = React.useRef(0);
+  const [lastTick, setLastTick] = React.useState(0);
+  const [now, setNow] = React.useState(0);
+  const [lastFpsUpdate, setLastFpsUpdate] = React.useState(0);
 
   const canvasBaseLayerRef = React.useRef(null);
   const canvasGridLayerRef = React.useRef(null);
@@ -110,29 +108,65 @@ const Lifelike = ({ isMobile }) => {
     fitCellsToCanvas,
   });
 
+  const [isRecording, setIsRecording] = React.useState(false);
+  const recorder = React.useRef();
+  const stream = React.useRef();
+  // console.log(recorder.current);
+
+  function startRecording() {
+    const chunks = []; // here we will store our recorded media chunks (Blobs)
+    stream.current = canvasBaseLayerRef.current.captureStream(); // grab our canvas MediaStream
+    recorder.current = new MediaRecorder(stream.current, {
+      videoBitsPerSecond: 2500000,
+    }); // init the recorder
+    // every time the recorder has new data, we will store it in our array
+    recorder.current.ondataavailable = (e) => chunks.push(e.data);
+    // only when the recorder stops, we construct a complete Blob from all the chunks
+    recorder.current.onstop = (e) =>
+      exportVid(new Blob(chunks, { type: 'video/webm' }));
+
+    recorder.current.start();
+  }
+
+  function exportVid(blob) {
+    const a = document.createElement('a');
+    a.download = 'myvid.webm';
+    a.href = URL.createObjectURL(blob);
+    a.click();
+  }
+
+  const handleStartCapture = () => {
+    startRecording();
+    setIsRecording(true);
+  };
+
+  const handleStopCapture = () => {
+    setIsRecording(false);
+    recorder.current.stop();
+  };
+
   useAnimationFrame(() => {
     if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
-      dispatch(setPreviousFrameTime());
+      setNow(window.performance.now());
+
+      dispatch(setPreviousFrameTime(window.performance.now()));
+
       dispatch(getNextCells());
 
-      now.current = window.performance.now();
-
-      if (now.current - lastFpsUpdate.current > 500) {
-        dispatch(setFps(Math.round(1000 / (now.current - lastTick.current))));
-        lastFpsUpdate.current = now.current;
+      if (now - lastFpsUpdate > 200) {
+        dispatch(setFps(Math.round(1000 / (now - lastTick))));
+        setLastFpsUpdate(now);
       }
 
-      lastTick.current = now.current;
+      setLastTick(now);
 
       !cellsChanged && shouldPauseOnStableState && dispatch(toggleIsRunning());
     }
   });
 
   React.useLayoutEffect(() => {
-    colorMode === 'light'
-      ? dispatch(setColors(lightModeColors))
-      : dispatch(setColors(darkModeColors));
-  }, [dispatch, darkModeColors, lightModeColors, colorMode]);
+    dispatch(setColorMode({ colorMode }));
+  }, [dispatch, colorMode]);
 
   React.useLayoutEffect(() => {
     drawCells({
@@ -144,7 +178,16 @@ const Lifelike = ({ isMobile }) => {
       px,
       width,
     });
-  }, [aliveCellColor, cells, deadCellColor, drawCells, height, px, width]);
+  }, [
+    aliveCellColor,
+    cells,
+    deadCellColor,
+    drawCells,
+    height,
+    px,
+    width,
+    isRecording,
+  ]);
 
   React.useLayoutEffect(() => {
     clearCanvas({ canvas: canvasGridLayerRef.current });
@@ -214,6 +257,9 @@ const Lifelike = ({ isMobile }) => {
         isMobile={isMobile}
         canvasBaseLayerRef={canvasBaseLayerRef}
         canvasGridLayerRef={canvasGridLayerRef}
+        isRecording={isRecording}
+        handleStartCapture={handleStartCapture}
+        handleStopCapture={handleStopCapture}
       />
 
       <MainControls

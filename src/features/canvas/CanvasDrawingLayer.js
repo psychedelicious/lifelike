@@ -7,16 +7,21 @@ const CanvasDrawingLayer = React.memo(({ canvasDrawLayerRef }) => {
   const canvasHeight = useSelector((state) => state.life.canvasHeight);
 
   const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
+  const isInTranslateMode = useSelector(
+    (state) => state.drawing.isInTranslateMode
+  );
+
+  const cursor = isInTranslateMode ? 'move' : isInDrawMode ? 'none' : 'initial';
 
   return (
     <canvas
       ref={canvasDrawLayerRef}
       style={{
-        cursor: isInDrawMode ? 'none' : 'initial',
+        cursor: cursor,
         position: 'absolute',
         top: '0',
         left: '0',
-        zIndex: '3',
+        zIndex: '5',
         width: canvasWidth || '100%',
         height: canvasHeight || '100%',
       }}

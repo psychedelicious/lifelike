@@ -38,7 +38,7 @@ const RuleCheckboxRow = React.memo(
                 size="1.5rem"
                 rounded="sm"
                 color={
-                  colorMode === 'light' ? 'blackAlpha.600' : 'whiteAlpha.600'
+                  colorMode === 'light' ? 'blue.600' : 'blue.200'
                 }
                 bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.100'}
                 cursor="pointer"
@@ -48,12 +48,12 @@ const RuleCheckboxRow = React.memo(
                   colorMode === 'light'
                     ? {
                         bg: 'blue.500',
-                        color: 'gray.50',
+                        color: 'white',
                         borderColor: 'blue.500',
                       }
                     : {
                         bg: 'blue.200',
-                        color: 'gray.800',
+                        color: 'blue.900',
                         borderColor: 'blue.200',
                       }
                 }

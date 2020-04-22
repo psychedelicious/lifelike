@@ -9,10 +9,23 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  useColorMode,
 } from '@chakra-ui/core';
+
+import { useSelector } from 'react-redux';
+
+import { lightDarkenColor } from 'features/menu/utilities';
 
 export const NumberSlider = React.memo(
   ({ value, min, max, onChange, icon, isDisabled = false }) => {
+    const { colorMode } = useColorMode();
+
+    const { aliveCellColor, deadCellColor } = useSelector(
+      (state) => state.life[`${colorMode}ModeColors`]
+    );
+
+    const disabledDeadCellColor = lightDarkenColor(deadCellColor, -100);
+
     return (
       <Flex my="1">
         <Slider
@@ -25,8 +38,13 @@ export const NumberSlider = React.memo(
         >
           <SliderTrack />
           <SliderFilledTrack />
-          <SliderThumb size={6} borderRadius="sm">
-            <Box color="gray.800" as={icon} />
+          <SliderThumb
+            size={6}
+            borderRadius="sm"
+            bg={deadCellColor}
+            _disabled={{ bg: disabledDeadCellColor }}
+          >
+            <Box color={aliveCellColor} as={icon} />
           </SliderThumb>
         </Slider>
         <NumberInput

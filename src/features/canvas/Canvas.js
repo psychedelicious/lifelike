@@ -8,9 +8,9 @@ import CanvasGridLayer from 'features/canvas/CanvasGridLayer';
 import CanvasDrawingLayer from 'features/canvas/CanvasDrawingLayer';
 import { getPointsOnLine } from 'features/canvas/getPointsOnLine';
 
-import Numbers from 'features/life/Numbers';
+import HUD from 'features/life/HUD';
 
-import { setArrayOfCells } from 'store/reducers/life';
+import { setArrayOfCells, translateCells } from 'store/reducers/life';
 
 const Canvas = React.memo(
   ({
@@ -28,6 +28,9 @@ const Canvas = React.memo(
     const shouldShowHUD = useSelector((state) => state.life.shouldShowHUD);
 
     const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
+    const isInTranslateMode = useSelector(
+      (state) => state.drawing.isInTranslateMode
+    );
     const isInvertDraw = useSelector((state) => state.drawing.isInvertDraw);
     const shouldDrawCrosshairs = useSelector(
       (state) => state.drawing.shouldDrawCrosshairs
@@ -44,87 +47,104 @@ const Canvas = React.memo(
     const mousePosY = React.useRef(0);
     const lastMousePosX = React.useRef(0);
     const lastMousePosY = React.useRef(0);
+    const lastPointerUpPosX = React.useRef(0);
+    const lastPointerUpPosY = React.useRef(0);
 
     const mouseDraggedIn = React.useRef(false);
 
     const handleCanvasPointerMove = React.useCallback(
       (e) => {
-        if (isInDrawMode) {
+        if (isInDrawMode || isInTranslateMode) {
           const canvasX = e.layerX - 1;
           const canvasY = e.layerY - 1;
           mousePosX.current = Math.floor(canvasX / px);
           mousePosY.current = Math.floor(canvasY / px);
-
-          const isAltKey = e.altKey;
           const context = canvasDrawLayerRef.current.getContext('2d');
-          const brushCells = brushPoints.map((point) => ({
-            x: point.x + mousePosX.current,
-            y: point.y + mousePosY.current,
-          }));
-
           context.clearRect(0, 0, canvasWidth, canvasHeight);
 
-          context.fillStyle =
-            isAltKey !== isInvertDraw ? '#FF000075' : '#00FF0075';
-
-          brushCells.forEach((cell) => {
-            if (shouldWrap) {
-              let _x = cell.x,
-                _y = cell.y;
-
-              if (_x < 0) {
-                _x = width + _x;
-              } else if (_x >= width) {
-                _x = _x - width;
-              }
-
-              if (_y < 0) {
-                _y = height + _y;
-              } else if (_y >= height) {
-                _y = _y - height;
-              }
-
-              context.fillRect(_x * px, _y * px, px, px);
-            } else {
-              if (
-                cell.x >= 0 &&
-                cell.x < width &&
-                cell.y >= 0 &&
-                cell.y < height
-              ) {
-                context.fillRect(cell.x * px, cell.y * px, px, px);
-              }
+          if (isInTranslateMode) {
+            if (e.buttons && !mouseDraggedIn.current) {
+              dispatch(
+                translateCells({
+                  deltaX: mousePosX.current - lastMousePosX.current,
+                  deltaY: mousePosY.current - lastMousePosY.current,
+                })
+              );
+              lastMousePosX.current = mousePosX.current;
+              lastMousePosY.current = mousePosY.current;
             }
-          });
+          } else {
+            const isAltKey = e.altKey;
+            const brushCells = brushPoints.map((point) => ({
+              x: point.x + mousePosX.current,
+              y: point.y + mousePosY.current,
+            }));
 
-          if (shouldDrawCrosshairs) {
             context.fillStyle =
-              isAltKey !== isInvertDraw ? '#FF0000' : '#00FF00';
-            context.fillRect(
-              mousePosX.current * px + px / 2,
-              0,
-              1,
-              canvasHeight
-            );
-            context.fillRect(
-              0,
-              mousePosY.current * px + px / 2,
-              canvasWidth,
-              1
-            );
-          }
+              isAltKey !== isInvertDraw ? '#FF000075' : '#00FF0075';
 
-          if (e.buttons && !mouseDraggedIn.current) {
-            dispatch(
-              setArrayOfCells({
-                arrayOfCells: brushCells,
-                invertState: isAltKey !== isInvertDraw,
-              })
-            );
-            lastMousePosX.current = mousePosX.current;
-            lastMousePosY.current = mousePosY.current;
+            brushCells.forEach((cell) => {
+              if (shouldWrap) {
+                let _x = cell.x,
+                  _y = cell.y;
+
+                if (_x < 0) {
+                  _x = width + _x;
+                } else if (_x >= width) {
+                  _x = _x - width;
+                }
+
+                if (_y < 0) {
+                  _y = height + _y;
+                } else if (_y >= height) {
+                  _y = _y - height;
+                }
+
+                context.fillRect(_x * px, _y * px, px, px);
+              } else {
+                if (
+                  cell.x >= 0 &&
+                  cell.x < width &&
+                  cell.y >= 0 &&
+                  cell.y < height
+                ) {
+                  context.fillRect(cell.x * px, cell.y * px, px, px);
+                }
+              }
+            });
+
+            if (shouldDrawCrosshairs) {
+              context.fillStyle =
+                isAltKey !== isInvertDraw ? '#FF0000' : '#00FF00';
+              context.fillRect(
+                mousePosX.current * px + px / 2,
+                0,
+                1,
+                canvasHeight
+              );
+              context.fillRect(
+                0,
+                mousePosY.current * px + px / 2,
+                canvasWidth,
+                1
+              );
+            }
+
+            if (e.buttons && !mouseDraggedIn.current) {
+              dispatch(
+                setArrayOfCells({
+                  arrayOfCells: brushCells,
+                  invertState: isAltKey !== isInvertDraw,
+                })
+              );
+
+              lastPointerUpPosX.current = mousePosX.current;
+              lastPointerUpPosY.current = mousePosY.current;
+            }
           }
         }
+        lastMousePosX.current = mousePosX.current;
+        lastMousePosY.current = mousePosY.current;
       },
       [
         dispatch,
@@ -139,13 +159,14 @@ const Canvas = React.memo(
         px,
         canvasDrawLayerRef,
         shouldDrawCrosshairs,
+        isInTranslateMode,
       ]
     );
 
     const handleCanvasPointerDown = React.useCallback(
       (e) => {
-        if (isInDrawMode) {
-          mouseDraggedIn.current = false;
+        mouseDraggedIn.current = false;
+        if (isInDrawMode && !isInTranslateMode) {
           const canvasX = e.layerX - 1;
           const canvasY = e.layerY - 1;
           mousePosX.current = Math.floor(canvasX / px);
@@ -153,12 +174,16 @@ const Canvas = React.memo(
           const isAltKey = e.altKey;
 
           let points;
-          if (e.shiftKey && lastMousePosX.current && lastMousePosY.current) {
+          if (
+            e.shiftKey &&
+            lastPointerUpPosX.current &&
+            lastPointerUpPosY.current
+          ) {
             let linePoints = getPointsOnLine(
               mousePosX.current,
               mousePosY.current,
-              lastMousePosX.current,
-              lastMousePosY.current
+              lastPointerUpPosX.current,
+              lastPointerUpPosY.current
             );
 
             points = linePoints
@@ -185,9 +210,11 @@ const Canvas = React.memo(
 
           lastMousePosX.current = mousePosX.current;
           lastMousePosY.current = mousePosY.current;
+          lastPointerUpPosX.current = mousePosX.current;
+          lastPointerUpPosY.current = mousePosY.current;
         }
       },
-      [dispatch, brushPoints, isInDrawMode, isInvertDraw, px]
+      [dispatch, brushPoints, isInDrawMode, isInvertDraw, px, isInTranslateMode]
     );
 
     const handleCanvasPointerLeave = React.useCallback(() => {
@@ -264,13 +291,13 @@ const Canvas = React.memo(
           display: 'flex',
           flex: '1 0 auto',
           userSelect: 'none',
-          touchAction: isInDrawMode ? 'none' : 'auto',
+          touchAction: isInDrawMode || isInTranslateMode ? 'none' : 'auto',
         }}
       >
         <CanvasBaseLayer canvasBaseLayerRef={canvasBaseLayerRef} />
         <CanvasGridLayer canvasGridLayerRef={canvasGridLayerRef} />
         <CanvasDrawingLayer canvasDrawLayerRef={canvasDrawLayerRef} />
-        {shouldShowHUD && <Numbers />}
+        {shouldShowHUD && <HUD />}
       </div>
     );
   }

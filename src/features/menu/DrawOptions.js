@@ -3,7 +3,7 @@ import { clamp } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { FaPaintBrush } from 'react-icons/fa';
-import { Radio, RadioGroup, Text } from '@chakra-ui/core';
+import { Radio, RadioGroup, Text, Flex } from '@chakra-ui/core';
 
 import { NumberSlider } from 'features/menu/NumberSlider';
 import { StyledCheckbox } from 'features/menu/StyledCheckbox';
@@ -85,16 +85,20 @@ const DrawOptions = React.memo(() => {
 
   return (
     <>
-      <StyledCheckbox
-        label="erase"
-        isChecked={isInvertDraw}
-        onChange={handleToggleIsInvertDraw}
-      />
-      <StyledCheckbox
-        label="crosshairs"
-        isChecked={shouldDrawCrosshairs}
-        onChange={handleToggleShouldDrawCrosshairs}
-      />
+      <Flex direction="row">
+        <StyledCheckbox
+          label="erase"
+          isChecked={isInvertDraw}
+          onChange={handleToggleIsInvertDraw}
+          mr="0.5rem"
+        />
+        <StyledCheckbox
+          label="crosshairs"
+          isChecked={shouldDrawCrosshairs}
+          onChange={handleToggleShouldDrawCrosshairs}
+          mr="0.5rem"
+        />
+      </Flex>
 
       <RadioGroup onChange={handleBrushShapeChange} value={brushShape} isInline>
         {validBrushShapes.map((opt) => (

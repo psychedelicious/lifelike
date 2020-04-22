@@ -102,9 +102,10 @@ export const InfoModal = () => {
         h="unset"
         minW="unset"
         mr="0.5rem"
-        variant="unstyled"
+        variant="link"
         aria-label="help"
         onClick={onOpen}
+        variantColor="blue"
       />
 
       <Modal

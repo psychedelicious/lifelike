@@ -25,7 +25,8 @@ export const SaveCanvasAsImageButton = React.memo(
         h="unset"
         minW="unset"
         mr="0.5rem"
-        variant="unstyled"
+        variant="link"
+        variantColor="blue"
         aria-label="save grid as image"
         onClick={handleClick}
       />
