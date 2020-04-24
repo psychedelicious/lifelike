@@ -5,9 +5,10 @@ import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
 
 import { InfoModal } from 'features/menu/InfoModal';
-import { SaveCanvasAsImageButton } from 'features/menu/SaveCanvasAsImageButton';
+import { SaveAsImageButton } from 'features/menu/SaveAsImageButton';
 import { useSelector } from 'react-redux';
-import { SaveAnimationButton } from './SaveAnimationButton';
+import { SaveAsVideoButton } from './SaveAsVideoButton';
+import { SaveAsImageArchiveButton } from './SaveAsImageArchiveButton';
 
 const Header = React.memo(
   ({
@@ -17,6 +18,9 @@ const Header = React.memo(
     isRecording,
     handleStartCapture,
     handleStopCapture,
+    isRecordingArchive,
+    handleStopRecordingArchive,
+    handleStartRecordingArchive,
     ...rest
   }) => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -33,14 +37,21 @@ const Header = React.memo(
         </Heading>
 
         <Flex justify="right">
-          <SaveAnimationButton
+          <SaveAsVideoButton
             canvasBaseLayerRef={canvasBaseLayerRef}
             isRecording={isRecording}
             handleStartCapture={handleStartCapture}
             handleStopCapture={handleStopCapture}
             variantColor="blue"
           />
-          <SaveCanvasAsImageButton
+
+          <SaveAsImageArchiveButton
+            isRecordingArchive={isRecordingArchive}
+            handleStopRecordingArchive={handleStopRecordingArchive}
+            handleStartRecordingArchive={handleStartRecordingArchive}
+          />
+
+          <SaveAsImageButton
             canvasBaseLayerRef={canvasBaseLayerRef}
             canvasGridLayerRef={canvasGridLayerRef}
             variantColor="blue"

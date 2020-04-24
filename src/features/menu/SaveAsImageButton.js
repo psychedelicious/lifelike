@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { IoMdImage } from 'react-icons/io';
+import { FaImage } from 'react-icons/fa';
 import { IconButton } from '@chakra-ui/core';
 
 import { useCanvas } from 'features/canvas/useCanvas';
 
-export const SaveCanvasAsImageButton = React.memo(
+export const SaveAsImageButton = React.memo(
   ({ canvasBaseLayerRef, canvasGridLayerRef }) => {
     const { saveCanvasAsImage } = useCanvas();
 
@@ -19,7 +19,7 @@ export const SaveCanvasAsImageButton = React.memo(
 
     return (
       <IconButton
-        icon={IoMdImage}
+        icon={FaImage}
         fontSize="1.5rem"
         p={0}
         h="unset"
@@ -34,7 +34,7 @@ export const SaveCanvasAsImageButton = React.memo(
   }
 );
 
-SaveCanvasAsImageButton.propTypes = {
+SaveAsImageButton.propTypes = {
   canvasBaseLayerRef: PropTypes.object.isRequired,
   canvasGridLayerRef: PropTypes.object.isRequired,
 };

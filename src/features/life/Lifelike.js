@@ -3,12 +3,14 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Chakra UI
-import { Grid, useColorMode, Button } from '@chakra-ui/core';
+import { useColorMode } from '@chakra-ui/core';
 
 // Components
 import Canvas from 'features/canvas/Canvas';
 import Header from 'features/menu/Header';
 import MainControls from 'features/menu/MainControls';
+
+import { saveAs } from 'file-saver';
 
 // Hooks
 import { useAnimationFrame } from 'hooks/useAnimationFrame';
@@ -25,9 +27,8 @@ import {
 } from 'store/reducers/life';
 
 import MainAccordion from 'features/menu/MainAccordion';
-// const CCapture = require('ccapture.js');
 
-import CCapture from 'ccapture.js';
+import JSZip from 'jszip';
 
 const Lifelike = ({ isMobile }) => {
   const {
@@ -73,6 +74,40 @@ const Lifelike = ({ isMobile }) => {
   const canvasGridLayerRef = React.useRef(null);
   const canvasDrawLayerRef = React.useRef(null);
 
+  const [isRecordingArchive, setIsRecordingArchive] = React.useState(false);
+  const zip = React.useRef();
+  const recordingArchiveFileIndex = React.useRef(0);
+
+  const getCanvasBlob = (canvasLayer1, canvasLayer2, callback) => {
+    if (canvasLayer2) {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvasLayer1.width;
+      tempCanvas.height = canvasLayer1.height;
+
+      const tempContext = tempCanvas.getContext('2d');
+
+      tempContext.drawImage(canvasLayer1, 0, 0);
+      tempContext.drawImage(canvasLayer2, 0, 0);
+
+      return tempCanvas.toBlob(callback);
+    } else {
+      return canvasLayer1.toBlob(callback);
+    }
+  };
+
+  const handleStartRecordingArchive = React.useCallback(() => {
+    setIsRecordingArchive(true);
+    recordingArchiveFileIndex.current = 0;
+    zip.current = new JSZip();
+  }, []);
+
+  const handleStopRecordingArchive = React.useCallback(() => {
+    setIsRecordingArchive(false);
+    zip.current.generateAsync({ type: 'blob' }).then(function (blob) {
+      saveAs(blob, 'lifelike.zip');
+    });
+  }, []);
+
   const fitCellsToCanvas = React.useCallback(() => {
     const { newWidth, newHeight } = getCellDimensions({
       canvasBaseLayerRef,
@@ -113,37 +148,40 @@ const Lifelike = ({ isMobile }) => {
   const stream = React.useRef();
   // console.log(recorder.current);
 
-  function startRecording() {
+  const exportVid = React.useCallback((blob) => {
+    const a = document.createElement('a');
+    a.download = 'myvid.mp4';
+    a.href = URL.createObjectURL(blob);
+    a.click();
+  }, []);
+
+  const startRecording = React.useCallback(() => {
     const chunks = []; // here we will store our recorded media chunks (Blobs)
     stream.current = canvasBaseLayerRef.current.captureStream(); // grab our canvas MediaStream
     recorder.current = new MediaRecorder(stream.current, {
-      videoBitsPerSecond: 2500000,
+      videoBitsPerSecond: 10000000,
     }); // init the recorder
     // every time the recorder has new data, we will store it in our array
-    recorder.current.ondataavailable = (e) => chunks.push(e.data);
+    recorder.current.ondataavailable = (e) =>
+      e.data && e.data.size > 0 && chunks.push(e.data);
     // only when the recorder stops, we construct a complete Blob from all the chunks
     recorder.current.onstop = (e) =>
-      exportVid(new Blob(chunks, { type: 'video/webm' }));
+      exportVid(new Blob(chunks, { type: 'video/mp4' }));
 
+    // console.log(recorder.current, stream.current)
     recorder.current.start();
-  }
+    // recorder.current.pause();
+  }, [exportVid]);
 
-  function exportVid(blob) {
-    const a = document.createElement('a');
-    a.download = 'myvid.webm';
-    a.href = URL.createObjectURL(blob);
-    a.click();
-  }
-
-  const handleStartCapture = () => {
+  const handleStartCapture = React.useCallback(() => {
     startRecording();
     setIsRecording(true);
-  };
+  }, [startRecording]);
 
-  const handleStopCapture = () => {
+  const handleStopCapture = React.useCallback(() => {
     setIsRecording(false);
     recorder.current.stop();
-  };
+  }, []);
 
   useAnimationFrame(() => {
     if (isRunning && window.performance.now() - previousFrameTime > msDelay) {
@@ -164,11 +202,11 @@ const Lifelike = ({ isMobile }) => {
     }
   });
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     dispatch(setColorMode({ colorMode }));
   }, [dispatch, colorMode]);
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     drawCells({
       aliveCellColor,
       canvasBaseLayer: canvasBaseLayerRef.current,
@@ -178,15 +216,24 @@ const Lifelike = ({ isMobile }) => {
       px,
       width,
     });
+    if (isRecordingArchive) {
+      getCanvasBlob(
+        canvasBaseLayerRef.current,
+        canvasGridLayerRef.current,
+        (blob) =>
+          zip.current.file(`${recordingArchiveFileIndex.current}.png`, blob)
+      );
+      recordingArchiveFileIndex.current++;
+    }
   }, [
     aliveCellColor,
     cells,
     deadCellColor,
-    drawCells,
     height,
+    drawCells,
     px,
     width,
-    isRecording,
+    isRecordingArchive,
   ]);
 
   React.useLayoutEffect(() => {
@@ -209,48 +256,59 @@ const Lifelike = ({ isMobile }) => {
     width,
   ]);
 
-  React.useEffect(() => {
-    // should only run on first render
+  React.useLayoutEffect(() => {
     fitCellsToCanvas();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // React.useLayoutEffect(() => {
+  //   if (isRecordingArchive) {
+  //     getCanvasBlob(
+  //       canvasBaseLayerRef.current,
+  //       canvasGridLayerRef.current,
+  //       (blob) =>
+  //         zip.current.file(`${recordingArchiveFileIndex.current}.png`, blob)
+  //     );
+  //     recordingArchiveFileIndex.current++;
+  //   }
+  // }, [cells]);
+
+  const gridStyle = React.useMemo(
+    () => ({
+      display: 'grid',
+      width: '100%',
+      height: '100%',
+      columnGap: '1rem',
+      alignItems: 'center',
+      gridTemplateColumns: isMobile ? 'auto' : '22rem auto',
+      gridTemplateAreas: isMobile
+        ? `"."
+"canvas"
+"."
+"."
+"."
+"."
+"."
+"."
+"."
+"."`
+        : `". canvas"
+". canvas"
+". canvas"
+". canvas"
+". canvas"
+". canvas"
+". canvas"
+". canvas"
+". canvas"
+". canvas"`,
+      userSelect: 'none',
+      touchAction: 'manipulation',
+    }),
+    [isMobile]
+  );
+
   return (
-    <Grid
-      w="100%"
-      h="100%"
-      columnGap="1rem"
-      alignItems="center"
-      gridTemplateColumns={{
-        base: 'auto',
-        md: '22rem auto',
-      }}
-      gridTemplateAreas={{
-        base: `"."
-  "canvas"
-  "."
-  "."
-  "."
-  "."
-  "."
-  "."
-  "."
-  "."`,
-        md: `". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"
-    ". canvas"`,
-      }}
-      userSelect="none"
-      style={{
-        touchAction: 'manipulation',
-      }}
-    >
+    <div style={gridStyle}>
       <Header
         justify="space-between"
         alignItems="center"
@@ -260,6 +318,9 @@ const Lifelike = ({ isMobile }) => {
         isRecording={isRecording}
         handleStartCapture={handleStartCapture}
         handleStopCapture={handleStopCapture}
+        isRecordingArchive={isRecordingArchive}
+        handleStopRecordingArchive={handleStopRecordingArchive}
+        handleStartRecordingArchive={handleStartRecordingArchive}
       />
 
       <MainControls
@@ -285,7 +346,7 @@ const Lifelike = ({ isMobile }) => {
         canvasGridLayerRef={canvasGridLayerRef}
         canvasDrawLayerRef={canvasDrawLayerRef}
       />
-    </Grid>
+    </div>
   );
 };
 
@@ -293,4 +354,8 @@ Lifelike.propTypes = {
   isMobile: PropTypes.bool.isRequired,
 };
 
-export default Lifelike;
+export default React.memo(Lifelike, (prevProps, nextProps) => {
+  console.log('Prev:', prevProps);
+  console.log('Next:', nextProps);
+  return prevProps === nextProps;
+});

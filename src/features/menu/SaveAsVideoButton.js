@@ -6,7 +6,7 @@ import { MdFiberManualRecord } from 'react-icons/md';
 
 import { IconButton } from '@chakra-ui/core';
 
-export const SaveAnimationButton = React.memo(
+export const SaveAsVideoButton = React.memo(
   ({ isRecording, handleStartCapture, handleStopCapture }) => {
     return (
       <IconButton
@@ -25,7 +25,8 @@ export const SaveAnimationButton = React.memo(
   }
 );
 
-SaveAnimationButton.propTypes = {
-  canvasBaseLayerRef: PropTypes.object.isRequired,
-  canvasGridLayerRef: PropTypes.object.isRequired,
+SaveAsVideoButton.propTypes = {
+  isRecording: PropTypes.bool.isRequired,
+  handleStartCapture: PropTypes.func.isRequired,
+  handleStopCapture: PropTypes.func.isRequired,
 };

@@ -5,7 +5,7 @@ import { Box, useTheme } from '@chakra-ui/core';
 
 import Lifelike from 'features/life/Lifelike';
 
-export default function App() {
+const App = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.md });
 
@@ -19,4 +19,6 @@ export default function App() {
       <Lifelike isMobile={isMobile} />
     </Box>
   );
-}
+};
+
+export default React.memo(App);
