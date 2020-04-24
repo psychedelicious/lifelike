@@ -1277,6 +1277,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
+"@jwdinker/use-animation-frame@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@jwdinker/use-animation-frame/-/use-animation-frame-1.0.3.tgz#c84cc91719d7b00abc2e91ba0fb613e143621284"
+  integrity sha512-bRlZZsvb7PMeQd3YZPPP1ZF/TMOwu6d+3AVNql01cJis+bQXs5/3lBhwPqHpprTjAZnYdhCYA7QEUNCeD1zYGw==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -7180,6 +7185,11 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
+multistreamsmixer@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/multistreamsmixer/-/multistreamsmixer-1.2.2.tgz#9a3c78a50301cfd3f3e881845acf8d41386ffcda"
+  integrity sha512-5UGMODV/vDFLs8CaYEgFgo2sg+kI6hzXy4e02C8nvqfp7hfCikzAC65p+nNPVRqvBhtMoA2HwAz6qN8iMvoaoA==
+
 mute-stream@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
@@ -9059,6 +9069,11 @@ react-spring@^8.0.27:
     "@babel/runtime" "^7.3.1"
     prop-types "^15.5.8"
 
+react-timing-hooks@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/react-timing-hooks/-/react-timing-hooks-1.3.2.tgz#bd99dded5ab9c7df2f630665ea9d2fa43e513a30"
+  integrity sha512-oIgJevQKpdiVGlJJxb3B5Bi4qgc78h98MfZxSk2Nam2d5DOE3HMie2XFHv8w7+iAC9QpWOq6T9DJaLUT5C1pew==
+
 react@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
@@ -10722,6 +10737,11 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
+use-animation-frame@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/use-animation-frame/-/use-animation-frame-0.1.0.tgz#1dc235ab7d7d340ec99b1c45f8f2143a5b78331b"
+  integrity sha512-vRdNzrphRaBOeq/pHSFWY3s6aoPELF3Zq92rSbm+Tj5qdKBtemfsQfYCLWAp4dnQ/3crpBD6iEAQ6IG2w8Q8Ww==
+
 use-callback-ref@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/use-callback-ref/-/use-callback-ref-1.2.1.tgz#898759ccb9e14be6c7a860abafa3ffbd826c89bb"
@@ -10734,6 +10754,11 @@ use-dark-mode@2.3.1:
   dependencies:
     "@use-it/event-listener" "^0.1.2"
     use-persisted-state "^0.3.0"
+
+use-interpolation@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/use-interpolation/-/use-interpolation-0.2.0.tgz#9159255c8641da9d903eb9a002c9bafeb50568c2"
+  integrity sha512-VN1saqEw3tRK9pAcHauANMF70i9M6kIS1uIHOhBRZ/vVU7/TJ9gQfqic6smn3U4kdGn93jOpVQTKqv3pTBWuLg==
 
 use-persisted-state@^0.3.0:
   version "0.3.0"

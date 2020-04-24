@@ -131,12 +131,13 @@ const Canvas = React.memo(
             }
 
             if (e.buttons && !mouseDraggedIn.current) {
-              dispatch(
-                setArrayOfCells({
-                  arrayOfCells: brushCells,
-                  invertState: isAltKey !== isInvertDraw,
-                })
-              );
+              brushCells.length &&
+                dispatch(
+                  setArrayOfCells({
+                    arrayOfCells: brushCells,
+                    invertState: isAltKey !== isInvertDraw,
+                  })
+                );
 
               lastPointerUpPosX.current = mousePosX.current;
               lastPointerUpPosY.current = mousePosY.current;
@@ -201,12 +202,13 @@ const Canvas = React.memo(
             }));
           }
 
-          dispatch(
-            setArrayOfCells({
-              arrayOfCells: points,
-              invertState: isAltKey !== isInvertDraw,
-            })
-          );
+          points.length &&
+            dispatch(
+              setArrayOfCells({
+                arrayOfCells: points,
+                invertState: isAltKey !== isInvertDraw,
+              })
+            );
 
           lastMousePosX.current = mousePosX.current;
           lastMousePosY.current = mousePosY.current;

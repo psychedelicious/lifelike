@@ -29,6 +29,8 @@ const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
   'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
 const TOGGLE_SHOULD_SWAP_CELL_COLORS = 'TOGGLE_SHOULD_SWAP_CELL_COLORS';
 const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
+const SET_IS_RECORDING_ARCHIVE = 'SET_IS_RECORDING_ARCHIVE';
+const SET_IS_RECORDING_VIDEO = 'SET_IS_RECORDING_VIDEO';
 
 const initialState = {
   cells: [],
@@ -43,12 +45,15 @@ const initialState = {
   shouldWrap: true,
   shouldShowGridlines: false,
   isRunning: false,
+  isRecordingArchive: false,
+  isRecordingVideo: false,
   shouldPauseOnStableState: false,
   shouldShowHUD: false,
   generation: 0,
   population: 0,
   density: 0,
   cellsChanged: true,
+  visibleChangeCounter: 0,
   canvasWidth: 0,
   canvasHeight: 0,
   canvasContainerWidth: 0,
@@ -110,6 +115,7 @@ export default function life(state = initialState, action) {
         generation: 0,
         cells: randomizedCells,
         cellsChanged: true,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
         population: randomizedCellsPopulation,
         density: getDensity(
           randomizedCellsPopulation,
@@ -129,6 +135,8 @@ export default function life(state = initialState, action) {
         cells: clearedCells,
         population: clearedCellsPopulation,
         cellsChanged: true,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
+
         density: getDensity(clearedCellsPopulation, state.width, state.height),
       };
     case TOGGLE_IS_RUNNING:
@@ -145,6 +153,7 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         shouldShowGridlines: !state.shouldShowGridlines,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
       };
     case TOGGLE_SHOULD_SHOW_HUD:
       return {
@@ -207,6 +216,8 @@ export default function life(state = initialState, action) {
         cells: nextCells,
         population: nextPopulation,
         cellsChanged: cellsChanged,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
+
         density: getDensity(nextPopulation, state.width, state.height),
       };
     }
@@ -226,6 +237,9 @@ export default function life(state = initialState, action) {
         canvasContainerWidth: action.payload.canvasContainerWidth,
         canvasContainerHeight: action.payload.canvasContainerHeight,
         cells: setGridCells,
+        cellsChanged: true,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
+
         population: setGridPopulation,
         density: getDensity(
           setGridPopulation,
@@ -262,6 +276,8 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         colorMode: colorMode,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
+
         colors: {
           aliveCellColor,
           deadCellColor,
@@ -298,6 +314,8 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         shouldSwapCellColors,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
+
         colors: { aliveCellColor, deadCellColor, gridlineColor },
       };
     }
@@ -335,6 +353,8 @@ export default function life(state = initialState, action) {
         cells: newArrayOfCells,
         population: newPopulation,
         cellsChanged: true,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
+
         density: getDensity(newPopulation, state.width, state.height),
       };
     }
@@ -381,6 +401,20 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         cells: translatedCells,
+        cellsChanged: true,
+        visibleChangeCounter: state.visibleChangeCounter + 1,
+      };
+    }
+    case SET_IS_RECORDING_ARCHIVE: {
+      return {
+        ...state,
+        isRecordingArchive: action.isRecordingArchive,
+      };
+    }
+    case SET_IS_RECORDING_VIDEO: {
+      return {
+        ...state,
+        isRecordingVideo: action.isRecordingVideo,
       };
     }
     default:
@@ -400,6 +434,16 @@ export const toggleShouldShowGridlines = () => ({
 
 export const toggleShouldPauseOnStableState = () => ({
   type: TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE,
+});
+
+export const setIsRecordingVideo = (isRecordingVideo) => ({
+  type: SET_IS_RECORDING_VIDEO,
+  isRecordingVideo,
+});
+
+export const setIsRecordingArchive = (isRecordingArchive) => ({
+  type: SET_IS_RECORDING_ARCHIVE,
+  isRecordingArchive,
 });
 
 export const setGrid = ({

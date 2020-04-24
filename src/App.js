@@ -1,12 +1,14 @@
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-import { Box, useTheme } from '@chakra-ui/core';
+import { Box, useTheme, useColorMode } from '@chakra-ui/core';
 
 import Lifelike from 'features/life/Lifelike';
 
 const App = () => {
   const theme = useTheme();
+  const { colorMode } = useColorMode();
+
   const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.md });
 
   return (
@@ -16,7 +18,7 @@ const App = () => {
       px={isMobile ? '0.75rem' : '1rem'}
       py={isMobile ? '0.5rem' : '1rem'}
     >
-      <Lifelike isMobile={isMobile} />
+      <Lifelike isMobile={isMobile} colorMode={colorMode} />
     </Box>
   );
 };

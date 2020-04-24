@@ -1,26 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
 
 import { InfoModal } from 'features/menu/InfoModal';
 import { SaveAsImageButton } from 'features/menu/SaveAsImageButton';
-import { useSelector } from 'react-redux';
 import { SaveAsVideoButton } from './SaveAsVideoButton';
-import { SaveAsImageArchiveButton } from './SaveAsImageArchiveButton';
 
 const Header = React.memo(
   ({
     isMobile,
     canvasBaseLayerRef,
     canvasGridLayerRef,
-    isRecording,
     handleStartCapture,
     handleStopCapture,
-    isRecordingArchive,
-    handleStopRecordingArchive,
-    handleStartRecordingArchive,
     ...rest
   }) => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -39,16 +34,9 @@ const Header = React.memo(
         <Flex justify="right">
           <SaveAsVideoButton
             canvasBaseLayerRef={canvasBaseLayerRef}
-            isRecording={isRecording}
             handleStartCapture={handleStartCapture}
             handleStopCapture={handleStopCapture}
             variantColor="blue"
-          />
-
-          <SaveAsImageArchiveButton
-            isRecordingArchive={isRecordingArchive}
-            handleStopRecordingArchive={handleStopRecordingArchive}
-            handleStartRecordingArchive={handleStartRecordingArchive}
           />
 
           <SaveAsImageButton
