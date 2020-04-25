@@ -10,7 +10,7 @@ const TOGGLE_IS_IN_TRANSLATE_MODE = 'TOGGLE_IS_IN_TRANSLATE_MODE';
 const initialState = {
   brushShape: 'circle',
   validBrushShapes: ['square', 'circle', 'pencil'],
-  brushRadius: 1,
+  brushRadius: 3,
   minBrushRadius: 1,
   maxBrushRadius: 50,
   brushPoints: [],

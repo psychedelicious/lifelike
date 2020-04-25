@@ -8,9 +8,9 @@ import {
   setNeighborhood,
   getNextCells,
   translateCells,
-  incrementSpeed,
-  decrementSpeed,
 } from 'store/reducers/life';
+
+import { incrementSpeed, decrementSpeed } from 'store/reducers/performance';
 
 import {
   toggleIsInDrawMode,

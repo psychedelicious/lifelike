@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@chakra-ui/core';
 
-const CanvasDrawingLayer = React.memo(({ canvasBaseLayerRef }) => {
+const CanvasDrawingLayer = ({ canvasBaseLayerRef }) => {
   const theme = useTheme();
   const canvasWidth = useSelector((state) => state.life.canvasWidth);
   const canvasHeight = useSelector((state) => state.life.canvasHeight);
@@ -18,10 +18,10 @@ const CanvasDrawingLayer = React.memo(({ canvasBaseLayerRef }) => {
       }}
     ></canvas>
   );
-});
+};
 
 CanvasDrawingLayer.propTypes = {
   canvasBaseLayerRef: PropTypes.object.isRequired,
 };
 
-export default CanvasDrawingLayer;
+export default React.memo(CanvasDrawingLayer);

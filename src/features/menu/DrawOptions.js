@@ -6,7 +6,7 @@ import { FaPaintBrush } from 'react-icons/fa';
 import { Radio, RadioGroup, Text, Flex } from '@chakra-ui/core';
 
 import { NumberSlider } from 'features/menu/NumberSlider';
-import { StyledCheckbox } from 'features/menu/StyledCheckbox';
+import StyledCheckbox from 'features/menu/StyledCheckbox';
 
 import {
   toggleIsInvertDraw,
@@ -14,7 +14,7 @@ import {
   toggleShouldDrawCrosshairs,
 } from 'store/reducers/drawing';
 
-const DrawOptions = React.memo(() => {
+const DrawOptions = () => {
   const brushFill = useSelector((state) => state.drawing.brushFill);
   const validBrushFills = useSelector((state) => state.drawing.validBrushFills);
   const brushRadius = useSelector((state) => state.drawing.brushRadius);
@@ -126,6 +126,6 @@ const DrawOptions = React.memo(() => {
       />
     </>
   );
-});
+};
 
-export default DrawOptions;
+export default React.memo(DrawOptions);

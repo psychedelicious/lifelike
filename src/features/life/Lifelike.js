@@ -2,13 +2,11 @@ import React from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
-// Chakra UI
-// import { useColorMode } from '@chakra-ui/core';
-
 // Components
-import Canvas from 'features/canvas/Canvas';
 import Header from 'features/menu/Header';
+import Canvas from 'features/canvas/Canvas';
 import MainControls from 'features/menu/MainControls';
+import MainAccordion from 'features/menu/MainAccordion';
 
 // Hooks
 import { useAnimationFrame } from 'hooks/useAnimationFrame';
@@ -16,15 +14,9 @@ import { useCanvas } from 'features/canvas/useCanvas';
 import { getCellDimensions } from 'features/life/getCellDimensions';
 import { useKeyboardShortcuts } from 'features/life/useKeyboardShortcuts';
 
-import {
-  getNextCells,
-  setColorMode,
-  toggleIsRunning,
-  setFps,
-  setIsRecordingVideo,
-} from 'store/reducers/life';
-
-import MainAccordion from 'features/menu/MainAccordion';
+import { getNextCells, toggleIsRunning } from 'store/reducers/life';
+import { setFps } from 'store/reducers/performance';
+import { setColorMode } from 'store/reducers/theme';
 
 const Lifelike = ({ isMobile, colorMode }) => {
   const {
@@ -45,14 +37,14 @@ const Lifelike = ({ isMobile, colorMode }) => {
   const isRunning = useSelector((state) => state.life.isRunning);
 
   const { aliveCellColor, deadCellColor, gridlineColor } = useSelector(
-    (state) => state.life.colors,
+    (state) => state.theme.colors,
     shallowEqual
   );
   const maxHeight = useSelector((state) => state.life.maxHeight);
   const maxWidth = useSelector((state) => state.life.maxWidth);
   const minHeight = useSelector((state) => state.life.minHeight);
   const minWidth = useSelector((state) => state.life.minWidth);
-  const msDelay = useSelector((state) => state.life.msDelay);
+  const msDelay = useSelector((state) => state.performance.msDelay);
   const px = useSelector((state) => state.life.px);
   const shouldShowGridlines = useSelector(
     (state) => state.life.shouldShowGridlines
@@ -101,51 +93,6 @@ const Lifelike = ({ isMobile, colorMode }) => {
     canvasDrawLayerRef,
     fitCellsToCanvas,
   });
-
-  const recorder = React.useRef();
-  const stream = React.useRef();
-
-  const exportVid = React.useCallback((blob) => {
-    const a = document.createElement('a');
-    const uid = Math.random().toString(36).substr(2, 9);
-    a.download = `lifelike_${uid}.webm`;
-    a.href = URL.createObjectURL(blob);
-    a.click();
-  }, []);
-
-  const startRecording = React.useCallback(() => {
-    const chunks = []; // here we will store our recorded media chunks (Blobs)
-    let mimeType;
-    if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-      mimeType = 'video/webm;codecs=vp9';
-    } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
-      mimeType = 'video/webm;codecs=vp8';
-    }
-
-    stream.current = canvasBaseLayerRef.current.captureStream(); // grab our canvas MediaStream
-
-    recorder.current = new MediaRecorder(stream.current, {
-      videoBitsPerSecond: 10000000,
-      mimeType,
-    }); // init the recorder
-    // every time the recorder has new data, we will store it in our array
-    recorder.current.ondataavailable = (e) =>
-      e.data && e.data.size > 0 && chunks.push(e.data);
-    // only when the recorder stops, we construct a complete Blob from all the chunks
-    recorder.current.onstop = (e) =>
-      exportVid(new Blob(chunks, { type: 'video/webm' }));
-    recorder.current.start();
-  }, [exportVid]);
-
-  const handleStartCapture = React.useCallback(() => {
-    startRecording();
-    dispatch(setIsRecordingVideo(true));
-  }, [dispatch, startRecording]);
-
-  const handleStopCapture = React.useCallback(() => {
-    dispatch(setIsRecordingVideo(false));
-    recorder.current.stop();
-  }, [dispatch]);
 
   useAnimationFrame(() => {
     if (isRunning && window.performance.now() - lastTick.current > msDelay) {
@@ -246,8 +193,6 @@ const Lifelike = ({ isMobile, colorMode }) => {
         isMobile={isMobile}
         canvasBaseLayerRef={canvasBaseLayerRef}
         canvasGridLayerRef={canvasGridLayerRef}
-        handleStartCapture={handleStartCapture}
-        handleStopCapture={handleStopCapture}
       />
 
       <MainControls

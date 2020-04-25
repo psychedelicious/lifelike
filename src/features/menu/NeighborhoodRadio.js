@@ -6,7 +6,7 @@ import { Text, Radio, Box, Flex } from '@chakra-ui/core';
 import { setNeighborhood } from 'store/reducers/life';
 import { Neighborhoods } from 'features/life/neighborhoods';
 
-const NeighborhoodRadio = React.memo(({ ...rest }) => {
+const NeighborhoodRadio = ({ ...rest }) => {
   const neighborhood = useSelector(
     (state) => state.life.neighborhood,
     shallowEqual
@@ -39,6 +39,6 @@ const NeighborhoodRadio = React.memo(({ ...rest }) => {
       </Flex>
     </Flex>
   );
-});
+};
 
-export default NeighborhoodRadio;
+export default React.memo(NeighborhoodRadio);

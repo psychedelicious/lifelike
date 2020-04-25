@@ -16,52 +16,57 @@ import { useSelector } from 'react-redux';
 
 import { lightDarkenColor } from 'features/menu/utilities';
 
-export const NumberSlider = React.memo(
-  ({ value, min, max, onChange, icon, isDisabled = false }) => {
-    const { colorMode } = useColorMode();
+export const NumberSlider = ({
+  value,
+  min,
+  max,
+  onChange,
+  icon,
+  isDisabled = false,
+}) => {
+  const { colorMode } = useColorMode();
 
-    const { aliveCellColor, deadCellColor } = useSelector(
-      (state) => state.life[`${colorMode}ModeColors`]
-    );
+  const { aliveCellColor, deadCellColor } = useSelector(
+    (state) => state.theme[`${colorMode}ModeColors`]
+  );
 
-    const disabledDeadCellColor = lightDarkenColor(deadCellColor, -100);
+  const disabledDeadCellColor = lightDarkenColor(deadCellColor, -100);
 
-    return (
-      <Flex my="1">
-        <Slider
-          flex="1"
-          value={value}
-          min={min}
-          max={max}
-          onChange={onChange}
-          isDisabled={isDisabled}
+  return (
+    <Flex my="1">
+      <Slider
+        flex="1"
+        value={value}
+        min={min}
+        max={max}
+        onChange={onChange}
+        isDisabled={isDisabled}
+      >
+        <SliderTrack />
+        <SliderFilledTrack />
+        <SliderThumb
+          size={6}
+          borderRadius="sm"
+          bg={deadCellColor}
+          _disabled={{ bg: disabledDeadCellColor }}
         >
-          <SliderTrack />
-          <SliderFilledTrack />
-          <SliderThumb
-            size={6}
-            borderRadius="sm"
-            bg={deadCellColor}
-            _disabled={{ bg: disabledDeadCellColor }}
-          >
-            <Box color={aliveCellColor} as={icon} />
-          </SliderThumb>
-        </Slider>
-        <NumberInput
-          size="sm"
-          maxW="5rem"
-          ml="1.5rem"
-          min={min}
-          max={max}
-          value={value}
-          onChange={onChange}
-          type="number"
-          isDisabled={isDisabled}
-        />
-      </Flex>
-    );
-  }
-);
+          <Box color={aliveCellColor} as={icon} />
+        </SliderThumb>
+      </Slider>
+      <NumberInput
+        size="sm"
+        maxW="5rem"
+        ml="1.5rem"
+        min={min}
+        max={max}
+        value={value}
+        onChange={onChange}
+        type="number"
+        isDisabled={isDisabled}
+      />
+    </Flex>
+  );
+};
 
 NumberSlider.propTypes = {
   value: PropTypes.number.isRequired,
@@ -71,3 +76,5 @@ NumberSlider.propTypes = {
   icon: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
 };
+
+export default React.memo(NumberSlider);

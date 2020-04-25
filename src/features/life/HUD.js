@@ -32,19 +32,19 @@ const NumberDisplay = React.memo(({ name, value }) => {
   );
 });
 
-const HUD = React.memo(() => {
+const HUD = () => {
   const density = useSelector((state) => state.life.density);
   const generation = useSelector((state) => state.life.generation);
   const height = useSelector((state) => state.life.height);
-  const msDelay = useSelector((state) => state.life.msDelay);
-  const speed = useSelector((state) => state.life.speed);
-  const fps = useSelector((state) => state.life.fps);
+  const msDelay = useSelector((state) => state.performance.msDelay);
+  const speed = useSelector((state) => state.performance.speed);
+  const fps = useSelector((state) => state.performance.fps);
   const population = useSelector((state) => state.life.population);
   const px = useSelector((state) => state.life.px);
   const width = useSelector((state) => state.life.width);
   const isRunning = useSelector((state) => state.life.isRunning);
   const { aliveCellColor, deadCellColor } = useSelector(
-    (state) => state.life.colors,
+    (state) => state.theme.colors,
     shallowEqual
   );
   const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
@@ -100,6 +100,6 @@ const HUD = React.memo(() => {
       </Box>
     </>
   );
-});
+};
 
-export default HUD;
+export default React.memo(HUD);

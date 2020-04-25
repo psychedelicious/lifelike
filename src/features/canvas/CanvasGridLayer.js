@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-const CanvasGridLayer = React.memo(({ canvasGridLayerRef }) => {
+const CanvasGridLayer = ({ canvasGridLayerRef }) => {
   const canvasWidth = useSelector((state) => state.life.canvasWidth);
   const canvasHeight = useSelector((state) => state.life.canvasHeight);
 
@@ -19,10 +19,10 @@ const CanvasGridLayer = React.memo(({ canvasGridLayerRef }) => {
       }}
     ></canvas>
   );
-});
+};
 
 CanvasGridLayer.propTypes = {
   canvasGridLayerRef: PropTypes.object.isRequired,
 };
 
-export default CanvasGridLayer;
+export default React.memo(CanvasGridLayer);

@@ -8,57 +8,43 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  // Tooltip,
   useColorMode,
 } from '@chakra-ui/core';
+import { useSelector } from 'react-redux';
 
-export const MobilePxSlider = React.memo(
-  ({ px, min, max, onChange, isDisabled, ...rest }) => {
-    const { colorMode } = useColorMode();
+export const MobilePxSlider = ({ onChange, isDisabled, ...rest }) => {
+  const { colorMode } = useColorMode();
+  const bg = colorMode === 'light' ? 'gray.50' : 'blue.100';
+  const color = colorMode === 'light' ? 'blue.600' : 'blue.800';
 
-    return (
-      <Slider
-        {...rest}
-        flex="1"
-        value={px}
-        min={min}
-        max={max}
-        onChange={onChange}
-        isDisabled={isDisabled}
-        w="calc(100% - 2rem)"
-        alignSelf="center"
-      >
-        <SliderTrack />
-        <SliderFilledTrack />
-        {/* <Tooltip
-          hasArrow
-          label={`${delayString} delay`}
-          placement="top"
-          zIndex="2"
-          bg={colorMode === 'light' ? 'gray.50' : 'blue.100'}
-          color={colorMode === 'light' ? 'blue.600' : 'blue.800'}
-        > */}
-        <SliderThumb
-          size={6}
-          borderRadius="sm"
-          border="1px "
-          bg={colorMode === 'light' ? 'gray.50' : 'blue.100'}
-        >
-          <Box
-            as={GiResize}
-            color={colorMode === 'light' ? 'blue.600' : 'blue.800'}
-          />
-        </SliderThumb>
-        {/* </Tooltip> */}
-      </Slider>
-    );
-  }
-);
+  const px = useSelector((state) => state.life.px);
+  const minPx = useSelector((state) => state.life.minPx);
+  const maxPx = useSelector((state) => state.life.maxPx);
+
+  return (
+    <Slider
+      {...rest}
+      flex="1"
+      value={px}
+      min={minPx}
+      max={maxPx}
+      onChange={onChange}
+      isDisabled={isDisabled}
+      w="calc(100% - 2rem)"
+      alignSelf="center"
+    >
+      <SliderTrack />
+      <SliderFilledTrack />
+      <SliderThumb size={6} borderRadius="sm" border="1px " bg={bg}>
+        <Box as={GiResize} color={color} />
+      </SliderThumb>
+    </Slider>
+  );
+};
 
 MobilePxSlider.propTypes = {
-  px: PropTypes.number.isRequired,
-  min: PropTypes.number.isRequired,
-  max: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool.isRequired,
 };
+
+export default React.memo(MobilePxSlider);

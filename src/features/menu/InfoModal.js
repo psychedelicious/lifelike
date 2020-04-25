@@ -90,7 +90,7 @@ const keyboardShortcuts = [
   { shortcut: 'd', description: 'toggle dark mode' },
 ];
 
-export const InfoModal = () => {
+const InfoModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -224,3 +224,5 @@ export const InfoModal = () => {
     </>
   );
 };
+
+export default React.memo(InfoModal);

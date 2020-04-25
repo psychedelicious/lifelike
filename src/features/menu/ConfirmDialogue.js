@@ -64,64 +64,6 @@ const ConfirmDialogue = ({
   );
 };
 
-// const ConfirmDialogue = ({
-//   icon,
-//   aria,
-//   header,
-//   message,
-//   callback,
-//   ...rest
-// }) => {
-//   const [isOpen, setIsOpen] = React.useState(false);
-//   const onClose = () => {
-//     setIsOpen(false);
-//   };
-
-//   const actionConfirmed = () => {
-//     callback();
-//     onClose();
-//   };
-//   return (
-//     <>
-//       <Popover
-//         returnFocusOnClose={false}
-//         isOpen={isOpen}
-//         onClose={onClose}
-//         placement="left"
-//         closeOnBlur={true}
-//       >
-//         <PopoverTrigger>
-//           <IconButton
-//             {...rest}
-//             icon={icon}
-//             variant="solid"
-//             aria-label={aria}
-//             onClick={() => setIsOpen((isOpen) => !isOpen)}
-//           />
-//         </PopoverTrigger>
-//         <PopoverContent zIndex={4}>
-//           <PopoverHeader fontSize="sm" fontWeight="bold">
-//             {header}
-//           </PopoverHeader>
-//           <PopoverArrow />
-//           <PopoverCloseButton />
-//           <PopoverBody fontSize="sm">{message}</PopoverBody>
-//           <PopoverFooter d="flex" justifyContent="flex-end">
-//             <Button
-//               size="sm"
-//               variantColor="blue"
-//               onClick={actionConfirmed}
-//               ml={3}
-//             >
-//               yes
-//             </Button>
-//           </PopoverFooter>
-//         </PopoverContent>
-//       </Popover>
-//     </>
-//   );
-// };
-
 ConfirmDialogue.propTypes = {
   icon: PropTypes.func.isRequired,
   aria: PropTypes.string.isRequired,
@@ -132,4 +74,4 @@ ConfirmDialogue.propTypes = {
   setIsOpen: PropTypes.func.isRequired,
 };
 
-export default ConfirmDialogue;
+export default React.memo(ConfirmDialogue);

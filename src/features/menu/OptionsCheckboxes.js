@@ -7,22 +7,24 @@ import {
   toggleShouldWrap,
   toggleShouldShowHUD,
   toggleShouldPauseOnStableState,
-  toggleShouldSwapCellColors,
+  // toggleShouldSwapCellColors,
 } from 'store/reducers/life';
 
-import { StyledCheckbox } from 'features/menu/StyledCheckbox';
+import { toggleShouldSwapCellColors } from 'store/reducers/theme';
 
-const OptionsCheckboxes = React.memo(({ ...rest }) => {
+import StyledCheckbox from 'features/menu/StyledCheckbox';
+
+const OptionsCheckboxes = ({ ...rest }) => {
   const shouldShowGridlines = useSelector(
     (state) => state.life.shouldShowGridlines
   );
   const shouldWrap = useSelector((state) => state.life.shouldWrap);
   const shouldShowHUD = useSelector((state) => state.life.shouldShowHUD);
   const shouldPauseOnStableState = useSelector(
-    (state) => state.life.shouldPauseOnStableState
+    (state) => state.theme.shouldPauseOnStableState
   );
   const shouldSwapCellColors = useSelector(
-    (state) => state.life.shouldSwapCellColors
+    (state) => state.theme.shouldSwapCellColors
   );
 
   const dispatch = useDispatch();
@@ -80,6 +82,6 @@ const OptionsCheckboxes = React.memo(({ ...rest }) => {
       />
     </Flex>
   );
-});
+};
 
-export default OptionsCheckboxes;
+export default React.memo(OptionsCheckboxes);

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-const CanvasDrawingLayer = React.memo(({ canvasDrawLayerRef }) => {
+const CanvasDrawingLayer = ({ canvasDrawLayerRef }) => {
   const canvasWidth = useSelector((state) => state.life.canvasWidth);
   const canvasHeight = useSelector((state) => state.life.canvasHeight);
 
@@ -27,10 +27,10 @@ const CanvasDrawingLayer = React.memo(({ canvasDrawLayerRef }) => {
       }}
     ></canvas>
   );
-});
+};
 
 CanvasDrawingLayer.propTypes = {
   canvasDrawLayerRef: PropTypes.object.isRequired,
 };
 
-export default CanvasDrawingLayer;
+export default React.memo(CanvasDrawingLayer);

@@ -23,9 +23,9 @@ import {
   getNextCells,
   clearCells,
   randomizeCells,
-  incrementSpeed,
-  decrementSpeed,
 } from 'store/reducers/life';
+
+import { incrementSpeed, decrementSpeed } from 'store/reducers/performance';
 
 import {
   toggleIsInDrawMode,
@@ -33,164 +33,161 @@ import {
 } from 'store/reducers/drawing';
 import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
 
-const MainControls = React.memo(
-  ({
-    isMobile,
-    canvasBaseLayerRef,
-    canvasGridLayerRef,
-    canvasDrawLayerRef,
-    ...rest
-  }) => {
-    const dispatch = useDispatch();
+const MainControls = ({
+  isMobile,
+  canvasBaseLayerRef,
+  canvasGridLayerRef,
+  canvasDrawLayerRef,
+  ...rest
+}) => {
+  const dispatch = useDispatch();
 
-    const isRunning = useSelector((state) => state.life.isRunning);
-    const speed = useSelector((state) => state.life.speed);
+  const isRunning = useSelector((state) => state.life.isRunning);
 
-    const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
-    const isInTranslateMode = useSelector(
-      (state) => state.drawing.isInTranslateMode
-    );
+  const speed = useSelector((state) => state.performance.speed);
 
-    const withModifiers = useWithModifiers();
+  const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
+  const isInTranslateMode = useSelector(
+    (state) => state.drawing.isInTranslateMode
+  );
 
-    useGlobalKeyDown((e) => {
-      switch (e.key) {
-        case 'c':
-          !withModifiers(e) && setIsClearCellsConfirmOpen(true);
-          break;
-        case 'r':
-          !withModifiers(e) && setIsRandomizeCellsConfirmOpen(true);
-          break;
-        default:
-          break;
-      }
-    });
+  const withModifiers = useWithModifiers();
 
-    const [
-      isClearCellsConfirmOpen,
-      setIsClearCellsConfirmOpen,
-    ] = React.useState(false);
+  useGlobalKeyDown((e) => {
+    switch (e.key) {
+      case 'c':
+        !withModifiers(e) && setIsClearCellsConfirmOpen(true);
+        break;
+      case 'r':
+        !withModifiers(e) && setIsRandomizeCellsConfirmOpen(true);
+        break;
+      default:
+        break;
+    }
+  });
 
-    const [
-      isRandomizeCellsConfirmOpen,
-      setIsRandomizeCellsConfirmOpen,
-    ] = React.useState(false);
+  const [isClearCellsConfirmOpen, setIsClearCellsConfirmOpen] = React.useState(
+    false
+  );
 
-    const handleToggleIsRunning = React.useCallback(
-      () => dispatch(toggleIsRunning()),
-      [dispatch]
-    );
+  const [
+    isRandomizeCellsConfirmOpen,
+    setIsRandomizeCellsConfirmOpen,
+  ] = React.useState(false);
 
-    const handleGetNextCells = React.useCallback(
-      () => dispatch(getNextCells()),
-      [dispatch]
-    );
+  const handleToggleIsRunning = React.useCallback(
+    () => dispatch(toggleIsRunning()),
+    [dispatch]
+  );
 
-    const handleClearCells = React.useCallback(() => dispatch(clearCells()), [
-      dispatch,
-    ]);
+  const handleGetNextCells = React.useCallback(() => dispatch(getNextCells()), [
+    dispatch,
+  ]);
 
-    const handleRandomizeCells = React.useCallback(
-      () => dispatch(randomizeCells()),
-      [dispatch]
-    );
+  const handleClearCells = React.useCallback(() => dispatch(clearCells()), [
+    dispatch,
+  ]);
 
-    const handleToggleIsInDrawMode = React.useCallback(
-      () => dispatch(toggleIsInDrawMode()),
-      [dispatch]
-    );
+  const handleRandomizeCells = React.useCallback(
+    () => dispatch(randomizeCells()),
+    [dispatch]
+  );
 
-    const handleToggleIsInTranslateMode = React.useCallback(
-      () => dispatch(toggleIsInTranslateMode()),
-      [dispatch]
-    );
+  const handleToggleIsInDrawMode = React.useCallback(
+    () => dispatch(toggleIsInDrawMode()),
+    [dispatch]
+  );
 
-    return (
-      <Flex {...rest}>
-        <IconButton
-          style={{ touchAction: 'manipulation' }}
-          icon={isRunning ? FaPause : FaPlay}
-          variant="solid"
-          aria-label="start/stop"
-          onClick={handleToggleIsRunning}
-          variantColor="blue"
-        />
+  const handleToggleIsInTranslateMode = React.useCallback(
+    () => dispatch(toggleIsInTranslateMode()),
+    [dispatch]
+  );
 
-        <IconButton
-          style={{ touchAction: 'manipulation' }}
-          isDisabled={isRunning}
-          icon={FaStepForward}
-          variant="solid"
-          aria-label="tick"
-          onClick={handleGetNextCells}
-          variantColor="blue"
-        />
+  return (
+    <Flex {...rest}>
+      <IconButton
+        style={{ touchAction: 'manipulation' }}
+        icon={isRunning ? FaPause : FaPlay}
+        variant="solid"
+        aria-label="start/stop"
+        onClick={handleToggleIsRunning}
+        variantColor="blue"
+      />
 
-        <IconButton
-          style={{ touchAction: 'manipulation' }}
-          isDisabled={speed === 0}
-          icon={FaBackward}
-          variant="solid"
-          aria-label="decrease speed"
-          onPointerDown={() => dispatch(decrementSpeed())}
-          variantColor="blue"
-        />
+      <IconButton
+        style={{ touchAction: 'manipulation' }}
+        isDisabled={isRunning}
+        icon={FaStepForward}
+        variant="solid"
+        aria-label="tick"
+        onClick={handleGetNextCells}
+        variantColor="blue"
+      />
 
-        <IconButton
-          style={{ touchAction: 'manipulation' }}
-          isDisabled={speed === 100}
-          icon={FaForward}
-          variant="solid"
-          aria-label="increase speed"
-          onPointerDown={() => dispatch(incrementSpeed())}
-          variantColor="blue"
-        />
+      <IconButton
+        style={{ touchAction: 'manipulation' }}
+        isDisabled={speed === 0}
+        icon={FaBackward}
+        variant="solid"
+        aria-label="decrease speed"
+        onPointerDown={() => dispatch(decrementSpeed())}
+        variantColor="blue"
+      />
 
-        <ConfirmDialogue
-          style={{ touchAction: 'manipulation' }}
-          icon={FaTrash}
-          header="clear grid"
-          aria="clear grid"
-          message="are you sure you want to clear the grid?"
-          confirmedCallback={handleClearCells}
-          isOpen={isClearCellsConfirmOpen}
-          setIsOpen={setIsClearCellsConfirmOpen}
-          variantColor="blue"
-        />
+      <IconButton
+        style={{ touchAction: 'manipulation' }}
+        isDisabled={speed === 100}
+        icon={FaForward}
+        variant="solid"
+        aria-label="increase speed"
+        onPointerDown={() => dispatch(incrementSpeed())}
+        variantColor="blue"
+      />
 
-        <ConfirmDialogue
-          style={{ touchAction: 'manipulation' }}
-          icon={FaRandom}
-          header="randomize grid"
-          aria="randomize grid"
-          message="are you sure you want to randomize the grid?"
-          confirmedCallback={handleRandomizeCells}
-          isOpen={isRandomizeCellsConfirmOpen}
-          setIsOpen={setIsRandomizeCellsConfirmOpen}
-          variantColor="blue"
-        />
+      <ConfirmDialogue
+        style={{ touchAction: 'manipulation' }}
+        icon={FaTrash}
+        header="clear grid"
+        aria="clear grid"
+        message="are you sure you want to clear the grid?"
+        confirmedCallback={handleClearCells}
+        isOpen={isClearCellsConfirmOpen}
+        setIsOpen={setIsClearCellsConfirmOpen}
+        variantColor="blue"
+      />
 
-        <IconButton
-          style={{ touchAction: 'manipulation' }}
-          icon={FaArrowsAlt}
-          variant={isInTranslateMode ? 'outline' : 'link'}
-          aria-label="toggle translate mode"
-          onClick={handleToggleIsInTranslateMode}
-          variantColor="blue"
-        />
+      <ConfirmDialogue
+        style={{ touchAction: 'manipulation' }}
+        icon={FaRandom}
+        header="randomize grid"
+        aria="randomize grid"
+        message="are you sure you want to randomize the grid?"
+        confirmedCallback={handleRandomizeCells}
+        isOpen={isRandomizeCellsConfirmOpen}
+        setIsOpen={setIsRandomizeCellsConfirmOpen}
+        variantColor="blue"
+      />
 
-        <IconButton
-          style={{ touchAction: 'manipulation' }}
-          icon={FaPencilAlt}
-          variant={isInDrawMode ? 'outline' : 'link'}
-          aria-label="toggle drawing mode"
-          onClick={handleToggleIsInDrawMode}
-          variantColor="blue"
-        />
-      </Flex>
-    );
-  }
-);
+      <IconButton
+        style={{ touchAction: 'manipulation' }}
+        icon={FaArrowsAlt}
+        variant={isInTranslateMode ? 'outline' : 'link'}
+        aria-label="toggle translate mode"
+        onClick={handleToggleIsInTranslateMode}
+        variantColor="blue"
+      />
+
+      <IconButton
+        style={{ touchAction: 'manipulation' }}
+        icon={FaPencilAlt}
+        variant={isInDrawMode ? 'outline' : 'link'}
+        aria-label="toggle drawing mode"
+        onClick={handleToggleIsInDrawMode}
+        variantColor="blue"
+      />
+    </Flex>
+  );
+};
 
 MainControls.propTypes = {
   isMobile: PropTypes.bool.isRequired,
@@ -199,4 +196,4 @@ MainControls.propTypes = {
   canvasDrawLayerRef: PropTypes.object.isRequired,
 };
 
-export default MainControls;
+export default React.memo(MainControls);
