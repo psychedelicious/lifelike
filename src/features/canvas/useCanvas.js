@@ -15,8 +15,6 @@ export const useCanvas = () => {
     height,
     cells,
     px,
-    zip,
-    filenameIndex,
   }) => {
     const context = canvasBaseLayer.getContext('2d', { alpha: false });
     context.fillStyle = deadCellColor;
@@ -28,13 +26,6 @@ export const useCanvas = () => {
         cells[x][y] && context.fillRect(x * px, y * px, px, px);
       }
     }
-
-    // if (zip.current) {
-    //   canvasBaseLayer.toBlob((blob) =>
-    //     zip.current.file(`${filenameIndex.current}.png`, blob)
-    //   );
-    //   filenameIndex.current++;
-    // }
   };
 
   const clearCanvas = ({ canvas }) => {
