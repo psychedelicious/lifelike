@@ -18,21 +18,14 @@ export const getCellDimensions = ({
   const widthOffset = isMobile ? 0.5 * rem : rem;
   const heightOffset = isMobile ? 14 * rem : rem;
 
-  // the canvas has a 1px border * 2 for each x and y
-  const borderWidth = 0;
-
   const newWidth = clamp(
-    Math.trunc(
-      (window.innerWidth - canvasRect.left - widthOffset - borderWidth) / px
-    ),
+    Math.trunc((window.innerWidth - canvasRect.left - widthOffset) / px),
     minWidth,
     maxWidth
   );
 
   const newHeight = clamp(
-    Math.trunc(
-      (window.innerHeight - canvasRect.top - heightOffset - borderWidth) / px
-    ),
+    Math.trunc((window.innerHeight - canvasRect.top - heightOffset) / px),
     minHeight,
     maxHeight
   );
