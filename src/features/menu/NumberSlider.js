@@ -15,6 +15,7 @@ import {
 import { useSelector } from 'react-redux';
 
 import { lightDarkenColor } from 'features/menu/utilities';
+import StyledTooltip from './StyledTooltip';
 
 export const NumberSlider = ({
   value,
@@ -22,6 +23,7 @@ export const NumberSlider = ({
   max,
   onChange,
   icon,
+  tooltipLabel,
   isDisabled = false,
 }) => {
   const { colorMode } = useColorMode();
@@ -30,7 +32,8 @@ export const NumberSlider = ({
     (state) => state.theme[`${colorMode}ModeColors`]
   );
 
-  const disabledDeadCellColor = lightDarkenColor(deadCellColor, -100);
+  const bgDisabled =
+    colorMode === 'light' ? '#DDDDDD' : lightDarkenColor(deadCellColor, -100);
 
   return (
     <Flex my="1">
@@ -41,29 +44,34 @@ export const NumberSlider = ({
         max={max}
         onChange={onChange}
         isDisabled={isDisabled}
+        style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
       >
         <SliderTrack />
         <SliderFilledTrack />
-        <SliderThumb
-          size={6}
-          borderRadius="sm"
-          bg={deadCellColor}
-          _disabled={{ bg: disabledDeadCellColor }}
-        >
-          <Box color={aliveCellColor} as={icon} />
-        </SliderThumb>
+        <StyledTooltip label={tooltipLabel} placement="top" hasArrow>
+          <SliderThumb
+            size={6}
+            borderRadius="sm"
+            bg={deadCellColor}
+            _disabled={{ bg: bgDisabled }}
+          >
+            <Box color={aliveCellColor} as={icon} />
+          </SliderThumb>
+        </StyledTooltip>
       </Slider>
-      <NumberInput
-        size="sm"
-        maxW="5rem"
-        ml="1.5rem"
-        min={min}
-        max={max}
-        value={value}
-        onChange={onChange}
-        type="number"
-        isDisabled={isDisabled}
-      />
+      <StyledTooltip label={tooltipLabel} placement="top" hasArrow>
+        <NumberInput
+          size="sm"
+          maxW="5rem"
+          ml="1.5rem"
+          min={min}
+          max={max}
+          value={value}
+          onChange={onChange}
+          type="number"
+          isDisabled={isDisabled}
+        />
+      </StyledTooltip>
     </Flex>
   );
 };

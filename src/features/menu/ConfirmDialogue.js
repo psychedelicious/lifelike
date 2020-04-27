@@ -11,6 +11,7 @@ import {
   Button,
   IconButton,
 } from '@chakra-ui/core';
+import StyledTooltip from './StyledTooltip';
 
 const ConfirmDialogue = ({
   icon,
@@ -31,17 +32,26 @@ const ConfirmDialogue = ({
     onClose();
   };
 
+  const confirmedRef = React.useRef();
+
   return (
     <>
-      <IconButton
-        {...rest}
-        icon={icon}
-        variant="solid"
-        aria-label={aria}
-        onClick={() => setIsOpen(true)}
-      />
-
-      <AlertDialog isCentered isOpen={isOpen} onClose={onClose} size="xs">
+      <StyledTooltip label={aria} placement="top" hasArrow>
+        <IconButton
+          {...rest}
+          icon={icon}
+          variant="solid"
+          aria-label={aria}
+          onClick={() => setIsOpen(true)}
+        />
+      </StyledTooltip>
+      <AlertDialog
+        isCentered
+        isOpen={isOpen}
+        onClose={onClose}
+        leastDestructiveRef={confirmedRef}
+        size="xs"
+      >
         <AlertDialogOverlay />
         <AlertDialogContent>
           <AlertDialogHeader fontSize="sm" fontWeight="bold">
@@ -49,9 +59,13 @@ const ConfirmDialogue = ({
           </AlertDialogHeader>
           <AlertDialogBody fontSize="sm">{message}</AlertDialogBody>
           <AlertDialogFooter>
+            <Button size="sm" onClick={onClose} ml={3}>
+              cancel
+            </Button>
             <Button
               size="sm"
               variantColor="blue"
+              ref={confirmedRef}
               onClick={actionConfirmed}
               ml={3}
             >

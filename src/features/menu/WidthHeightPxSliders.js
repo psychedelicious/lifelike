@@ -170,6 +170,7 @@ const WidthHeightPxSliders = ({
             onChange={handleWidthChange}
             isDisabled={isRunning}
             icon={AiOutlineColumnWidth}
+            tooltipLabel={'grid width (cells)'}
           />
 
           <NumberSlider
@@ -179,6 +180,7 @@ const WidthHeightPxSliders = ({
             onChange={handleHeightChange}
             isDisabled={isRunning}
             icon={AiOutlineColumnHeight}
+            tooltipLabel={'grid height (cells)'}
           />
 
           <NumberSlider
@@ -188,6 +190,7 @@ const WidthHeightPxSliders = ({
             onChange={handlePxChange}
             isDisabled={isRunning}
             icon={GiResize}
+            tooltipLabel={'cell size (px)'}
           />
 
           <Button

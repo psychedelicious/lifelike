@@ -4,14 +4,12 @@ import { speedToMs } from 'store/reducers/performance/utilities';
 const DECREMENT_SPEED = 'DECREMENT_SPEED';
 const INCREMENT_SPEED = 'INCREMENT_SPEED';
 const SET_FPS = 'SET_FPS';
-const SET_PREVIOUS_FRAMETIME = 'SET_PREVIOUS_FRAMETIME';
 const SET_SPEED = 'SET_SPEED';
 
 const initialState = {
   speed: 70,
   msDelay: speedToMs(70),
   fps: 0,
-  previousFrameTime: 0,
   minSpeed: 0,
   maxSpeed: 100,
 };
@@ -47,12 +45,6 @@ export default function life(state = initialState, action) {
         msDelay: speedToMs(newSpeed),
       };
     }
-    case SET_PREVIOUS_FRAMETIME: {
-      return {
-        ...state,
-        previousFrameTime: action.previousFrameTime,
-      };
-    }
     default:
       return state;
   }
@@ -66,11 +58,6 @@ export const incrementSpeed = () => ({
 
 export const decrementSpeed = () => ({
   type: DECREMENT_SPEED,
-});
-
-export const setPreviousFrameTime = (previousFrameTime) => ({
-  type: SET_PREVIOUS_FRAMETIME,
-  previousFrameTime,
 });
 
 export const setFps = (fps) => ({

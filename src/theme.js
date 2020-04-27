@@ -18,6 +18,8 @@ export const lifelikeTheme = {
   colors: {
     ...theme.colors,
     transparent: 'transparent',
+    darkBackground: '#1A202C',
+    tooltipBackground: '#313D53',
     // black: '#252020',
     // white: '#ebeaea',
     whiteAlpha: {

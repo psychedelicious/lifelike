@@ -11,7 +11,7 @@ const initialState = {
   },
   darkModeColors: {
     deadCellColor: lifelikeTheme.colors.blue['100'],
-    aliveCellColor: '#1A202C', // the Chakra UI background color
+    aliveCellColor: lifelikeTheme.colors.darkBackground, // the Chakra UI background color
     gridlineColor: `${lifelikeTheme.colors.blue['600']}80`,
   },
   shouldSwapCellColors: false,

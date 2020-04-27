@@ -123,6 +123,7 @@ const DrawOptions = () => {
         onChange={handleBrushRadiusChange}
         isDisabled={brushShape === 'pencil'}
         icon={FaPaintBrush}
+        tooltipLabel='brush radius (cells)'
       />
     </>
   );

@@ -32,6 +32,7 @@ import {
   toggleIsInTranslateMode,
 } from 'store/reducers/drawing';
 import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
+import StyledTooltip from './StyledTooltip';
 
 const MainControls = ({
   isMobile,
@@ -105,44 +106,52 @@ const MainControls = ({
 
   return (
     <Flex {...rest}>
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        icon={isRunning ? FaPause : FaPlay}
-        variant="solid"
-        aria-label="start/stop"
-        onClick={handleToggleIsRunning}
-        variantColor="blue"
-      />
+      <StyledTooltip label="start/stop" placement="top" hasArrow>
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          icon={isRunning ? FaPause : FaPlay}
+          variant="solid"
+          aria-label="start/stop"
+          onClick={handleToggleIsRunning}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        isDisabled={isRunning}
-        icon={FaStepForward}
-        variant="solid"
-        aria-label="tick"
-        onClick={handleGetNextCells}
-        variantColor="blue"
-      />
+      <StyledTooltip label="tick once" placement="top" hasArrow>
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          isDisabled={isRunning}
+          icon={FaStepForward}
+          variant="solid"
+          aria-label="tick"
+          onClick={handleGetNextCells}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        isDisabled={speed === 0}
-        icon={FaBackward}
-        variant="solid"
-        aria-label="decrease speed"
-        onPointerDown={() => dispatch(decrementSpeed())}
-        variantColor="blue"
-      />
+      <StyledTooltip label="slower" placement="top" hasArrow>
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          isDisabled={speed === 0}
+          icon={FaBackward}
+          variant="solid"
+          aria-label="slower"
+          onPointerDown={() => dispatch(decrementSpeed())}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        isDisabled={speed === 100}
-        icon={FaForward}
-        variant="solid"
-        aria-label="increase speed"
-        onPointerDown={() => dispatch(incrementSpeed())}
-        variantColor="blue"
-      />
+      <StyledTooltip label="faster" placement="top" hasArrow>
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          isDisabled={speed === 100}
+          icon={FaForward}
+          variant="solid"
+          aria-label="faster"
+          onPointerDown={() => dispatch(incrementSpeed())}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
       <ConfirmDialogue
         style={{ touchAction: 'manipulation' }}
@@ -168,23 +177,27 @@ const MainControls = ({
         variantColor="blue"
       />
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        icon={FaArrowsAlt}
-        variant={isInTranslateMode ? 'outline' : 'link'}
-        aria-label="toggle translate mode"
-        onClick={handleToggleIsInTranslateMode}
-        variantColor="blue"
-      />
+      <StyledTooltip label="translate mode" placement="top" hasArrow>
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          icon={FaArrowsAlt}
+          variant={isInTranslateMode ? 'outline' : 'link'}
+          aria-label="toggle translate mode"
+          onClick={handleToggleIsInTranslateMode}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        icon={FaPencilAlt}
-        variant={isInDrawMode ? 'outline' : 'link'}
-        aria-label="toggle drawing mode"
-        onClick={handleToggleIsInDrawMode}
-        variantColor="blue"
-      />
+      <StyledTooltip label="draw mode" placement="top" hasArrow>
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          icon={FaPencilAlt}
+          variant={isInDrawMode ? 'outline' : 'link'}
+          aria-label="toggle drawing mode"
+          onClick={handleToggleIsInDrawMode}
+          variantColor="blue"
+        />
+      </StyledTooltip>
     </Flex>
   );
 };
