@@ -29,7 +29,14 @@ const Lifelike = ({ isMobile, colorMode }) => {
   const dispatch = useDispatch();
 
   const cells = useSelector((state) => state.life.cells);
-  const cellsChanged = useSelector((state) => state.life.cellsChanged);
+  const didAnyCellsChange = useSelector(
+    (state) => state.life.didAnyCellsChange
+  );
+
+  const redrawCellList = useSelector((state) => state.life.redrawCellList);
+  const shouldDrawAllCells = useSelector(
+    (state) => state.life.shouldDrawAllCells
+  );
   const shouldPauseOnStableState = useSelector(
     (state) => state.life.shouldPauseOnStableState
   );
@@ -98,7 +105,9 @@ const Lifelike = ({ isMobile, colorMode }) => {
     if (isRunning && window.performance.now() - lastTick.current > msDelay) {
       dispatch(getNextCells());
 
-      !cellsChanged && shouldPauseOnStableState && dispatch(toggleIsRunning());
+      !didAnyCellsChange &&
+        shouldPauseOnStableState &&
+        dispatch(toggleIsRunning());
 
       now.current = window.performance.now();
 
@@ -123,8 +132,19 @@ const Lifelike = ({ isMobile, colorMode }) => {
       height,
       px,
       width,
+      redrawCellList,
+      shouldDrawAllCells,
     });
-  }, [aliveCellColor, cells, deadCellColor, height, drawCells, px, width]);
+  }, [
+    aliveCellColor,
+    cells,
+    deadCellColor,
+    height,
+    drawCells,
+    px,
+    width,
+    shouldDrawAllCells,
+  ]);
 
   React.useEffect(() => {
     clearCanvas({ canvas: canvasGridLayerRef.current });

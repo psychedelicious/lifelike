@@ -15,15 +15,40 @@ export const useCanvas = () => {
     height,
     cells,
     px,
+    shouldDrawAllCells,
+    redrawCellList,
   }) => {
     const context = canvasBaseLayer.getContext('2d', { alpha: false });
-    context.fillStyle = deadCellColor;
-    context.fillRect(0, 0, canvasBaseLayer.width, canvasBaseLayer.height);
 
-    context.fillStyle = aliveCellColor;
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        cells[x][y] && context.fillRect(x * px, y * px, px, px);
+    if (shouldDrawAllCells) {
+      context.fillStyle = deadCellColor;
+      context.fillRect(0, 0, canvasBaseLayer.width, canvasBaseLayer.height);
+      context.fillStyle = aliveCellColor;
+
+      for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+          cells[x][y] && context.fillRect(x * px, y * px, px, px);
+        }
+      }
+    } else {
+      context.fillStyle = deadCellColor;
+      for (let i = 0; i < redrawCellList[0].length; i++) {
+        context.fillRect(
+          redrawCellList[0][i][0] * px,
+          redrawCellList[0][i][1] * px,
+          px,
+          px
+        );
+      }
+
+      context.fillStyle = aliveCellColor;
+      for (let i = 0; i < redrawCellList[1].length; i++) {
+        context.fillRect(
+          redrawCellList[1][i][0] * px,
+          redrawCellList[1][i][1] * px,
+          px,
+          px
+        );
       }
     }
   };

@@ -3,7 +3,10 @@ import { lifelikeTheme } from 'theme';
 import { Neighborhoods } from 'features/life/neighborhoods';
 
 import { createCells } from 'store/reducers/life/createCells';
-import { getNextCells as stepCells } from 'store/reducers/life/getNextCells';
+import {
+  getNextCells_shouldDrawAllCells,
+  getNextCells_drawChangedCells,
+} from 'store/reducers/life/getNextCells';
 import { getDensity } from 'store/reducers/performance/utilities';
 
 const CLEAR_CELLS = 'CLEAR_CELLS';
@@ -15,6 +18,7 @@ const SET_BORN = 'SET_BORN';
 const SET_GRID = 'SET_GRID';
 const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 const SET_SURVIVE = 'SET_SURVIVE';
+const TOGGLE_SHOULD_DRAW_ALL_CELLS = 'TOGGLE_SHOULD_DRAW_ALL_CELLS';
 const TOGGLE_IS_RUNNING = 'TOGGLE_IS_RUNNING';
 const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
 const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
@@ -40,7 +44,9 @@ const initialState = {
   generation: 0,
   population: 0,
   density: 0,
-  cellsChanged: true,
+  didAnyCellsChange: true,
+  redrawCellList: [[], []],
+  shouldDrawAllCells: true,
   canvasWidth: 0,
   canvasHeight: 0,
   canvasContainerWidth: 0,
@@ -68,7 +74,11 @@ export default function life(state = initialState, action) {
         ),
       };
     case RANDOMIZE_CELLS:
-      const [randomizedCells, randomizedCellsPopulation] = createCells({
+      let [
+        newRandomizedCells,
+        newRandomizedPopulation,
+        newRandomizedRedrawCellList,
+      ] = createCells({
         width: state.width,
         height: state.height,
         fill: 'random',
@@ -76,17 +86,18 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         generation: 0,
-        cells: randomizedCells,
-        cellsChanged: true,
-        population: randomizedCellsPopulation,
-        density: getDensity(
-          randomizedCellsPopulation,
-          state.width,
-          state.height
-        ),
+        cells: newRandomizedCells,
+        didAnyCellsChange: true,
+        population: newRandomizedPopulation,
+        density: getDensity(newRandomizedPopulation, state.width, state.height),
+        redrawCellList: newRandomizedRedrawCellList,
       };
     case CLEAR_CELLS:
-      const [clearedCells, clearedCellsPopulation] = createCells({
+      let [
+        newClearedCells,
+        newClearedPopulation,
+        newClearedRedrawCellList,
+      ] = createCells({
         width: state.width,
         height: state.height,
         fill: 0,
@@ -94,10 +105,11 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         generation: 0,
-        cells: clearedCells,
-        population: clearedCellsPopulation,
-        cellsChanged: true,
-        density: getDensity(clearedCellsPopulation, state.width, state.height),
+        cells: newClearedCells,
+        population: newClearedPopulation,
+        didAnyCellsChange: true,
+        density: getDensity(newClearedPopulation, state.width, state.height),
+        redrawCellList: newClearedRedrawCellList,
       };
     case TOGGLE_IS_RUNNING:
       return {
@@ -130,26 +142,60 @@ export default function life(state = initialState, action) {
         neighborhood: Neighborhoods[action.neighborhood],
       };
     case GET_NEXT_CELLS: {
-      const [nextCells, nextPopulation, cellsChanged] = stepCells(
-        state.cells,
-        state.width,
-        state.height,
-        state.born,
-        state.survive,
-        state.shouldWrap,
-        state.neighborhood
-      );
-      return {
-        ...state,
-        generation: state.generation + 1,
-        cells: nextCells,
-        population: nextPopulation,
-        cellsChanged: cellsChanged,
-        density: getDensity(nextPopulation, state.width, state.height),
-      };
+      if (state.shouldDrawAllCells) {
+        let [
+          newCells,
+          newPopulation,
+          didAnyCellsChange,
+        ] = getNextCells_shouldDrawAllCells(
+          state.cells,
+          state.width,
+          state.height,
+          state.born,
+          state.survive,
+          state.shouldWrap,
+          state.neighborhood
+        );
+        return {
+          ...state,
+          generation: state.generation + 1,
+          cells: newCells,
+          population: newPopulation,
+          didAnyCellsChange: didAnyCellsChange,
+          density: getDensity(newPopulation, state.width, state.height),
+        };
+      } else {
+        let [
+          newCells,
+          newPopulation,
+          didAnyCellsChange,
+          newRedrawCellList,
+        ] = getNextCells_drawChangedCells(
+          state.cells,
+          state.width,
+          state.height,
+          state.born,
+          state.survive,
+          state.shouldWrap,
+          state.neighborhood
+        );
+        return {
+          ...state,
+          generation: state.generation + 1,
+          cells: newCells,
+          population: newPopulation,
+          didAnyCellsChange: didAnyCellsChange,
+          redrawCellList: newRedrawCellList,
+          density: getDensity(newPopulation, state.width, state.height),
+        };
+      }
     }
     case SET_GRID: {
-      const [setGridCells, setGridPopulation] = createCells({
+      let [
+        newSetGridCells,
+        newSetGridPopulation,
+        newSetGridRedrawCellList,
+      ] = createCells({
         width: action.payload.width,
         height: action.payload.height,
         fill: state.cells.length ? state.cells : 'random',
@@ -163,18 +209,20 @@ export default function life(state = initialState, action) {
         canvasHeight: action.payload.canvasHeight,
         canvasContainerWidth: action.payload.canvasContainerWidth,
         canvasContainerHeight: action.payload.canvasContainerHeight,
-        cells: setGridCells,
-        cellsChanged: true,
-        population: setGridPopulation,
+        cells: newSetGridCells,
+        didAnyCellsChange: true,
+        population: newSetGridPopulation,
         density: getDensity(
-          setGridPopulation,
+          newSetGridPopulation,
           action.payload.width,
           action.payload.height
         ),
+        redrawCellList: newSetGridRedrawCellList,
       };
     }
     case SET_ARRAY_OF_CELLS: {
-      let newArrayOfCells = [...state.cells];
+      let newSetArrayCells = [...state.cells],
+        newSetArrayRedrawCellList = [[], []];
 
       action.arrayOfCells.forEach(({ x, y }) => {
         if (state.shouldWrap) {
@@ -190,24 +238,37 @@ export default function life(state = initialState, action) {
             y = y - state.height;
           }
 
-          newArrayOfCells[x][y] = action.invertState ? 0 : 1;
+          if (action.invertState) {
+            newSetArrayCells[x][y] = 0;
+            newSetArrayRedrawCellList[0].push([x, y]);
+          } else {
+            newSetArrayCells[x][y] = 1;
+            newSetArrayRedrawCellList[1].push([x, y]);
+          }
         } else {
           if (x >= 0 && x < state.width && y >= 0 && y < state.height) {
-            newArrayOfCells[x][y] = action.invertState ? 0 : 1;
+            if (action.invertState) {
+              newSetArrayCells[x][y] = 0;
+              newSetArrayRedrawCellList[0].push([x, y]);
+            } else {
+              newSetArrayCells[x][y] = 1;
+              newSetArrayRedrawCellList[1].push([x, y]);
+            }
           }
         }
       });
 
-      let newPopulation = newArrayOfCells
+      let newSetArrayPopulation = newSetArrayCells
         .flat()
         .reduce((sum, val) => sum + val, 0);
 
       return {
         ...state,
-        cells: newArrayOfCells,
-        population: newPopulation,
-        cellsChanged: true,
-        density: getDensity(newPopulation, state.width, state.height),
+        cells: newSetArrayCells,
+        population: newSetArrayPopulation,
+        didAnyCellsChange: true,
+        redrawCellList: newSetArrayRedrawCellList,
+        density: getDensity(newSetArrayPopulation, state.width, state.height),
       };
     }
     case TRANSLATE_CELLS: {
@@ -243,17 +304,45 @@ export default function life(state = initialState, action) {
             let _x = x - deltaX;
             let _y = y - deltaY;
 
-            translatedCells[x][y] =
-              _x >= 0 && _x < width && _y >= 0 && _y < height
-                ? state.cells[_x][_y]
-                : 0;
+            if (_x >= 0 && _x < width && _y >= 0 && _y < height) {
+              translatedCells[x][y] = state.cells[_x][_y];
+            } else {
+              translatedCells[x][y] = 0;
+            }
           }
         }
       }
+
+      const [
+        newTranslatedCells,
+        newTranslatedPopulation,
+        newTranslatedRedrawCellList,
+      ] = createCells({
+        width: state.width,
+        height: state.height,
+        fill: translatedCells,
+      });
+
       return {
         ...state,
-        cells: translatedCells,
-        cellsChanged: true,
+        cells: newTranslatedCells,
+        population: newTranslatedPopulation,
+        redrawCellList: newTranslatedRedrawCellList,
+        didAnyCellsChange: true,
+      };
+    }
+    case TOGGLE_SHOULD_DRAW_ALL_CELLS: {
+      const [cells, population, redrawCellList] = createCells({
+        width: state.width,
+        height: state.height,
+        fill: state.cells,
+      });
+      return {
+        ...state,
+        cells,
+        population,
+        redrawCellList,
+        shouldDrawAllCells: !state.shouldDrawAllCells,
       };
     }
     default:
@@ -304,6 +393,10 @@ export const setNeighborhood = ({ neighborhood }) => ({
 export const setBorn = ({ index }) => ({ type: SET_BORN, index });
 
 export const setSurvive = ({ index }) => ({ type: SET_SURVIVE, index });
+
+export const toggleShouldDrawAllCells = () => ({
+  type: TOGGLE_SHOULD_DRAW_ALL_CELLS,
+});
 
 export const clearCells = () => ({ type: CLEAR_CELLS });
 
