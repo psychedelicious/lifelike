@@ -58,9 +58,11 @@ const Lifelike = ({ isMobile, colorMode }) => {
   );
   const width = useSelector((state) => state.life.width);
 
-  const lastTick = React.useRef(0);
   const now = React.useRef(0);
+  const lastTick = React.useRef(0);
   const lastFpsUpdate = React.useRef(0);
+  const frametimeLog = React.useRef([]);
+  const lastFps = React.useRef(0);
 
   const canvasBaseLayerRef = React.useRef(null);
   const canvasGridLayerRef = React.useRef(null);
@@ -111,8 +113,22 @@ const Lifelike = ({ isMobile, colorMode }) => {
 
       now.current = window.performance.now();
 
+      frametimeLog.current.push(now.current - lastTick.current);
+
+      frametimeLog.current.length > lastFps.current &&
+        frametimeLog.current.splice(
+          0,
+          frametimeLog.current.length - lastFps.current
+        );
+
       if (now.current - lastFpsUpdate.current > 200) {
-        dispatch(setFps(Math.round(1000 / (now.current - lastTick.current))));
+        lastFps.current = Math.round(
+          1000 /
+            (frametimeLog.current.reduce((total, val) => total + val, 0) /
+              frametimeLog.current.length)
+        );
+
+        dispatch(setFps(lastFps.current));
         lastFpsUpdate.current = now.current;
       }
       lastTick.current = now.current;
@@ -144,7 +160,7 @@ const Lifelike = ({ isMobile, colorMode }) => {
     px,
     width,
     shouldDrawAllCells,
-  ]);
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     clearCanvas({ canvas: canvasGridLayerRef.current });
