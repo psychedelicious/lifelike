@@ -1,17 +1,12 @@
 import React from 'react';
-import { Tooltip, useColorMode } from '@chakra-ui/core';
+import { Tooltip } from '@chakra-ui/core';
 import { useMediaQuery } from 'react-responsive';
 
-import { useTheme } from '@chakra-ui/core';
 import { useSelector } from 'react-redux';
 
 const StyledTooltip = ({ children, ...rest }) => {
-  const theme = useTheme();
+  const { colorMode, theme } = useSelector((state) => state.theme);
   const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.md });
-  const { colorMode } = useColorMode();
-  const { aliveCellColor, deadCellColor } = useSelector(
-    (state) => state.theme[`${colorMode}ModeColors`]
-  );
 
   const bg = {
     dark: 'blue.200',
@@ -19,7 +14,7 @@ const StyledTooltip = ({ children, ...rest }) => {
   };
 
   const color = {
-    dark: aliveCellColor,
+    dark: 'darkBackground',
     light: 'white',
   };
 

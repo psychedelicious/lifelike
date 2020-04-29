@@ -9,13 +9,9 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  useColorMode,
 } from '@chakra-ui/core';
 
 import { useSelector } from 'react-redux';
-
-import { lightDarkenColor } from 'features/menu/utilities';
-import StyledTooltip from './StyledTooltip';
 
 export const NumberSlider = ({
   value,
@@ -23,17 +19,14 @@ export const NumberSlider = ({
   max,
   onChange,
   icon,
-  tooltipLabel,
   isDisabled = false,
+  showTextInput = true,
 }) => {
-  const { colorMode } = useColorMode();
-
-  const { aliveCellColor, deadCellColor } = useSelector(
-    (state) => state.theme[`${colorMode}ModeColors`]
-  );
-
-  const bgDisabled =
-    colorMode === 'light' ? '#DDDDDD' : lightDarkenColor(deadCellColor, -100);
+  const {
+    sliderThumbBgColor,
+    sliderThumbColor,
+    sliderDisabledThumbBgColor,
+  } = useSelector((state) => state.theme);
 
   return (
     <Flex my="1">
@@ -48,18 +41,16 @@ export const NumberSlider = ({
       >
         <SliderTrack />
         <SliderFilledTrack />
-        <StyledTooltip label={tooltipLabel} placement="top" hasArrow>
-          <SliderThumb
-            size={6}
-            borderRadius="sm"
-            bg={deadCellColor}
-            _disabled={{ bg: bgDisabled }}
-          >
-            <Box color={aliveCellColor} as={icon} />
-          </SliderThumb>
-        </StyledTooltip>
+        <SliderThumb
+          size={6}
+          borderRadius="sm"
+          bg={sliderThumbBgColor}
+          _disabled={{ bg: sliderDisabledThumbBgColor }}
+        >
+          <Box color={sliderThumbColor} as={icon} />
+        </SliderThumb>
       </Slider>
-      <StyledTooltip label={tooltipLabel} placement="top" hasArrow>
+      {showTextInput && (
         <NumberInput
           size="sm"
           maxW="5rem"
@@ -71,7 +62,7 @@ export const NumberSlider = ({
           type="number"
           isDisabled={isDisabled}
         />
-      </StyledTooltip>
+      )}
     </Flex>
   );
 };

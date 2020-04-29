@@ -44,7 +44,7 @@ const HUD = () => {
   const width = useSelector((state) => state.life.width);
   const isRunning = useSelector((state) => state.life.isRunning);
   const { aliveCellColor, deadCellColor } = useSelector(
-    (state) => state.theme.colors,
+    (state) => state.theme,
     shallowEqual
   );
   const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);

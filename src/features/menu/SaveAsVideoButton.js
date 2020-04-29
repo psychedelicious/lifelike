@@ -5,7 +5,6 @@ import { IoMdVideocam } from 'react-icons/io';
 import { MdFiberManualRecord } from 'react-icons/md';
 
 import { IconButton } from '@chakra-ui/core';
-import StyledTooltip from './StyledTooltip';
 
 export const SaveAsVideoButton = ({ canvasBaseLayerRef }) => {
   const [isRecordingVideo, setIsRecordingVideo] = React.useState(false);
@@ -59,24 +58,18 @@ export const SaveAsVideoButton = ({ canvasBaseLayerRef }) => {
   }, []);
 
   return (
-    <StyledTooltip
-      label={isRecordingVideo ? 'stop recording & download' : 'start recording'}
-      placement="top"
-      hasArrow
-    >
-      <IconButton
-        icon={isRecordingVideo ? MdFiberManualRecord : IoMdVideocam}
-        fontSize="1.5rem"
-        p={0}
-        h="unset"
-        minW="unset"
-        mr="0.5rem"
-        variant="link"
-        variantColor={isRecordingVideo ? 'red' : 'blue'}
-        aria-label="save as video"
-        onClick={isRecordingVideo ? handleStopCapture : handleStartCapture}
-      />
-    </StyledTooltip>
+    <IconButton
+      icon={isRecordingVideo ? MdFiberManualRecord : IoMdVideocam}
+      fontSize="1.5rem"
+      p={0}
+      h="unset"
+      minW="unset"
+      mr="0.5rem"
+      variant="link"
+      variantColor={isRecordingVideo ? 'red' : 'blue'}
+      aria-label="save as video"
+      onClick={isRecordingVideo ? handleStopCapture : handleStartCapture}
+    />
   );
 };
 

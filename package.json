@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^7.1.2",
     "canvas-recorder": "^1.8.0",
     "ccapture.js": "Unsigno/ccapture.js",
+    "color": "^3.1.2",
     "emotion-theming": "^10.0.27",
     "file-saver": "^2.0.2",
     "gif-capture-canvas": "^1.0.1",

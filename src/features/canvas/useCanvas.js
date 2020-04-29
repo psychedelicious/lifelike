@@ -16,11 +16,12 @@ export const useCanvas = () => {
     cells,
     px,
     shouldDrawAllCells,
+    shouldNextDrawAllCells,
     redrawCellList,
   }) => {
     const context = canvasBaseLayer.getContext('2d', { alpha: false });
 
-    if (shouldDrawAllCells) {
+    if (shouldDrawAllCells || shouldNextDrawAllCells) {
       context.fillStyle = deadCellColor;
       context.fillRect(0, 0, canvasBaseLayer.width, canvasBaseLayer.height);
       context.fillStyle = aliveCellColor;

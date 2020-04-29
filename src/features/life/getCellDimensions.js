@@ -25,7 +25,12 @@ export const getCellDimensions = ({
   );
 
   const newHeight = clamp(
-    Math.trunc((window.innerHeight - canvasRect.top - heightOffset) / px),
+    Math.trunc(
+      (window.innerHeight -
+        canvasBaseLayerRef.current.offsetParent.offsetTop -
+        heightOffset) /
+        px
+    ),
     minHeight,
     maxHeight
   );

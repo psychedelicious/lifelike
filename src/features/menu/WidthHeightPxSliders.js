@@ -208,7 +208,15 @@ const WidthHeightPxSliders = ({
           </Button>
         </Flex>
       ) : (
-        <MobilePxSlider onChange={handlePxChange} isDisabled={isRunning} />
+        <NumberSlider
+          value={px}
+          min={minPx}
+          max={maxPx}
+          onChange={handlePxChange}
+          isDisabled={isRunning}
+          icon={GiResize}
+          showTextInput={false}
+        />
       )}
     </>
   );

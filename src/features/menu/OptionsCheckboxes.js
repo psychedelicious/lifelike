@@ -8,9 +8,10 @@ import {
   toggleShouldShowHUD,
   toggleShouldPauseOnStableState,
   toggleShouldDrawAllCells,
+  nextDrawAllCells,
 } from 'store/reducers/life';
 
-import { toggleShouldSwapCellColors } from 'store/reducers/theme';
+import { setThemeColor } from 'store/reducers/theme';
 
 import StyledCheckbox from 'features/menu/StyledCheckbox';
 
@@ -28,7 +29,7 @@ const OptionsCheckboxes = ({ ...rest }) => {
   );
 
   const shouldDrawAllCells = useSelector(
-    (state) => state.theme.shouldDrawAllCells
+    (state) => state.life.shouldDrawAllCells
   );
 
   const dispatch = useDispatch();
@@ -50,8 +51,9 @@ const OptionsCheckboxes = ({ ...rest }) => {
   }, [dispatch]);
 
   const handleToggleShouldSwapCellColors = React.useCallback(() => {
-    dispatch(toggleShouldSwapCellColors());
-  }, [dispatch]);
+    dispatch(setThemeColor({ shouldSwapCellColors: !shouldSwapCellColors }));
+    dispatch(nextDrawAllCells());
+  }, [dispatch, shouldSwapCellColors]);
 
   const handleToggleShouldDrawAllCells = React.useCallback(() => {
     dispatch(toggleShouldDrawAllCells());
@@ -90,7 +92,7 @@ const OptionsCheckboxes = ({ ...rest }) => {
       />
 
       <StyledCheckbox
-        isChecked={shouldDrawAllCells}
+        isChecked={!shouldDrawAllCells}
         onChange={handleToggleShouldDrawAllCells}
         label="draw only changed cells"
       />

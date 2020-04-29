@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
@@ -8,6 +8,9 @@ import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
 import InfoModal from 'features/menu/InfoModal';
 import SaveAsImageButton from 'features/menu/SaveAsImageButton';
 import SaveAsVideoButton from 'features/menu/SaveAsVideoButton';
+import ChangeThemeButton from './ChangeThemeButton';
+import { setThemeColor } from 'store/reducers/theme';
+import { nextDrawAllCells } from 'store/reducers/life';
 
 const Header = ({
   isMobile,
@@ -15,12 +18,14 @@ const Header = ({
   canvasGridLayerRef,
   ...rest
 }) => {
+  const dispatch = useDispatch();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { aliveCellColor, deadCellColor } = useSelector(
-    (state) => state.theme[`${colorMode}ModeColors`]
-  );
+  const { headerColor } = useSelector((state) => state.theme);
 
-  const headerColor = colorMode === 'light' ? aliveCellColor : deadCellColor;
+  const handleToggleColorMode = () => {
+    toggleColorMode();
+    dispatch(nextDrawAllCells());
+  };
 
   return (
     <Flex {...rest} justify="space-between">
@@ -42,6 +47,8 @@ const Header = ({
 
         <InfoModal variantColor="blue" />
 
+        <ChangeThemeButton />
+
         <IconButton
           icon={colorMode === 'light' ? IoMdMoon : IoMdSunny}
           fontSize="1.5rem"
@@ -50,7 +57,7 @@ const Header = ({
           minW="unset"
           variant="link"
           aria-label="toggle dark mode"
-          onClick={toggleColorMode}
+          onClick={handleToggleColorMode}
           variantColor="blue"
         />
       </Flex>

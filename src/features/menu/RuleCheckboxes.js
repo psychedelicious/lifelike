@@ -2,16 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 
-import {
-  ControlBox,
-  VisuallyHidden,
-  Flex,
-  Text,
-  useColorMode,
-} from '@chakra-ui/core';
+import { ControlBox, VisuallyHidden, Flex, Text } from '@chakra-ui/core';
 
 import { setBorn, setSurvive } from 'store/reducers/life';
-import StyledTooltip from 'features/menu/StyledTooltip';
 
 const RuleCheckboxRow = ({
   ruleArray,
@@ -20,63 +13,55 @@ const RuleCheckboxRow = ({
   colorMode,
   ...rest
 }) => {
-  const numberString = ruleArray
-    .reduce((acc, val, idx) => (val ? acc.concat(idx) : acc), [])
-    .join(`|`);
-
-  const tooltipLabel = `neighbors == ${numberString || '[null]'} ~> ${ruleType}`;
-
   return (
-    <StyledTooltip label={tooltipLabel} placement="top">
-      <Flex {...rest} align="center" justify="space-between">
-        <Text fontSize="sm">{ruleType === 'born' ? 'b ~>' : 's ~>'}</Text>
+    <Flex {...rest} align="center" justify="space-between">
+      <Text fontSize="sm">{ruleType === 'born' ? 'b ~>' : 's ~>'}</Text>
 
-        {ruleArray.map((val, index) => {
-          const key = `${ruleType}${index}`;
-          const isChecked = ruleArray[index];
-          return (
-            <label key={key}>
-              <VisuallyHidden
-                as="input"
-                type="checkbox"
-                checked={isChecked}
-                onChange={() => {
-                  onChange(ruleType, index);
-                }}
-              />
+      {ruleArray.map((val, index) => {
+        const key = `${ruleType}${index}`;
+        const isChecked = ruleArray[index];
+        return (
+          <label key={key}>
+            <VisuallyHidden
+              as="input"
+              type="checkbox"
+              checked={isChecked}
+              onChange={() => {
+                onChange(ruleType, index);
+              }}
+            />
 
-              <ControlBox
-                userSelect="none"
-                borderWidth="1px"
-                size="1.5rem"
-                rounded="sm"
-                color={colorMode === 'light' ? 'blue.600' : 'blue.200'}
-                bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.100'}
-                cursor="pointer"
-                borderColor="transparent"
-                _child={{ opacity: 100 }}
-                _checked={
-                  colorMode === 'light'
-                    ? {
-                        bg: 'blue.500',
-                        color: 'white',
-                        borderColor: 'blue.500',
-                      }
-                    : {
-                        bg: 'blue.200',
-                        color: 'blue.900',
-                        borderColor: 'blue.200',
-                      }
-                }
-                _focus={{ boxShadow: 'outline' }}
-              >
-                <Text fontSize="sm">{index}</Text>
-              </ControlBox>
-            </label>
-          );
-        })}
-      </Flex>
-    </StyledTooltip>
+            <ControlBox
+              userSelect="none"
+              borderWidth="1px"
+              size="1.5rem"
+              rounded="sm"
+              color={colorMode === 'light' ? 'blue.600' : 'blue.200'}
+              bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.100'}
+              cursor="pointer"
+              borderColor="transparent"
+              _child={{ opacity: 100 }}
+              _checked={
+                colorMode === 'light'
+                  ? {
+                      bg: 'blue.500',
+                      color: 'white',
+                      borderColor: 'blue.500',
+                    }
+                  : {
+                      bg: 'blue.200',
+                      color: 'blue.900',
+                      borderColor: 'blue.200',
+                    }
+              }
+              _focus={{ boxShadow: 'outline' }}
+            >
+              <Text fontSize="sm">{index}</Text>
+            </ControlBox>
+          </label>
+        );
+      })}
+    </Flex>
   );
 };
 
@@ -91,7 +76,7 @@ const RuleCheckboxes = () => {
   const born = useSelector((state) => state.life.born, shallowEqual);
   const survive = useSelector((state) => state.life.survive, shallowEqual);
 
-  const { colorMode } = useColorMode();
+  const { colorMode } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
 

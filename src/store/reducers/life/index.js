@@ -25,6 +25,7 @@ const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
 const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
   'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
 const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
+const NEXT_DRAW_ALL_CELLS = 'NEXT_DRAW_ALL_CELLS';
 
 const initialState = {
   cells: [],
@@ -47,6 +48,7 @@ const initialState = {
   didAnyCellsChange: true,
   redrawCellList: [[], []],
   shouldDrawAllCells: true,
+  shouldNextDrawAllCells: false,
   canvasWidth: 0,
   canvasHeight: 0,
   canvasContainerWidth: 0,
@@ -162,6 +164,7 @@ export default function life(state = initialState, action) {
           cells: newCells,
           population: newPopulation,
           didAnyCellsChange: didAnyCellsChange,
+          shouldNextDrawAllCells: false,
           density: getDensity(newPopulation, state.width, state.height),
         };
       } else {
@@ -186,6 +189,7 @@ export default function life(state = initialState, action) {
           population: newPopulation,
           didAnyCellsChange: didAnyCellsChange,
           redrawCellList: newRedrawCellList,
+          shouldNextDrawAllCells: false,
           density: getDensity(newPopulation, state.width, state.height),
         };
       }
@@ -345,6 +349,12 @@ export default function life(state = initialState, action) {
         shouldDrawAllCells: !state.shouldDrawAllCells,
       };
     }
+    case NEXT_DRAW_ALL_CELLS: {
+      return {
+        ...state,
+        shouldNextDrawAllCells: true,
+      };
+    }
     default:
       return state;
   }
@@ -415,3 +425,5 @@ export const translateCells = ({ deltaX, deltaY }) => ({
   deltaX,
   deltaY,
 });
+
+export const nextDrawAllCells = () => ({ type: NEXT_DRAW_ALL_CELLS });

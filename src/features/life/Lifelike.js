@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Components
@@ -16,7 +16,7 @@ import { useKeyboardShortcuts } from 'features/life/useKeyboardShortcuts';
 
 import { getNextCells, toggleIsRunning } from 'store/reducers/life';
 import { setFps } from 'store/reducers/performance';
-import { setColorMode } from 'store/reducers/theme';
+import { setThemeColor } from 'store/reducers/theme';
 
 const Lifelike = ({ isMobile, colorMode }) => {
   const {
@@ -37,16 +37,23 @@ const Lifelike = ({ isMobile, colorMode }) => {
   const shouldDrawAllCells = useSelector(
     (state) => state.life.shouldDrawAllCells
   );
+  const shouldNextDrawAllCells = useSelector(
+    (state) => state.life.shouldNextDrawAllCells
+  );
   const shouldPauseOnStableState = useSelector(
     (state) => state.life.shouldPauseOnStableState
   );
   const height = useSelector((state) => state.life.height);
   const isRunning = useSelector((state) => state.life.isRunning);
 
-  const { aliveCellColor, deadCellColor, gridlineColor } = useSelector(
-    (state) => state.theme.colors,
-    shallowEqual
-  );
+  const {
+    aliveCellColor,
+    deadCellColor,
+    gridlineColor,
+    shouldSwapCellColors,
+    themeColor,
+  } = useSelector((state) => state.theme);
+
   const maxHeight = useSelector((state) => state.life.maxHeight);
   const maxWidth = useSelector((state) => state.life.maxWidth);
   const minHeight = useSelector((state) => state.life.minHeight);
@@ -136,8 +143,8 @@ const Lifelike = ({ isMobile, colorMode }) => {
   });
 
   React.useEffect(() => {
-    dispatch(setColorMode({ colorMode }));
-  }, [dispatch, colorMode]);
+    dispatch(setThemeColor({ colorMode, shouldSwapCellColors, themeColor }));
+  }, [dispatch, colorMode, shouldSwapCellColors, themeColor]);
 
   React.useEffect(() => {
     drawCells({
@@ -150,8 +157,10 @@ const Lifelike = ({ isMobile, colorMode }) => {
       width,
       redrawCellList,
       shouldDrawAllCells,
+      shouldNextDrawAllCells,
     });
   }, [
+    // eslint-disable-line react-hooks/exhaustive-deps
     aliveCellColor,
     cells,
     deadCellColor,
@@ -160,7 +169,8 @@ const Lifelike = ({ isMobile, colorMode }) => {
     px,
     width,
     shouldDrawAllCells,
-  ]); // eslint-disable-line react-hooks/exhaustive-deps
+    colorMode,
+  ]);
 
   React.useEffect(() => {
     clearCanvas({ canvas: canvasGridLayerRef.current });
@@ -232,7 +242,7 @@ const Lifelike = ({ isMobile, colorMode }) => {
       />
 
       <MainControls
-        mt="0.5rem"
+        mt={isMobile ? '0.75rem' : '0.5rem'}
         justify="space-between"
         isMobile={isMobile}
         canvasBaseLayerRef={canvasBaseLayerRef}

@@ -11,7 +11,7 @@ import {
   Button,
   IconButton,
 } from '@chakra-ui/core';
-import StyledTooltip from './StyledTooltip';
+import { useSelector } from 'react-redux';
 
 const ConfirmDialogue = ({
   icon,
@@ -23,6 +23,10 @@ const ConfirmDialogue = ({
   setIsOpen,
   ...rest
 }) => {
+  const { colorMode } = useSelector((state) => state.theme);
+  const { lightBackground, darkBackground } = useSelector(
+    (state) => state.theme.theme.colors
+  );
   const onClose = () => {
     setIsOpen(false);
   };
@@ -36,15 +40,13 @@ const ConfirmDialogue = ({
 
   return (
     <>
-      <StyledTooltip label={aria} placement="top" hasArrow>
-        <IconButton
-          {...rest}
-          icon={icon}
-          variant="solid"
-          aria-label={aria}
-          onClick={() => setIsOpen(true)}
-        />
-      </StyledTooltip>
+      <IconButton
+        {...rest}
+        icon={icon}
+        variant="solid"
+        aria-label={aria}
+        onClick={() => setIsOpen(true)}
+      />
       <AlertDialog
         isCentered
         isOpen={isOpen}
@@ -53,17 +55,22 @@ const ConfirmDialogue = ({
         size="xs"
       >
         <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="sm" fontWeight="bold">
+        <AlertDialogContent
+          bg={colorMode === 'light' ? lightBackground : darkBackground}
+        >
+          <AlertDialogHeader fontSize="sm" fontWeight="400">
             {header}
           </AlertDialogHeader>
-          <AlertDialogBody fontSize="sm">{message}</AlertDialogBody>
+          <AlertDialogBody fontSize="sm" fontWeight="300">
+            {message}
+          </AlertDialogBody>
           <AlertDialogFooter>
-            <Button size="sm" onClick={onClose} ml={3}>
+            <Button size="sm" fontWeight="300" onClick={onClose} ml={3}>
               cancel
             </Button>
             <Button
               size="sm"
+              fontWeight="300"
               variantColor="blue"
               ref={confirmedRef}
               onClick={actionConfirmed}

@@ -1,91 +1,98 @@
 import { lifelikeTheme } from 'theme';
 
-const SET_COLOR_MODE = 'SET_COLOR_MODE';
-const TOGGLE_SHOULD_SWAP_CELL_COLORS = 'TOGGLE_SHOULD_SWAP_CELL_COLORS';
+import Color from 'color';
+
+const SET_THEME_COLOR = 'SET_THEME_COLOR';
 
 const initialState = {
-  lightModeColors: {
-    deadCellColor: lifelikeTheme.colors.white,
-    aliveCellColor: lifelikeTheme.colors.blue['600'],
-    gridlineColor: `${lifelikeTheme.colors.blue['500']}80`,
+  theme: {
+    ...lifelikeTheme,
+    colors: {
+      ...lifelikeTheme.colors,
+      blue: lifelikeTheme.colors['green'],
+    },
   },
-  darkModeColors: {
-    deadCellColor: lifelikeTheme.colors.blue['100'],
-    aliveCellColor: lifelikeTheme.colors.darkBackground, // the Chakra UI background color
-    gridlineColor: `${lifelikeTheme.colors.blue['600']}80`,
-  },
+  aliveCellColor: lifelikeTheme.colors.green['600'],
+  deadCellColor: lifelikeTheme.colors.lightBackground,
+  gridlineColor: `${lifelikeTheme.colors.green['500']}80`,
+  themeColor: 'green',
+  colorMode: 'light',
   shouldSwapCellColors: false,
-  colorMode: null,
-  colors: {},
+  headerColor: lifelikeTheme.colors.green['600'],
+  sliderThumbBgColor: lifelikeTheme.colors.lightBackground,
+  sliderDisabledThumbBgColor: lifelikeTheme.colors.gray['300'],
+  sliderThumbColor: lifelikeTheme.colors.green['600'],
 };
 
 export default function theme(state = initialState, action) {
   switch (action.type) {
-    case SET_COLOR_MODE: {
-      const { colorMode } = action;
-      const { shouldSwapCellColors } = state;
-      let aliveCellColor, deadCellColor, gridlineColor;
+    case SET_THEME_COLOR: {
+      const {
+        themeColor = state.themeColor,
+        colorMode = state.colorMode,
+        shouldSwapCellColors = state.shouldSwapCellColors,
+      } = action;
+
+      let aliveCellColor,
+        deadCellColor,
+        gridlineColor,
+        headerColor,
+        sliderThumbBgColor,
+        sliderThumbColor,
+        sliderDisabledThumbBgColor;
 
       if (colorMode === 'light') {
         if (shouldSwapCellColors) {
-          aliveCellColor = state.lightModeColors.deadCellColor;
-          deadCellColor = state.lightModeColors.aliveCellColor;
+          deadCellColor = lifelikeTheme.colors[themeColor]['600'];
+          aliveCellColor = lifelikeTheme.colors.lightBackground;
         } else {
-          aliveCellColor = state.lightModeColors.aliveCellColor;
-          deadCellColor = state.lightModeColors.deadCellColor;
+          deadCellColor = lifelikeTheme.colors.lightBackground;
+          aliveCellColor = lifelikeTheme.colors[themeColor]['600'];
         }
-        gridlineColor = state.lightModeColors.gridlineColor;
+        headerColor = lifelikeTheme.colors[themeColor]['600'];
+        sliderThumbBgColor = lifelikeTheme.colors.lightBackground;
+        sliderDisabledThumbBgColor = lifelikeTheme.colors.gray['300'];
+        sliderThumbColor = lifelikeTheme.colors[themeColor]['600'];
+        gridlineColor = `${lifelikeTheme.colors[themeColor]['500']}80`;
       } else {
         if (shouldSwapCellColors) {
-          aliveCellColor = state.darkModeColors.deadCellColor;
-          deadCellColor = state.darkModeColors.aliveCellColor;
+          deadCellColor = lifelikeTheme.colors[themeColor]['200'];
+          aliveCellColor = lifelikeTheme.colors.darkBackground;
         } else {
-          aliveCellColor = state.darkModeColors.aliveCellColor;
-          deadCellColor = state.darkModeColors.deadCellColor;
+          deadCellColor = lifelikeTheme.colors.darkBackground;
+          aliveCellColor = lifelikeTheme.colors[themeColor]['200'];
         }
-        gridlineColor = state.darkModeColors.gridlineColor;
+        headerColor = lifelikeTheme.colors[themeColor]['200'];
+        sliderThumbBgColor = lifelikeTheme.colors[themeColor]['200'];
+        sliderDisabledThumbBgColor = Color(
+          lifelikeTheme.colors[themeColor]['200']
+        )
+          .desaturate(0.8)
+          .darken(0.5)
+          .hex();
+        sliderThumbColor = lifelikeTheme.colors.darkBackground;
+        gridlineColor = `${lifelikeTheme.colors[themeColor]['600']}80`;
       }
 
       return {
         ...state,
-        colorMode: colorMode,
-        colors: {
-          aliveCellColor,
-          deadCellColor,
-          gridlineColor,
-        },
-      };
-    }
-    case TOGGLE_SHOULD_SWAP_CELL_COLORS: {
-      const shouldSwapCellColors = !state.shouldSwapCellColors;
-      const { colorMode } = state;
-
-      let aliveCellColor, deadCellColor, gridlineColor;
-
-      if (colorMode === 'light') {
-        if (shouldSwapCellColors) {
-          aliveCellColor = state.lightModeColors.deadCellColor;
-          deadCellColor = state.lightModeColors.aliveCellColor;
-        } else {
-          aliveCellColor = state.lightModeColors.aliveCellColor;
-          deadCellColor = state.lightModeColors.deadCellColor;
-        }
-        gridlineColor = state.lightModeColors.gridlineColor;
-      } else {
-        if (shouldSwapCellColors) {
-          aliveCellColor = state.darkModeColors.deadCellColor;
-          deadCellColor = state.darkModeColors.aliveCellColor;
-        } else {
-          aliveCellColor = state.darkModeColors.aliveCellColor;
-          deadCellColor = state.darkModeColors.deadCellColor;
-        }
-        gridlineColor = state.darkModeColors.gridlineColor;
-      }
-
-      return {
-        ...state,
+        aliveCellColor,
+        deadCellColor,
+        gridlineColor,
+        headerColor,
+        sliderThumbBgColor,
+        sliderThumbColor,
+        sliderDisabledThumbBgColor,
+        themeColor,
+        colorMode,
         shouldSwapCellColors,
-        colors: { aliveCellColor, deadCellColor, gridlineColor },
+        theme: {
+          ...lifelikeTheme,
+          colors: {
+            ...lifelikeTheme.colors,
+            blue: lifelikeTheme.colors[themeColor],
+          },
+        },
       };
     }
     default:
@@ -93,11 +100,15 @@ export default function theme(state = initialState, action) {
   }
 }
 
-export const setColorMode = ({ colorMode }) => ({
-  type: SET_COLOR_MODE,
+export const setThemeColor = ({
+  themeColor,
   colorMode,
-});
-
-export const toggleShouldSwapCellColors = () => ({
-  type: TOGGLE_SHOULD_SWAP_CELL_COLORS,
-});
+  shouldSwapCellColors,
+}) => {
+  return {
+    type: SET_THEME_COLOR,
+    themeColor,
+    colorMode,
+    shouldSwapCellColors,
+  };
+};
