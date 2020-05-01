@@ -4,7 +4,7 @@
 
 Lifelike is a cellular automata toy that can model the late John Conway's famous [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life), as well as any ["Life-like" cellular automaton](https://en.wikipedia.org/wiki/Life-like_cellular_automaton).
 
-The app is built using React + Chakra UI and uses HTML Canvas to render the grid.
+The app is built using React with Chakra UI and uses HTML Canvas to render the grid.
 
 - [Features](#features)
 - [Guide](#guide)
@@ -29,12 +29,11 @@ The app is built using React + Chakra UI and uses HTML Canvas to render the grid
 - Play with most options while the automaton is running (except grid and cell size)
 - Save grid as image
 - Record video
-  - Best on Chrome (supports VP9 codec, good garbage collection means smoother performance)
-  - Good enough on Firefox (supports VP8 codec, less good garbage collection may cause occasional stutters)
+  - Best on Chrome (supports VP9 codec)
+  - Good enough on Firefox (supports VP8 codec)
   - No worky on Safari
 - Dark mode & themes
-- Mobile-friendly!
-- Fast (or at least, fast enough!)
+- Mobile-friendly! As best as I can manage with an app like this.
 
 ## Guide
 
@@ -47,6 +46,7 @@ Just below the header are the main controls for the automaton:
 - Speed up and slow down the automaton (via the delay between iterations):
   - Minimum speed = delay of 1 second
   - Maximum speed = no delay => as fast as your computer can go, limited by CPU and browser framerate - usually maxing at 60fps
+  - Chromium browsers and Safari seem to do run noticeably faster than Firefox and manage garbage collection better, reducing stutters. 
 - Toggle translate mode off and on
   - In translate mode, can click and drag the grid to translate it. You can translate while the automaton is running.
   - When wrapping is enabled, the grid wraps around the edges as you'd expect.
@@ -123,7 +123,7 @@ You will not be able to seek in the video but can convert it to mp4 using ffmpeg
 
 `ffmpeg -i lifelike_ti2cn9wiz.webm -c:v libx264 lifelike_ti2cn9wiz.mp4`
 
-Note that if your cell size was an odd number, you will need to use a different pixel format:
+Note that if your cell size and either width or height were odd numbers, you will need to use a different pixel format:
 
 `ffmpeg -i lifelike_vrmf5aach.webm -c:v libx264 -pix_fmt yuv444p lifelike_vrmf5aach.mp4`
 
