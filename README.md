@@ -19,6 +19,7 @@ The app is built using React with Chakra UI and uses HTML Canvas to render the g
 - [Tips](#tips)
   - [Some interesting rules](#some-interesting-rules)
 - [Roadmap](#roadmap)
+- [Design Decisions](#design-decisions)
 
 ## Features
 
@@ -46,7 +47,7 @@ Just below the header are the main controls for the automaton:
 - Speed up and slow down the automaton (via the delay between iterations):
   - Minimum speed = delay of 1 second
   - Maximum speed = no delay => as fast as your computer can go, limited by CPU and browser framerate - usually maxing at 60fps
-  - Chromium browsers and Safari seem to do run noticeably faster than Firefox and manage garbage collection better, reducing stutters. 
+  - Chromium browsers and Safari seem to do run noticeably faster than Firefox and manage garbage collection better, reducing stutters.
 - Toggle translate mode off and on
   - In translate mode, can click and drag the grid to translate it. You can translate while the automaton is running.
   - When wrapping is enabled, the grid wraps around the edges as you'd expect.
@@ -185,3 +186,53 @@ You can start and stop recording at any time. You'll get the best quality on a c
 - Share grid states via link (depends on if I can compress the grid state to something reasonable)
 - Add pause and resume to video recording controls
 - Experiment with other algorithms, rendering techniques, and parallel processing via webworkers or something like GPU.js
+
+## Design Decisions
+
+This is my first venture outside the React tutorial world, and my second non-trivial javascript app. If you take the time to review the code, I would love to hear critical feedback.
+
+### Why React, Chakra UI and Canvas?
+
+I want to learn React and JSX makes sense to me.
+
+Chakra UI's components are aesthetically pleasing and accessible out of the box. Nice styling via styled-system.
+
+Canvas (without a library) because I wanted the best performance possible without coding everything in a WebGL shader - that's still black magic to me.
+
+### Design
+
+#### State management
+
+The automaton's state is a 2D array of 1's and 0's - one int for each cell. The grid can be fairly large, containing 1 million+ cells! The algorithm in use currently is naive and checks each cell's 8 neighbors. This means 8 array reads per cell per iteration. The numbers get big really quickly.
+
+There are other algorithms that I plan to explore that need fewer array reads, like Tony Finch's ListLife. I will explore those in the future.
+
+Using simple React state with `useState()` quickly became terrible so I explored `useReducer()`, `useReducer()` bundled up with Context, the new Redux Toolkit, and finally plain Redux.
+
+`useState()` and `useReducer()` were performant but made handling multiple user inputs from several components affecting the automaton's cells very tricky. I couldn't figure out a way to do it without having performance issues and incredibly ugly code.
+
+Redux Toolkit was really nice to use but its use of immer behind the scenes made it too slow to read and write potentially 1 million cells each iteration. Performance was terrible.
+
+Plain Redux solved all of these issues. It was fast and allowed for the various user inputs to modify state far more simply.
+
+#### Drawing to canvas
+
+Immediately, I ran into some difficulties making React work well with Canvas, perhaps due to my inexperience. I played with PIXI.js and Fabric but ultimately they were too slow to handle the hundreds of thousands of calls to `fillRect()` 60 times per second. Using canvas directly was noticeably faster. The extra microseconds related to the abstraction of these libraries added up.
+
+The cells are iterated using `requestAnimationFrame()` and then `useEffect()` handles the drawing. Amazingly, this works quite well.
+
+I briefly explored using typed arrays, Canvas direct drawing methods and scaling to draw the grid, but didn't get any signficant improvements, and it made my brain hurt, so I reverted to using `fillRect()`.
+
+To improve performance, the gridlines are drawn to a separate transparent Canvas element, as is the drawing overlay.
+
+#### Reducing re-renders
+
+Because every re-render's performance hit is multiplied by the framerate during animation, I memoized all components and used `useCallback()` very often.
+
+#### Other challenges
+
+The drawing features neded aliased circles, filled circles, lines. I tried to figure it out myself but couldn't get shapes to be only 1 cell wide. I ended up porting some algorithms from stackoverflow to javascript to draw things prettily.
+
+I wasn't sure how to deploy the site, but had heard that Netlify was a joy to use so I gave it a whirl. Wow. Closest thing to real magic I have experience in some time. Needless to say, the app is deployed on Netlify now.
+
+As nice as Chakra UI is, I had some challenges with theming things due to the lack of an included way to change themes and colors. I ended up with a hacky way to provide the Chakra `ThemeProvider` component with my own colors and such on the fly. It works fine but feels wrong.
