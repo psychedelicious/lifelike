@@ -203,7 +203,7 @@ const GridAndCellSizeControls = ({
             fontWeight="400"
             onClick={handleFitCellsToCanvas}
           >
-            fit grid to screen
+            fit grid to window
           </Button>
         </Flex>
       ) : (
