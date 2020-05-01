@@ -1,3 +1,5 @@
+import { omit } from 'lodash';
+
 import { lifelikeTheme } from 'theme';
 
 import { Neighborhoods } from 'features/life/neighborhoods';
@@ -26,6 +28,11 @@ const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
   'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
 const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
 const NEXT_DRAW_ALL_CELLS = 'NEXT_DRAW_ALL_CELLS';
+const SAVE_BOOKMARK = 'SAVE_BOOKMARK';
+const LOAD_BOOKMARK = 'LOAD_BOOKMARK';
+const DELETE_BOOKMARK = 'DELETE_BOOKMARK';
+const RENAME_BOOKMARK = 'RENAME_BOOKMARK';
+const SET_WAS_BOOKMARK_JUST_LOADED = 'SET_WAS_BOOKMARK_JUST_LOADED';
 
 const initialState = {
   cells: [],
@@ -59,6 +66,8 @@ const initialState = {
   maxHeight: 2000,
   minPx: 1,
   maxPx: 25,
+  bookmarks: [],
+  wasBookmarkJustLoaded: false,
 };
 
 export default function life(state = initialState, action) {
@@ -355,6 +364,54 @@ export default function life(state = initialState, action) {
         shouldNextDrawAllCells: true,
       };
     }
+    case SAVE_BOOKMARK: {
+      const { name } = action;
+      const bookmark = {
+        ...omit(state, ['bookmarks']),
+        name,
+      };
+      return {
+        ...state,
+        bookmarks: [...state.bookmarks, bookmark],
+      };
+    }
+    case LOAD_BOOKMARK: {
+      const { index } = action;
+      let newState = omit(state.bookmarks[index], ['name']);
+      newState.isRunning = false;
+
+      return {
+        ...state,
+        ...newState,
+        wasBookmarkJustLoaded: true,
+      };
+    }
+    case DELETE_BOOKMARK: {
+      const { index } = action;
+      const newBookmarks = state.bookmarks.filter((val, i) => i !== index);
+
+      return {
+        ...state,
+        bookmarks: newBookmarks,
+      };
+    }
+    case RENAME_BOOKMARK: {
+      const { index, newName } = action;
+      const newBookmarks = state.bookmarks.map((val, i) =>
+        i === index ? { ...val, name: newName } : { ...val }
+      );
+
+      return {
+        ...state,
+        bookmarks: newBookmarks,
+      };
+    }
+    case SET_WAS_BOOKMARK_JUST_LOADED: {
+      return {
+        ...state,
+        wasBookmarkJustLoaded: action.wasBookmarkJustLoaded,
+      };
+    }
     default:
       return state;
   }
@@ -410,6 +467,18 @@ export const toggleShouldDrawAllCells = () => ({
 
 export const clearCells = () => ({ type: CLEAR_CELLS });
 
+export const saveBookmark = ({ name }) => ({ type: SAVE_BOOKMARK, name });
+
+export const loadBookmark = ({ index }) => ({ type: LOAD_BOOKMARK, index });
+
+export const deleteBookmark = ({ index }) => ({ type: DELETE_BOOKMARK, index });
+
+export const renameBookmark = ({ index, newName }) => ({
+  type: RENAME_BOOKMARK,
+  index,
+  newName,
+});
+
 export const randomizeCells = () => ({ type: RANDOMIZE_CELLS });
 
 export const getNextCells = () => ({ type: GET_NEXT_CELLS });
@@ -427,3 +496,8 @@ export const translateCells = ({ deltaX, deltaY }) => ({
 });
 
 export const nextDrawAllCells = () => ({ type: NEXT_DRAW_ALL_CELLS });
+
+export const setWasBookmarkJustLoaded = ({ wasBookmarkJustLoaded }) => ({
+  type: SET_WAS_BOOKMARK_JUST_LOADED,
+  wasBookmarkJustLoaded,
+});

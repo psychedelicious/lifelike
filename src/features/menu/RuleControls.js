@@ -72,7 +72,7 @@ RuleCheckboxRow.propTypes = {
   colorMode: PropTypes.string.isRequired,
 };
 
-const RuleCheckboxes = () => {
+const RuleControls = () => {
   const born = useSelector((state) => state.life.born, shallowEqual);
   const survive = useSelector((state) => state.life.survive, shallowEqual);
 
@@ -108,4 +108,4 @@ const RuleCheckboxes = () => {
   );
 };
 
-export default React.memo(RuleCheckboxes);
+export default React.memo(RuleControls);

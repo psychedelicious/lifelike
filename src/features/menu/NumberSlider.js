@@ -21,6 +21,7 @@ export const NumberSlider = ({
   icon,
   isDisabled = false,
   showTextInput = true,
+  ...rest
 }) => {
   const {
     sliderThumbBgColor,
@@ -29,7 +30,7 @@ export const NumberSlider = ({
   } = useSelector((state) => state.theme);
 
   return (
-    <Flex my="1">
+    <Flex my="1" {...rest}>
       <Slider
         flex="1"
         value={value}

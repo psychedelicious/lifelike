@@ -10,18 +10,19 @@ import {
   AlertDialogOverlay,
   Button,
   IconButton,
+  Input,
+  Text,
 } from '@chakra-ui/core';
 import { useSelector } from 'react-redux';
 
-const ConfirmDialogue = ({
+const EditDialogue = ({
   icon,
-  buttonText,
   aria,
   header,
   message,
+  initialValue,
+  confirmButtonText,
   confirmedCallback,
-  isOpen,
-  setIsOpen,
   ...rest
 }) => {
   const { colorMode } = useSelector((state) => state.theme);
@@ -29,47 +30,32 @@ const ConfirmDialogue = ({
     (state) => state.theme.theme.colors
   );
 
+  const [isOpen, setIsOpen] = React.useState(false);
+  const editedTextRef = React.useRef();
+
   const onClose = () => {
     setIsOpen(false);
   };
 
-  const actionConfirmed = () => {
-    confirmedCallback();
+  const actionConfirmed = (val) => {
+    confirmedCallback(val);
     onClose();
   };
 
-  const confirmedRef = React.useRef();
-
   return (
     <>
-      {buttonText ? (
-        <Button
-          {...rest}
-          style={{ userSelect: 'none' }}
-          leftIcon={icon}
-          variant="solid"
-          size="sm"
-          my="0.25rem"
-          aria-label={aria}
-          fontWeight="400"
-          onClick={() => setIsOpen(true)}
-        >
-          {buttonText}
-        </Button>
-      ) : (
-        <IconButton
-          {...rest}
-          icon={icon}
-          variant="solid"
-          aria-label={aria}
-          onClick={() => setIsOpen(true)}
-        />
-      )}
+      <IconButton
+        {...rest}
+        icon={icon}
+        variant="solid"
+        aria-label={aria}
+        onClick={() => setIsOpen(true)}
+      />
       <AlertDialog
         isCentered
         isOpen={isOpen}
         onClose={onClose}
-        leastDestructiveRef={confirmedRef}
+        leastDestructiveRef={editedTextRef}
         size="xs"
       >
         <AlertDialogOverlay />
@@ -80,21 +66,33 @@ const ConfirmDialogue = ({
             {header}
           </AlertDialogHeader>
           <AlertDialogBody fontSize="sm" fontWeight="300">
-            {message}
+            {message && <Text>{message}</Text>}
+            <Input
+              size="sm"
+              placeholder={initialValue}
+              ref={editedTextRef}
+              onKeyDown={(e) => e.stopPropagation()}
+            ></Input>
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button size="sm" fontWeight="300" onClick={onClose} ml={3}>
-              cancel
-            </Button>
             <Button
               size="sm"
               fontWeight="300"
+              onClick={onClose}
+              ml={3}
+              tabIndex={1}
+            >
+              cancel
+            </Button>
+            <Button
+              tabIndex={0}
+              size="sm"
+              fontWeight="300"
               variantColor="blue"
-              ref={confirmedRef}
-              onClick={actionConfirmed}
+              onClick={() => actionConfirmed(editedTextRef.current.value)}
               ml={3}
             >
-              yes
+              {confirmButtonText}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -103,15 +101,12 @@ const ConfirmDialogue = ({
   );
 };
 
-ConfirmDialogue.propTypes = {
-  icon: PropTypes.func.isRequired,
+EditDialogue.propTypes = {
+  icon: PropTypes.oneOfType([PropTypes.func, PropTypes.string]).isRequired,
   aria: PropTypes.string.isRequired,
-  buttonText: PropTypes.string,
   header: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
+  message: PropTypes.string,
   confirmedCallback: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  setIsOpen: PropTypes.func.isRequired,
 };
 
-export default React.memo(ConfirmDialogue);
+export default React.memo(EditDialogue);

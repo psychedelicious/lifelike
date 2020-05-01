@@ -12,14 +12,17 @@ export const getCellDimensions = ({
   // calculate 1 rem in px
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-  const canvasRect = canvasBaseLayerRef.current.getBoundingClientRect();
-
   // TODO: get the offsets dynamically
   const widthOffset = isMobile ? 0.5 * rem : rem;
   const heightOffset = isMobile ? 14 * rem : rem;
 
   const newWidth = clamp(
-    Math.trunc((window.innerWidth - canvasRect.left - widthOffset) / px),
+    Math.trunc(
+      (window.innerWidth -
+        canvasBaseLayerRef.current.offsetParent.offsetLeft -
+        widthOffset) /
+        px
+    ),
     minWidth,
     maxWidth
   );

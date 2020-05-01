@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Components
@@ -8,17 +8,22 @@ import Canvas from 'features/canvas/Canvas';
 import MainControls from 'features/menu/MainControls';
 import MainAccordion from 'features/menu/MainAccordion';
 
-// Hooks
 import { useAnimationFrame } from 'hooks/useAnimationFrame';
 import { useCanvas } from 'features/canvas/useCanvas';
 import { getCellDimensions } from 'features/life/getCellDimensions';
 import { useKeyboardShortcuts } from 'features/life/useKeyboardShortcuts';
 
-import { getNextCells, toggleIsRunning } from 'store/reducers/life';
+import {
+  getNextCells,
+  toggleIsRunning,
+  setWasBookmarkJustLoaded,
+} from 'store/reducers/life';
 import { setFps } from 'store/reducers/performance';
 import { setThemeColor } from 'store/reducers/theme';
 
 const Lifelike = ({ isMobile, colorMode }) => {
+  const dispatch = useDispatch();
+
   const {
     drawCells,
     drawGridlines,
@@ -26,25 +31,24 @@ const Lifelike = ({ isMobile, colorMode }) => {
     changeCanvasSize,
   } = useCanvas();
 
-  const dispatch = useDispatch();
-
-  const cells = useSelector((state) => state.life.cells);
-  const didAnyCellsChange = useSelector(
-    (state) => state.life.didAnyCellsChange
-  );
-
-  const redrawCellList = useSelector((state) => state.life.redrawCellList);
-  const shouldDrawAllCells = useSelector(
-    (state) => state.life.shouldDrawAllCells
-  );
-  const shouldNextDrawAllCells = useSelector(
-    (state) => state.life.shouldNextDrawAllCells
-  );
-  const shouldPauseOnStableState = useSelector(
-    (state) => state.life.shouldPauseOnStableState
-  );
-  const height = useSelector((state) => state.life.height);
-  const isRunning = useSelector((state) => state.life.isRunning);
+  const {
+    cells,
+    redrawCellList,
+    didAnyCellsChange,
+    shouldDrawAllCells,
+    shouldNextDrawAllCells,
+    shouldPauseOnStableState,
+    height,
+    isRunning,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    px,
+    shouldShowGridlines,
+    width,
+    wasBookmarkJustLoaded,
+  } = useSelector((state) => state.life, shallowEqual);
 
   const {
     aliveCellColor,
@@ -54,16 +58,7 @@ const Lifelike = ({ isMobile, colorMode }) => {
     themeColor,
   } = useSelector((state) => state.theme);
 
-  const maxHeight = useSelector((state) => state.life.maxHeight);
-  const maxWidth = useSelector((state) => state.life.maxWidth);
-  const minHeight = useSelector((state) => state.life.minHeight);
-  const minWidth = useSelector((state) => state.life.minWidth);
   const msDelay = useSelector((state) => state.performance.msDelay);
-  const px = useSelector((state) => state.life.px);
-  const shouldShowGridlines = useSelector(
-    (state) => state.life.shouldShowGridlines
-  );
-  const width = useSelector((state) => state.life.width);
 
   const now = React.useRef(0);
   const lastTick = React.useRef(0);
@@ -159,8 +154,8 @@ const Lifelike = ({ isMobile, colorMode }) => {
       shouldDrawAllCells,
       shouldNextDrawAllCells,
     });
-  }, [
-    // eslint-disable-line react-hooks/exhaustive-deps
+  }, 
+  [  // eslint-disable-line react-hooks/exhaustive-deps
     aliveCellColor,
     cells,
     deadCellColor,
@@ -194,7 +189,8 @@ const Lifelike = ({ isMobile, colorMode }) => {
 
   React.useEffect(() => {
     fitCellsToCanvas();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    setWasBookmarkJustLoaded({ wasBookmarkJustLoaded: false });
+  }, [wasBookmarkJustLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const gridStyle = React.useMemo(
     () => ({

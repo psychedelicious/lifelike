@@ -15,31 +15,26 @@ import { lifelikeTheme } from 'theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { setThemeColor } from 'store/reducers/theme';
 import { nextDrawAllCells } from 'store/reducers/life';
+import StyledCheckbox from './StyledCheckbox';
 
-const ColorButton = ({ currentTheme, handleChangeTheme, color, colorMode }) => {
+const ColorButton = ({ currentTheme, handleChangeTheme, color }) => {
   const isSelected = currentTheme === color;
-  let borderColor;
 
-  if (isSelected) {
-    borderColor =
-      colorMode === 'light'
-        ? lifelikeTheme.colors[color][600]
-        : lifelikeTheme.colors[color][200];
-  } else {
-    borderColor = 'transparent';
-  }
+  const borderColor = isSelected
+    ? lifelikeTheme.colors[color][200]
+    : 'transparent';
 
-  const bg =
-    colorMode === 'light'
-      ? lifelikeTheme.colors[color][300]
-      : lifelikeTheme.colors[color][500];
+  const boxShadow = isSelected
+    ? `0 0 0 0.15rem ${lifelikeTheme.colors[color][700]}`
+    : null;
 
   return (
     <Box
       m="0.25rem"
       size="1.5rem"
-      bg={bg}
-      borderWidth="0.25rem"
+      bg={lifelikeTheme.colors[color][500]}
+      borderWidth="0.1rem"
+      boxShadow={boxShadow}
       rounded="sm"
       zIndex={7}
       borderColor={borderColor}
@@ -58,15 +53,22 @@ const ChangeThemeButton = (props) => {
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
 
-  const { theme, colorMode, themeColor } = useSelector((state) => state.theme);
-  const { lightBackground, darkBackground } = useSelector(
-    (state) => state.theme.theme.colors
+  const { theme, colorMode, themeColor, shouldSwapCellColors } = useSelector(
+    (state) => state.theme
   );
 
-  const handleChangeTheme = (color) => {
-    dispatch(setThemeColor({ themeColor: color }));
+  const handleChangeTheme = React.useCallback(
+    (color) => {
+      dispatch(setThemeColor({ themeColor: color }));
+      dispatch(nextDrawAllCells());
+    },
+    [dispatch]
+  );
+
+  const handleToggleShouldSwapCellColors = React.useCallback(() => {
+    dispatch(setThemeColor({ shouldSwapCellColors: !shouldSwapCellColors }));
     dispatch(nextDrawAllCells());
-  };
+  }, [dispatch, shouldSwapCellColors]);
 
   return (
     <>
@@ -94,7 +96,11 @@ const ChangeThemeButton = (props) => {
         <PopoverContent
           zIndex={6}
           width="10rem"
-          bg={colorMode === 'light' ? lightBackground : darkBackground}
+          bg={
+            colorMode === 'light'
+              ? theme.colors.lightBackground
+              : theme.colors.darkBackground
+          }
         >
           <PopoverArrow />
           <PopoverBody
@@ -113,6 +119,12 @@ const ChangeThemeButton = (props) => {
                 />
               ))}
             </Flex>
+            <StyledCheckbox
+              m="0.25rem"
+              isChecked={shouldSwapCellColors}
+              onChange={handleToggleShouldSwapCellColors}
+              label="invert grid"
+            />
           </PopoverBody>
         </PopoverContent>
       </Popover>

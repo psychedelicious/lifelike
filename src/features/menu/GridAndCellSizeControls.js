@@ -8,13 +8,12 @@ import { GiResize } from 'react-icons/gi';
 import { Flex, Button } from '@chakra-ui/core';
 
 import NumberSlider from 'features/menu/NumberSlider';
-import MobilePxSlider from 'features/menu/MobilePxSlider';
 
 import { useCanvas } from 'features/canvas/useCanvas';
 import { getCellDimensions } from 'features/life/getCellDimensions';
 import { FaExpand } from 'react-icons/fa';
 
-const WidthHeightPxSliders = ({
+const GridAndCellSizeControls = ({
   isMobile,
   canvasBaseLayerRef,
   canvasGridLayerRef,
@@ -222,11 +221,11 @@ const WidthHeightPxSliders = ({
   );
 };
 
-WidthHeightPxSliders.propTypes = {
+GridAndCellSizeControls.propTypes = {
   isMobile: PropTypes.bool.isRequired,
   canvasBaseLayerRef: PropTypes.object.isRequired,
   canvasGridLayerRef: PropTypes.object.isRequired,
   canvasDrawLayerRef: PropTypes.object.isRequired,
 };
 
-export default React.memo(WidthHeightPxSliders);
+export default React.memo(GridAndCellSizeControls);

@@ -16,6 +16,8 @@ const CanvasDrawingLayer = ({ canvasDrawLayerRef }) => {
   return (
     <canvas
       ref={canvasDrawLayerRef}
+      width={canvasWidth}
+      height={canvasHeight}
       style={{
         cursor: cursor,
         position: 'absolute',

@@ -9,6 +9,8 @@ const CanvasGridLayer = ({ canvasGridLayerRef }) => {
   return (
     <canvas
       ref={canvasGridLayerRef}
+      width={canvasWidth}
+      height={canvasHeight}
       style={{
         position: 'absolute',
         top: '0',

@@ -10,6 +10,8 @@ const CanvasDrawingLayer = ({ canvasBaseLayerRef }) => {
   return (
     <canvas
       ref={canvasBaseLayerRef}
+      width={canvasWidth}
+      height={canvasHeight}
       style={{
         borderRadius: '2px',
         width: canvasWidth || '100%',

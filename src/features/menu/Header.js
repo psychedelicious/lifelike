@@ -2,14 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { IoMdSunny, IoMdMoon } from 'react-icons/io';
-import { IconButton, Flex, Heading, useColorMode } from '@chakra-ui/core';
+import { IoMdSunny, IoMdMoon, IoMdHelpCircle } from 'react-icons/io';
+import { IconButton, Flex, Heading, useColorMode, Link } from '@chakra-ui/core';
 
-import InfoModal from 'features/menu/InfoModal';
 import SaveAsImageButton from 'features/menu/SaveAsImageButton';
 import SaveAsVideoButton from 'features/menu/SaveAsVideoButton';
 import ChangeThemeButton from './ChangeThemeButton';
-import { setThemeColor } from 'store/reducers/theme';
 import { nextDrawAllCells } from 'store/reducers/life';
 
 const Header = ({
@@ -21,6 +19,8 @@ const Header = ({
   const dispatch = useDispatch();
   const { colorMode, toggleColorMode } = useColorMode();
   const { headerColor } = useSelector((state) => state.theme);
+
+  const isMediaRecorderAvailable = window.MediaRecorder ? true : false;
 
   const handleToggleColorMode = () => {
     toggleColorMode();
@@ -34,10 +34,26 @@ const Header = ({
       </Heading>
 
       <Flex justify="right">
-        <SaveAsVideoButton
-          canvasBaseLayerRef={canvasBaseLayerRef}
-          variantColor="blue"
-        />
+        <Link
+          href="https://github.com/psychedelicious/lifelike"
+          target="new"
+          mr="0.5rem"
+        >
+          <IconButton
+            icon={IoMdHelpCircle}
+            fontSize="1.5rem"
+            p={0}
+            h="unset"
+            minW="unset"
+            variant="link"
+            aria-label="help/info"
+            variantColor="blue"
+          />
+        </Link>
+
+        {isMediaRecorderAvailable && (
+          <SaveAsVideoButton canvasBaseLayerRef={canvasBaseLayerRef} />
+        )}
 
         <SaveAsImageButton
           canvasBaseLayerRef={canvasBaseLayerRef}
@@ -45,9 +61,7 @@ const Header = ({
           variantColor="blue"
         />
 
-        <InfoModal variantColor="blue" />
-
-        <ChangeThemeButton />
+        <ChangeThemeButton variantColor="blue" />
 
         <IconButton
           icon={colorMode === 'light' ? IoMdMoon : IoMdSunny}

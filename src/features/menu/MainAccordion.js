@@ -10,106 +10,85 @@ import {
   AccordionPanel,
 } from '@chakra-ui/core';
 
-import RuleCheckboxes from 'features/menu/RuleCheckboxes';
-import NeighborhoodRadio from 'features/menu/NeighborhoodRadio';
-import WidthHeightPxSliders from 'features/menu/WidthHeightPxSliders';
-import DrawOptions from 'features/menu/DrawOptions';
-import OptionsCheckboxes from 'features/menu/OptionsCheckboxes';
+import RuleControls from 'features/menu/RuleControls';
+import NeighborhoodControls from 'features/menu/NeighborhoodControls';
+import GridAndCellSizeControls from 'features/menu/GridAndCellSizeControls';
+import DrawingOptions from 'features/menu/DrawingOptions';
+import OptionsSection from 'features/menu/OptionsSection';
+import { useSelector } from 'react-redux';
+import Bookmarks from './Bookmarks';
+
+const Item = React.memo(({ header, children, defaultIsOpen }) => {
+  const {
+    buttonBackgroundColor,
+    buttonBackgroundColorHover,
+    headerColor,
+  } = useSelector((state) => state.theme);
+
+  return (
+    <AccordionItem
+      borderColor={buttonBackgroundColor}
+      defaultIsOpen={defaultIsOpen}
+    >
+      <AccordionHeader
+        py="0.25rem"
+        px="0.5rem"
+        backgroundColor={buttonBackgroundColor}
+        _hover={{
+          backgroundColor: buttonBackgroundColorHover,
+        }}
+      >
+        <Box
+          flex="1"
+          textAlign="left"
+          fontSize="sm"
+          fontWeight="500"
+          color={headerColor}
+        >
+          {header}
+        </Box>
+        <AccordionIcon />
+      </AccordionHeader>
+      <AccordionPanel p="0.5rem 0.5rem 0.5rem 0.5rem">
+        {children}
+      </AccordionPanel>
+    </AccordionItem>
+  );
+});
 
 const MainAccordion = ({
   isMobile,
-  colorMode,
   canvasBaseLayerRef,
   canvasGridLayerRef,
   canvasDrawLayerRef,
 }) => {
-  const borderColor =
-    colorMode === 'light' ? 'blackAlpha.200' : 'whiteAlpha.100';
-  const backgroundColor = borderColor;
-
   return (
-    <Accordion
-      mt="0.5rem"
-      defaultIndex={isMobile ? [] : [0, 1, 2, 3]}
-      allowMultiple
-    >
-      <AccordionItem borderColor={borderColor}>
-        <AccordionHeader
-          py="0.25rem"
-          px="0.5rem"
-          _hover={{
-            backgroundColor,
-          }}
-        >
-          <Box flex="1" textAlign="left" fontSize="sm" fontWeight="300">
-            rule & neighborhood
-          </Box>
-          <AccordionIcon />
-        </AccordionHeader>
-        <AccordionPanel p="0.5rem 0.5rem 0.5rem 0.5rem">
-          <RuleCheckboxes />
-          <NeighborhoodRadio mt="0.5rem" direction="row" />
-        </AccordionPanel>
-      </AccordionItem>
+    <Accordion mt="0.5rem" allowMultiple>
+      <Item header="rule & neighborhood" defaultIsOpen={!isMobile}>
+        <RuleControls />
+        <NeighborhoodControls mt="0.5rem" direction="row" />
+      </Item>
 
-      <AccordionItem borderColor={borderColor}>
-        <AccordionHeader
-          py="0.25rem"
-          px="0.5rem"
-          _hover={{
-            backgroundColor,
-          }}
-        >
-          <Box flex="1" textAlign="left" fontSize="sm" fontWeight="300">
-            grid
-          </Box>
-          <AccordionIcon />
-        </AccordionHeader>
-        <AccordionPanel p="0.5rem 0.5rem 0.5rem 0.5rem">
-          <WidthHeightPxSliders
-            isMobile={isMobile}
-            canvasBaseLayerRef={canvasBaseLayerRef}
-            canvasGridLayerRef={canvasGridLayerRef}
-            canvasDrawLayerRef={canvasDrawLayerRef}
-          />{' '}
-        </AccordionPanel>
-      </AccordionItem>
+      <Item header="drawing" defaultIsOpen={!isMobile}>
+        <DrawingOptions />
+      </Item>
 
-      <AccordionItem borderColor={borderColor}>
-        <AccordionHeader
-          py="0.25rem"
-          px="0.5rem"
-          _hover={{
-            backgroundColor,
-          }}
-        >
-          <Box flex="1" textAlign="left" fontSize="sm" fontWeight="300">
-            drawing
-          </Box>
-          <AccordionIcon />
-        </AccordionHeader>
-        <AccordionPanel p="0.5rem 0.5rem 0.5rem 0.5rem">
-          <DrawOptions />
-        </AccordionPanel>
-      </AccordionItem>
+      <Item header="bookmarks" defaultIsOpen={!isMobile}>
+        <Bookmarks />
+      </Item>
 
-      <AccordionItem borderColor={borderColor}>
-        <AccordionHeader
-          py="0.25rem"
-          px="0.5rem"
-          _hover={{
-            backgroundColor,
-          }}
-        >
-          <Box flex="1" textAlign="left" fontSize="sm" fontWeight="300">
-            options
-          </Box>
-          <AccordionIcon />
-        </AccordionHeader>
-        <AccordionPanel p="0.5rem 0.5rem 0.5rem 0.5rem">
-          <OptionsCheckboxes />
-        </AccordionPanel>
-      </AccordionItem>
+      <Item header="grid & cell size" defaultIsOpen={false}>
+        <GridAndCellSizeControls
+          isMobile={isMobile}
+          canvasBaseLayerRef={canvasBaseLayerRef}
+          canvasGridLayerRef={canvasGridLayerRef}
+          canvasDrawLayerRef={canvasDrawLayerRef}
+        />
+      </Item>
+
+      <Item header="options" defaultIsOpen={false}>
+        <OptionsSection />
+      </Item>
     </Accordion>
   );
 };

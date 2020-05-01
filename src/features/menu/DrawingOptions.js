@@ -2,7 +2,6 @@ import React from 'react';
 import { clamp } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { FaPaintBrush } from 'react-icons/fa';
 import { Radio, RadioGroup, Text, Flex } from '@chakra-ui/core';
 
 import { NumberSlider } from 'features/menu/NumberSlider';
@@ -13,8 +12,9 @@ import {
   setBrush,
   toggleShouldDrawCrosshairs,
 } from 'store/reducers/drawing';
+import { IoMdBrush } from 'react-icons/io';
 
-const DrawOptions = () => {
+const DrawingOptions = () => {
   const brushFill = useSelector((state) => state.drawing.brushFill);
   const validBrushFills = useSelector((state) => state.drawing.validBrushFills);
   const brushRadius = useSelector((state) => state.drawing.brushRadius);
@@ -84,8 +84,55 @@ const DrawOptions = () => {
   }, [setBrush]); //eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
-      <Flex direction="row">
+    <Flex direction="column">
+      <Flex direction="row" height="1.5rem" align-items="center">
+        <Text fontSize="sm" width="3rem">
+          shape
+        </Text>
+        <Text fontSize="sm" mr="0.5rem">
+          ~>
+        </Text>
+        <RadioGroup
+          onChange={handleBrushShapeChange}
+          value={brushShape}
+          isInline
+        >
+          {validBrushShapes.map((opt) => (
+            <Radio key={opt} value={opt}>
+              <Text fontSize="sm">{opt}</Text>
+            </Radio>
+          ))}
+        </RadioGroup>
+      </Flex>
+
+      <Flex direction="row" height="1.5rem" align-items="center">
+        <Text fontSize="sm" width="3rem">
+          fill
+        </Text>
+        <Text fontSize="sm" mr="0.5rem">
+          ~>
+        </Text>
+
+        <RadioGroup onChange={handleBrushFillChange} value={brushFill} isInline>
+          {validBrushFills.map((opt) => (
+            <Radio key={opt} isDisabled={brushShape === 'pencil'} value={opt}>
+              <Text fontSize="sm">{opt}</Text>
+            </Radio>
+          ))}
+        </RadioGroup>
+      </Flex>
+
+      <NumberSlider
+        flex="1 0 auto"
+        value={brushRadius}
+        min={minBrushRadius}
+        max={maxBrushRadius}
+        onChange={handleBrushRadiusChange}
+        isDisabled={brushShape === 'pencil'}
+        icon={IoMdBrush}
+      />
+
+      <Flex direction="row" height="1.5rem" align-items="center">
         <StyledCheckbox
           label="erase"
           isChecked={isInvertDraw}
@@ -99,34 +146,8 @@ const DrawOptions = () => {
           mr="0.5rem"
         />
       </Flex>
-
-      <RadioGroup onChange={handleBrushShapeChange} value={brushShape} isInline>
-        {validBrushShapes.map((opt) => (
-          <Radio key={opt} value={opt}>
-            <Text fontSize="sm">{opt}</Text>
-          </Radio>
-        ))}
-      </RadioGroup>
-
-      <RadioGroup onChange={handleBrushFillChange} value={brushFill} isInline>
-        {validBrushFills.map((opt) => (
-          <Radio key={opt} isDisabled={brushShape === 'pencil'} value={opt}>
-            <Text fontSize="sm">{opt}</Text>
-          </Radio>
-        ))}
-      </RadioGroup>
-
-      <NumberSlider
-        value={brushRadius}
-        min={minBrushRadius}
-        max={maxBrushRadius}
-        onChange={handleBrushRadiusChange}
-        isDisabled={brushShape === 'pencil'}
-        icon={FaPaintBrush}
-        tooltipLabel='brush radius (cells)'
-      />
-    </>
+    </Flex>
   );
 };
 
-export default React.memo(DrawOptions);
+export default React.memo(DrawingOptions);

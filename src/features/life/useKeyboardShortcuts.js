@@ -25,8 +25,6 @@ export const withModifiers = (e) => {
 };
 
 export const useKeyboardShortcuts = ({
-  canvasBaseLayerRef,
-  canvasGridLayerRef,
   canvasDrawLayerRef,
   fitCellsToCanvas,
 }) => {
@@ -37,7 +35,7 @@ export const useKeyboardShortcuts = ({
   );
 
   const dispatch = useDispatch();
-  const { clearCanvas, saveCanvasAsImage } = useCanvas();
+  const { clearCanvas } = useCanvas();
   const withModifiers = useWithModifiers();
 
   useGlobalKeyDown((e) => {
@@ -68,14 +66,6 @@ export const useKeyboardShortcuts = ({
       case 'w':
         if (!withModifiers(e)) {
           dispatch(toggleShouldWrap());
-        }
-        break;
-      case 's':
-        if (!withModifiers(e)) {
-          saveCanvasAsImage({
-            canvasBaseLayerRef: canvasBaseLayerRef,
-            canvasGridLayerRef: canvasGridLayerRef,
-          });
         }
         break;
       case 'h':

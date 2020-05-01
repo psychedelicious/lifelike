@@ -32,7 +32,6 @@ export const lifelikeTheme = {
       'offgray',
     ],
     transparent: 'transparent',
-    // darkBackground: '#1A202C',
     darkBackground: '#171923',
     lightBackground: '#F7FAFC',
     tooltipBackground: '#313D53',

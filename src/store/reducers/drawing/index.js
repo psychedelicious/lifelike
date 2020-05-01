@@ -15,11 +15,11 @@ const initialState = {
   maxBrushRadius: 50,
   brushPoints: [],
   brushFill: 'solid',
-  validBrushFills: ['solid', 'outline', 'random', 'spray'],
+  validBrushFills: ['solid', 'outline', 'spray'], // 'random' is not so nice
   isInDrawMode: false,
   isInTranslateMode: false,
   isInvertDraw: false,
-  shouldDrawCrosshairs: true,
+  shouldDrawCrosshairs: false,
 };
 
 export default function drawing(state = initialState, action) {
