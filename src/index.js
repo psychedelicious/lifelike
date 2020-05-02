@@ -1,11 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, useSelector } from 'react-redux';
-
-import store from 'store';
+import { PersistGate } from 'redux-persist/integration/react';
+import getStore from 'store';
 
 import App from 'App';
-import { ThemeProvider, ColorModeProvider, CSSReset } from '@chakra-ui/core';
+
+import {
+  ThemeProvider,
+  ColorModeProvider,
+  CSSReset,
+  Spinner,
+  Flex,
+} from '@chakra-ui/core';
 
 // if (process.env.NODE_ENV === 'development') {
 //   const whyDidYouRender = require('@welldone-software/why-did-you-render');
@@ -26,6 +33,16 @@ import { ThemeProvider, ColorModeProvider, CSSReset } from '@chakra-ui/core';
 //     ],
 //   });
 // }
+
+let { store, persistor } = getStore();
+
+const Loading = () => {
+  return (
+    <Flex w="100vw" h="100vh" justify="center" alignItems="center">
+      <Spinner size="xl" />
+    </Flex>
+  );
+};
 
 const CSSResetConfig = (theme) => ({
   light: {
@@ -56,19 +73,9 @@ const WrappedApp = () => {
 
 ReactDOM.render(
   <Provider store={store}>
-    <WrappedApp />
+    <PersistGate loading={<Loading />} persistor={persistor}>
+      <WrappedApp />
+    </PersistGate>
   </Provider>,
   document.getElementById('root')
 );
-
-// ReactDOM.render(
-//   <Provider store={store}>
-//     <ThemeProvider theme={lifelikeTheme}>
-//       <ColorModeProvider>
-//         <CSSReset />
-//         <App />
-//       </ColorModeProvider>
-//     </ThemeProvider>
-//   </Provider>,
-//   document.getElementById('root')
-// );
