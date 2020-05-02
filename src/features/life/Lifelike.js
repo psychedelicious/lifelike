@@ -154,8 +154,8 @@ const Lifelike = ({ isMobile, colorMode }) => {
       shouldDrawAllCells,
       shouldNextDrawAllCells,
     });
-  }, 
-  [  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    // eslint-disable-line react-hooks/exhaustive-deps
     aliveCellColor,
     cells,
     deadCellColor,
@@ -189,8 +189,22 @@ const Lifelike = ({ isMobile, colorMode }) => {
 
   React.useEffect(() => {
     fitCellsToCanvas();
-    setWasBookmarkJustLoaded({ wasBookmarkJustLoaded: false });
-  }, [wasBookmarkJustLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  React.useEffect(() => {
+    if (wasBookmarkJustLoaded) {
+      changeCanvasSize({
+        canvasBaseLayerRef,
+        canvasDrawLayerRef,
+        canvasGridLayerRef,
+        height,
+        px,
+        width,
+      });
+
+      dispatch(setWasBookmarkJustLoaded({ wasBookmarkJustLoaded: false }));
+    }
+  }, [wasBookmarkJustLoaded, changeCanvasSize, px, height, width, dispatch]);
 
   const gridStyle = React.useMemo(
     () => ({
