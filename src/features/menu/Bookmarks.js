@@ -9,36 +9,41 @@ import {
   IconButton,
   Button,
 } from '@chakra-ui/core';
+
 import {
   loadBookmark,
   deleteBookmark,
   renameBookmark,
   saveBookmark,
 } from 'store/reducers/life';
+
 import { FaTrash } from 'react-icons/fa';
 import EditDialogue from './EditDialogue';
 
-const getFormattedDate = () => {
-  const d = new Date();
-  const day = d.getDay().toString().padStart(2, '0');
-  const month = d.getMonth().toString().padStart(2, '0');
-  const year = d.getFullYear().toString();
-  const hours = d.getHours().toString().padStart(2, '0');
-  const minutes = d.getMinutes().toString().padStart(2, '0');
-  const seconds = d.getSeconds().toString().padStart(2, '0');
-
-  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-};
-
 const Bookmarks = () => {
   const dispatch = useDispatch();
+
   const bookmarks = useSelector(
     (state) => state.life.bookmarks,
     (prev, next) => {
-      prev.length === next.length &&
-        prev.map((val, idx) => val.name === next[idx].name);
+      return (
+        prev.length === next.length &&
+        prev.every((el, idx) => el.name === next[idx].name)
+      );
     }
   );
+
+  const getFormattedDate = React.useCallback(() => {
+    const d = new Date();
+    const day = d.getDay().toString().padStart(2, '0');
+    const month = d.getMonth().toString().padStart(2, '0');
+    const year = d.getFullYear().toString();
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    const seconds = d.getSeconds().toString().padStart(2, '0');
+
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+  }, []);
 
   return (
     <>
@@ -46,7 +51,7 @@ const Bookmarks = () => {
         <Button
           flex="1 1 auto"
           style={{ userSelect: 'none' }}
-          leftIcon='star'
+          leftIcon="star"
           variant="solid"
           size="sm"
           my="0.25rem"
