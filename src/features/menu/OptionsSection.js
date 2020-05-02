@@ -59,7 +59,7 @@ const OptionsSection = ({ ...rest }) => {
       <StyledCheckbox
         isChecked={shouldWrap}
         onChange={handleToggleWrap}
-        label="wrap"
+        label="edge wrapping"
       />
 
       <StyledCheckbox
