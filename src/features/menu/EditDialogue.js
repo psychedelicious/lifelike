@@ -33,14 +33,17 @@ const EditDialogue = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const editedTextRef = React.useRef();
 
-  const onClose = () => {
+  const onClose = React.useCallback(() => {
     setIsOpen(false);
-  };
+  }, []);
 
-  const actionConfirmed = (val) => {
-    confirmedCallback(val);
-    onClose();
-  };
+  const actionConfirmed = React.useCallback(
+    (val) => {
+      confirmedCallback(val);
+      onClose();
+    },
+    [confirmedCallback, onClose]
+  );
 
   return (
     <>
