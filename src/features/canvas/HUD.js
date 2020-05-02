@@ -33,23 +33,26 @@ const NumberDisplay = React.memo(({ name, value }) => {
 });
 
 const HUD = () => {
-  const density = useSelector((state) => state.life.density);
-  const generation = useSelector((state) => state.life.generation);
-  const height = useSelector((state) => state.life.height);
-  const msDelay = useSelector((state) => state.performance.msDelay);
-  const speed = useSelector((state) => state.performance.speed);
-  const fps = useSelector((state) => state.performance.fps);
-  const population = useSelector((state) => state.life.population);
-  const px = useSelector((state) => state.life.px);
-  const width = useSelector((state) => state.life.width);
-  const isRunning = useSelector((state) => state.life.isRunning);
+  const {
+    density,
+    generation,
+    height,
+    isRunning,
+    population,
+    px,
+    width,
+    shouldWrap,
+  } = useSelector((state) => state.life);
+
+  const { msDelay, speed, fps } = useSelector((state) => state.performance);
+
   const { aliveCellColor, deadCellColor } = useSelector(
     (state) => state.theme,
     shallowEqual
   );
-  const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
-  const isInTranslateMode = useSelector(
-    (state) => state.drawing.isInTranslateMode
+
+  const { isInDrawMode, isInTranslateMode } = useSelector(
+    (state) => state.drawing
   );
 
   return (
@@ -62,7 +65,7 @@ const HUD = () => {
         margin="0.5rem"
         zIndex="2"
         width="14rem"
-        height="14rem"
+        height="15.25rem"
         opacity="0.7"
         borderRadius="0.15rem"
         bg={aliveCellColor}
@@ -74,7 +77,7 @@ const HUD = () => {
         zIndex="3"
         display="grid"
         gridTemplateColumns="auto 7rem"
-        gridTemplateRows="repeat(10 auto)"
+        gridTemplateRows="repeat(11 auto)"
         position="absolute"
         padding="0.5rem"
         margin="0.5rem"
@@ -90,6 +93,7 @@ const HUD = () => {
         <NumberDisplay name={'density'} value={`${density}%`} />
         <NumberDisplay name={'delay'} value={formatDelay(speed, msDelay)} />
         <NumberDisplay name={'fps'} value={fps} />
+        <NumberDisplay name={'wrap'} value={shouldWrap ? 'yes' : 'no'} />
         <NumberDisplay name={'running'} value={isRunning ? 'yes' : 'no'} />
         <NumberDisplay
           name={'mode'}
