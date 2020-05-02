@@ -28,13 +28,10 @@ The app is built using React with Chakra UI and uses HTML Canvas to render the g
 - Basic drawing functionality
 - Edge-wrapping (or not)
 - Play with most options while the automaton is running (except grid and cell size)
-- Save grid as image
-- Record video
-  - Best on Chrome (supports VP9 codec)
-  - Good enough on Firefox (supports VP8 codec)
-  - No worky on Safari
-- Dark mode & themes
-- Mobile-friendly! As best as I can manage with an app like this.
+- Save automaton state as image or record video of automaton
+- Bookmark automaton states for safe experimentation
+- Save bookmarks between reloads
+- Mobile-friendly
 
 ## Guide
 
@@ -42,20 +39,22 @@ The app is built using React with Chakra UI and uses HTML Canvas to render the g
 
 Just below the header are the main controls for the automaton:
 
-- Start/stop
+- Start/stop automaton
 - Tick/iterate once
 - Speed up and slow down the automaton (via the delay between iterations):
   - Minimum speed = delay of 1 second
   - Maximum speed = no delay => as fast as your computer can go, limited by CPU and browser framerate - usually maxing at 60fps
   - Chromium browsers and Safari seem to do run noticeably faster than Firefox and manage garbage collection better, reducing stutters.
-- Toggle translate mode off and on
-  - In translate mode, can click and drag the grid to translate it. You can translate while the automaton is running.
-  - When wrapping is enabled, the grid wraps around the edges as you'd expect.
-  - **When wrapping is not enabled, the grid is cropped!**
-  - Translate mode over-rides drawing mode.
-  - Use the arrow keys to move one cell at a time, or hold shift and use arrow keys to move 10 cells at a time.
-- Toggle drawing mode off and on
-  - In draw mode, you can draw or erase cells on the grid. You can draw while the automaton is running. See Drawing section below.
+
+There is a toggle button for Translate mode:
+
+- In translate mode, can click and drag the grid totranslate it. You can translate while the automatonis running.
+- When wrapping is enabled, the grid wraps aroundthe edges as you'd expect.
+- **When wrapping is not enabled, the grid iscropped!**
+- Translate mode over-rides drawing mode.
+- Use the arrow keys to move one cell at a time, or hold shift and use arrow keys to move 10 cells at a time.
+
+And one for Drawing mode (see Drawing section below).
 
 ### Rule & Neighborhood
 
@@ -82,19 +81,16 @@ Hold Shift while clicking to draw (or erase) a line using the current brush, fro
 
 ### Bookmarks
 
-**Bookmarks are not kept between app reloads!**
-
-A bookmark is a snapshot of the current automaton's state, including the rule, neighborhood, cells, grid size, etc.
-
-Loading a bookmark will overwrite the current state.
-
-Bookmarks can be renamed.
+- A bookmark is a snapshot of the current automaton's state, including the rule, neighborhood, cells, grid size, etc.
+- Loading a bookmark will overwrite the current state.
+- Bookmarks can be renamed.
+- Bookmarks are saved between app reloads. They use localstorage, so they will only last for 7 days on Safari, but should last forever (?) on Chrome & FF.
 
 ### Grid & Cell Size
 
 Changes to the grid width and height (measured in cells) occur from the top left corner. So, if you increase the width or height, it will expand toward the right or downwards.
 
-Changes to cell size (measured in pixels) is just like zooming in.
+Changes to cell size (measured in pixels) does not change the width and height.
 
 When you fit the grid to window...
 
@@ -103,54 +99,55 @@ When you fit the grid to window...
 
 ### Options
 
-- Toggle gridlines
-  - Gridlines are included in saved images, but not saved videos
-- Toggle edge-wrapping (toroidal topology)
+- Gridlines are included in saved images, but not saved videos
+- Edge wrapping means opposite edges of the grid behave as if they are connected, like a torus.
 - Toggle HUD (info overlay)
 - Toggle pause on stable state
   - If the current state is identical to the previous, pauses the automaton
 - Draw only changed cells
-  - Alternate algorithm and drawing method. Keeps track of which cells have changed and only updates them. May be faster when the grid isn't very active. Doesn't make a _huge_ difference, though.
+  - Alternate algorithm and drawing method. May be faster in some specific situations, worth trying if the app is running slowly.
 
 ### Image & Video Recording
 
-You can save an image of the current grid at any time by clicking the image icon at the top of the page. Images include the gridlines.
+You can save an image of the current grid at any time by clicking the image icon at the top of the page. Images include the gridlines if they are enabled.
 
-Video recording can be started and stopped by clicking the video camera icon at the top of the page. It will turn into a red circle while recording. Whatever you do or see will be recorded in real time, but you won't get the gridlines or see the drawing/HUD overlays. If you have the automaton running at 1 fps, it will record at 1 fps.
+Video recording can be started and stopped by clicking the video camera icon at the top of the page. It will turn into a red circle while recording. Whatever you do or see will be recorded in real time, but you won't get the gridlines or see the drawing/HUD overlays.
 
-When you stop, a recording will be immediately downloaded in webm format.
+When you click the red circle to stop, a recording will be immediately downloaded in webm format.
 
-You will not be able to seek in the video but can convert it to mp4 using ffmpeg:
+You will not be able to seek in the webm file but can convert it to mp4 using ffmpeg to fix this:
 
 `ffmpeg -i lifelike_ti2cn9wiz.webm -c:v libx264 lifelike_ti2cn9wiz.mp4`
 
-Note that if your cell size and either width or height were odd numbers, you will need to use a different pixel format:
+Note that if your grid has an odd width or height _in pixels_, the encoding to mp4 will fail. You can use a different pixel format to get around this:
 
 `ffmpeg -i lifelike_vrmf5aach.webm -c:v libx264 -pix_fmt yuv444p lifelike_vrmf5aach.mp4`
 
-The resultant file may not play on all media players, though. Best to use an even cell size for recording purposes.
+However, the resultant file will not be as compatible with media players as the default pixel format (which is yuv420p). Best to ensure you set up the grid to result in even pixel dimensions for best compatibility.
 
-You can start and stop recording at any time. You'll get the best quality on a chromium-based browser (e.g. Chrome, Brave or the new Edge) as chromium supports the VP9 codec. Firefox only supports the older VP8 codec and quality is not quite as great, but it still works. Video recording is not available on Safari.
+You can start and stop recording at any time.
+
+You'll get the best quality on Chrome as it supports the VP9 codec (maybe Brave and new Edge also support it?). Firefox only supports the older VP8 codec and quality is not quite as great, but it still works. Video recording is not available on Safari at all.
 
 ## Keyboard Shortcuts
 
-|                   key | action                                                                          |
-| --------------------: | ------------------------------------------------------------------------------- |
-|              spacebar | run/stop the automaton                                                          |
-|                 right | tick automaton once                                                             |
-|                     c | clear all cells                                                                 |
-|                     r | randomize all cells                                                             |
-|                     f | fit cells to window                                                             |
-|              up, down | speed up/down                                                                   |
-|                     m | set neighborhood to moore                                                       |
-|                     n | set neighborhood to von neumann                                                 |
-|                     b | set neighborhood to hexagonal                                                   |
-|                     w | toggle edge wrapping                                                            |
-|                     g | toggle gridlines                                                                |
-|                     h | toggle HUD                                                                      |
-|                     d | toggle draw mode                                                                |
-|                     t | toggle translate mode                                                           |
-| up, down, left, right | shift grid by 1 cell (translate mode only, hold shift to translate by 10 cells) |
+|                   key | action                                                                              |
+| --------------------: | ----------------------------------------------------------------------------------- |
+|              spacebar | run/stop the automaton                                                              |
+|                 right | tick automaton once                                                                 |
+|                     c | clear all cells                                                                     |
+|                     r | randomize all cells                                                                 |
+|                     f | fit cells to window                                                                 |
+|              up, down | speed up/down                                                                       |
+|                     m | set neighborhood to moore                                                           |
+|                     n | set neighborhood to von neumann                                                     |
+|                     b | set neighborhood to hexagonal                                                       |
+|                     w | toggle edge wrapping                                                                |
+|                     g | toggle gridlines                                                                    |
+|                     h | toggle HUD                                                                          |
+|                     d | toggle draw mode                                                                    |
+|                     t | toggle translate mode                                                               |
+| up, down, left, right | translate grid by 1 cell (translate mode only, hold shift to translate by 10 cells) |
 
 ## Tips
 
@@ -158,7 +155,7 @@ You can start and stop recording at any time. You'll get the best quality on a c
 - To get some cool symmetry going without drawing anything:
   - Clear the grid
   - Disable edge-wrapping
-  - Set the rule born 0 and at least:
+  - Set the rule to born 0 and at least:
     - for Moore: survive 3, 5 or 8
     - for von Neumann: survive 2, 3 or 4
     - for Hexagonal: survive 3, 4 or 6
@@ -170,7 +167,7 @@ You can start and stop recording at any time. You'll get the best quality on a c
 
 - Hexagonal B0/S1235
   - From a clear grid, with edge wrapping off, crystals grow inward.
-  - From a grid with a single cell or symmetrical drawing in the center of the grid, crystals grow outward.
+  - From a grid with a single cell or symmetrical drawing in the center of the grid, very orderly crystals grow outward.
 - von Neumann B24/S23
   - Tries to stabilize as morphing rectangles
   - Try from a random grid, from clear grid while drawing, or from a single square
@@ -179,23 +176,24 @@ You can start and stop recording at any time. You'll get the best quality on a c
 
 ## Roadmap
 
-- Save the app's config and bookmarks between page loads
 - Better drawing
   - Limited undo
   - More brushes (e.g. glider brush)
 - Share grid states via link (depends on if I can compress the grid state to something reasonable)
 - Add pause and resume to video recording controls
 - Experiment with other algorithms, rendering techniques, and parallel processing via webworkers or something like GPU.js
+- Hexagonal grid
+- Non-totalistic rules
 
 ## Design Decisions
 
 This is my first venture outside the React tutorial world, and my second non-trivial javascript app. If you take the time to review the code, I would love to hear critical feedback.
 
-### Why React, Chakra UI and Canvas?
+### React, Chakra UI and Canvas
 
-I want to learn React and JSX makes sense to me.
+I want to learn React and JSX makes sense to me. I tried Vue, but couldn't really wrap my head around it. I hope to eventually be employed as a front-end developer, and React is a good place to start for that.
 
-Chakra UI's components are aesthetically pleasing and accessible out of the box. Nice styling via styled-system.
+Chakra UI's components are aesthetically pleasing and accessible out of the box. Really nice styling via styled-system, kinda like TailwindCSS utility classes.
 
 Canvas (without a library) because I wanted the best performance possible without coding everything in a WebGL shader - that's still black magic to me.
 
@@ -207,13 +205,13 @@ The automaton's state is a 2D array of 1's and 0's - one int for each cell. The 
 
 There are other algorithms that I plan to explore that need fewer array reads, like Tony Finch's ListLife. I will explore those in the future.
 
-Using simple React state with `useState()` quickly became terrible so I explored `useReducer()`, `useReducer()` bundled up with Context, the new Redux Toolkit, and finally plain Redux.
+I explored simple React state with `useState()`, `useReducer()`, `useReducer()` bundled up with Context, the new Redux Toolkit, and finally plain Redux.
 
 `useState()` and `useReducer()` were performant but made handling multiple user inputs from several components affecting the automaton's cells very tricky. I couldn't figure out a way to do it without having performance issues and incredibly ugly code.
 
-Redux Toolkit was really nice to use but its use of immer behind the scenes made it too slow to read and write potentially 1 million cells each iteration. Performance was terrible.
+Redux Toolkit was really nice to use but its use of immer behind the scenes made it too slow to read and write potentially 1 million+ cells each iteration. Performance was unacceptable.
 
-Plain Redux solved all of these issues. It was fast and allowed for the various user inputs to modify state far more simply.
+Plain Redux solved all of these issues. It is fast and allowed for the various user inputs to modify state far more simply.
 
 #### Drawing to canvas
 
@@ -231,8 +229,10 @@ Because every re-render's performance hit is multiplied by the framerate during 
 
 #### Other challenges
 
-The drawing features neded aliased circles, filled circles, lines. I tried to figure it out myself but couldn't get shapes to be only 1 cell wide. I ended up porting some algorithms from stackoverflow to javascript to draw things prettily.
+The drawing features needed _aliased_ shapes. I had trouble creating my own algorithms to generate circles and arbitrary lines that were a single pixel thick. I ended up porting some algorithms from stackoverflow to javascript to draw things prettily. Geometry becomes more difficult when you are working in the pixel-y world and not the ideal math world.
 
 I wasn't sure how to deploy the site, but had heard that Netlify was a joy to use so I gave it a whirl. Wow. Closest thing to real magic I have experience in some time. Needless to say, the app is deployed on Netlify now.
 
 As nice as Chakra UI is, I had some challenges with theming things due to the lack of an included way to change themes and colors. I ended up with a hacky way to provide the Chakra `ThemeProvider` component with my own colors and such on the fly. It works fine but feels wrong.
+
+Redux made implementing bookmarks a total breeze, and redux-persist made implementing persistance literally a 15 minute job.
