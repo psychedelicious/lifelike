@@ -8,7 +8,7 @@ import CanvasGridLayer from 'features/canvas/CanvasGridLayer';
 import CanvasDrawingLayer from 'features/canvas/CanvasDrawingLayer';
 import { getPointsOnLine } from 'features/canvas/getPointsOnLine';
 
-import HUD from 'features/life/HUD';
+import HUD from 'features/canvas/HUD';
 
 import { setArrayOfCells, translateCells } from 'store/reducers/life';
 

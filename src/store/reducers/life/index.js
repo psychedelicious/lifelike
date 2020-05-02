@@ -5,69 +5,71 @@ import { lifelikeTheme } from 'theme';
 import { Neighborhoods } from 'features/life/neighborhoods';
 
 import { createCells } from 'store/reducers/life/createCells';
+
 import {
   getNextCells_shouldDrawAllCells,
   getNextCells_drawChangedCells,
 } from 'store/reducers/life/getNextCells';
-import { getDensity } from 'store/reducers/performance/utilities';
+
+import { getDensity } from 'store/reducers/life/utilities';
 
 const CLEAR_CELLS = 'CLEAR_CELLS';
+const DELETE_BOOKMARK = 'DELETE_BOOKMARK';
 const GET_NEXT_CELLS = 'GET_NEXT_CELLS';
+const LOAD_BOOKMARK = 'LOAD_BOOKMARK';
+const NEXT_DRAW_ALL_CELLS = 'NEXT_DRAW_ALL_CELLS';
 const RANDOMIZE_CELLS = 'RANDOMIZE_CELLS';
+const RENAME_BOOKMARK = 'RENAME_BOOKMARK';
+const SAVE_BOOKMARK = 'SAVE_BOOKMARK';
 const SET_ARRAY_OF_CELLS = 'SET_ARRAY_OF_CELLS';
-const TRANSLATE_CELLS = 'TRANSLATE_CELLS';
 const SET_BORN = 'SET_BORN';
 const SET_GRID = 'SET_GRID';
 const SET_NEIGHBORHOOD = 'SET_NEIGHBORHOOD';
 const SET_SURVIVE = 'SET_SURVIVE';
-const TOGGLE_SHOULD_DRAW_ALL_CELLS = 'TOGGLE_SHOULD_DRAW_ALL_CELLS';
+const SET_WAS_BOOKMARK_JUST_LOADED = 'SET_WAS_BOOKMARK_JUST_LOADED';
 const TOGGLE_IS_RUNNING = 'TOGGLE_IS_RUNNING';
-const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
-const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
+const TOGGLE_SHOULD_DRAW_ALL_CELLS = 'TOGGLE_SHOULD_DRAW_ALL_CELLS';
 const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
   'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
+const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
+const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
 const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
-const NEXT_DRAW_ALL_CELLS = 'NEXT_DRAW_ALL_CELLS';
-const SAVE_BOOKMARK = 'SAVE_BOOKMARK';
-const LOAD_BOOKMARK = 'LOAD_BOOKMARK';
-const DELETE_BOOKMARK = 'DELETE_BOOKMARK';
-const RENAME_BOOKMARK = 'RENAME_BOOKMARK';
-const SET_WAS_BOOKMARK_JUST_LOADED = 'SET_WAS_BOOKMARK_JUST_LOADED';
+const TRANSLATE_CELLS = 'TRANSLATE_CELLS';
 
 const initialState = {
+  bookmarks: [],
+  born: [false, false, false, true, false, false, false, false, false],
+  canvasContainerHeight: 0,
+  canvasContainerWidth: 0,
+  canvasHeight: 0,
+  canvasWidth: 0,
   cells: [],
-  width: 0,
+  density: 0,
+  didAnyCellsChange: true,
+  generation: 0,
   height: 0,
+  isRunning: false,
+  maxHeight: 2000,
+  maxPx: 25,
+  maxWidth: 2000,
+  minHeight: 1,
+  minPx: 1,
+  minWidth: 1,
+  neighborhood: Neighborhoods.MOORE,
+  population: 0,
   px: window.matchMedia(`(max-width: ${lifelikeTheme.breakpoints.md})`).matches
     ? 3
     : 5,
-  neighborhood: Neighborhoods.MOORE,
-  born: [false, false, false, true, false, false, false, false, false],
-  survive: [false, false, true, true, false, false, false, false, false],
-  shouldWrap: true,
-  shouldShowGridlines: false,
-  isRunning: false,
-  shouldPauseOnStableState: false,
-  shouldShowHUD: false,
-  generation: 0,
-  population: 0,
-  density: 0,
-  didAnyCellsChange: true,
   redrawCellList: [[], []],
   shouldDrawAllCells: true,
   shouldNextDrawAllCells: false,
-  canvasWidth: 0,
-  canvasHeight: 0,
-  canvasContainerWidth: 0,
-  canvasContainerHeight: 0,
-  minWidth: 1,
-  maxWidth: 2000,
-  minHeight: 1,
-  maxHeight: 2000,
-  minPx: 1,
-  maxPx: 25,
-  bookmarks: [],
+  shouldPauseOnStableState: false,
+  shouldShowGridlines: false,
+  shouldShowHUD: false,
+  shouldWrap: true,
+  survive: [false, false, true, true, false, false, false, false, false],
   wasBookmarkJustLoaded: false,
+  width: 0,
 };
 
 export default function life(state = initialState, action) {
