@@ -4,7 +4,7 @@
 
 Lifelike is a cellular automata toy that can model the late John Conway's famous [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life), as well as any ["Life-like" cellular automaton](https://en.wikipedia.org/wiki/Life-like_cellular_automaton).
 
-The app is built using React with Chakra UI and uses HTML Canvas to render the grid.
+The app is built using React with Chakra UI and uses HTML Canvas to render the grid. It's the CA browser toy I've always wanted.
 
 - [Features](#features)
 - [Guide](#guide)
@@ -184,6 +184,7 @@ You'll get the best quality on Chrome as it supports the VP9 codec (maybe Brave 
 - Experiment with other algorithms, rendering techniques, and parallel processing via webworkers or something like GPU.js
 - Hexagonal grid
 - Non-totalistic rules
+- Mirror mode (grid is mirrored horizontally / vertically, mirrored drawing)
 
 ## Design Decisions
 
