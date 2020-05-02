@@ -9,6 +9,7 @@ import SaveAsImageButton from 'features/menu/SaveAsImageButton';
 import SaveAsVideoButton from 'features/menu/SaveAsVideoButton';
 import ChangeThemeButton from './ChangeThemeButton';
 import { nextDrawAllCells } from 'store/reducers/life';
+import { setThemeColor } from 'store/reducers/theme';
 
 const Header = ({
   isMobile,
@@ -24,6 +25,10 @@ const Header = ({
 
   const handleToggleColorMode = () => {
     toggleColorMode();
+    dispatch(
+      setThemeColor({ colorMode: colorMode === 'light' ? 'dark' : 'light' })
+    );
+
     dispatch(nextDrawAllCells());
   };
 
