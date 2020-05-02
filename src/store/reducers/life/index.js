@@ -367,7 +367,13 @@ export default function life(state = initialState, action) {
     case SAVE_BOOKMARK: {
       const { name } = action;
       const bookmark = {
-        ...omit(state, ['bookmarks']),
+        ...omit(state, [
+          'bookmarks',
+          'shouldShowGridlines',
+          'isRunning',
+          'shouldPauseOnStableState',
+          'shouldShowHUD',
+        ]),
         name,
       };
       return {
@@ -378,11 +384,11 @@ export default function life(state = initialState, action) {
     case LOAD_BOOKMARK: {
       const { index } = action;
       let newState = omit(state.bookmarks[index], ['name']);
-      newState.isRunning = false;
 
       return {
         ...state,
         ...newState,
+        isRunning: false,
         wasBookmarkJustLoaded: true,
       };
     }
