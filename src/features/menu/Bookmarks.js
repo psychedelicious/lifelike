@@ -35,8 +35,8 @@ const Bookmarks = () => {
 
   const getFormattedDate = React.useCallback(() => {
     const d = new Date();
-    const day = d.getDay().toString().padStart(2, '0');
-    const month = d.getMonth().toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
     const year = d.getFullYear().toString();
     const hours = d.getHours().toString().padStart(2, '0');
     const minutes = d.getMinutes().toString().padStart(2, '0');
