@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 import {
   AlertDialog,
@@ -10,8 +11,10 @@ import {
   AlertDialogOverlay,
   Button,
   IconButton,
+  useDisclosure,
 } from '@chakra-ui/core';
-import { useSelector } from 'react-redux';
+
+import { useWithModifiers, useGlobalKeyDown } from 'hooks/useWindowEvent';
 
 const ConfirmDialogue = ({
   icon,
@@ -20,8 +23,7 @@ const ConfirmDialogue = ({
   header,
   message,
   confirmedCallback,
-  isOpen,
-  setIsOpen,
+  shortcutKey,
   ...rest
 }) => {
   const { colorMode } = useSelector((state) => state.theme);
@@ -29,9 +31,19 @@ const ConfirmDialogue = ({
     (state) => state.theme.theme.colors
   );
 
-  const onClose = () => {
-    setIsOpen(false);
-  };
+  const { isOpen, onClose, onToggle } = useDisclosure();
+
+  const withModifiers = useWithModifiers();
+
+  useGlobalKeyDown((e) => {
+    switch (e.key) {
+      case shortcutKey:
+        !withModifiers(e) && onToggle();
+        break;
+      default:
+        break;
+    }
+  });
 
   const actionConfirmed = () => {
     confirmedCallback();
@@ -52,7 +64,7 @@ const ConfirmDialogue = ({
           my="0.25rem"
           aria-label={aria}
           fontWeight="400"
-          onClick={() => setIsOpen(true)}
+          onClick={onToggle}
         >
           {buttonText}
         </Button>
@@ -62,7 +74,7 @@ const ConfirmDialogue = ({
           icon={icon}
           variant="solid"
           aria-label={aria}
-          onClick={() => setIsOpen(true)}
+          onClick={onToggle}
         />
       )}
       <AlertDialog
