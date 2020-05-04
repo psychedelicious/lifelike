@@ -114,21 +114,21 @@ const Lifelike = ({ isMobile, colorMode }) => {
         dispatch(toggleIsRunning());
 
       now.current = window.performance.now();
-
       frametimeLog.current.push(now.current - lastTick.current);
 
-      frametimeLog.current.length > lastFps.current &&
+      frametimeLog.current.length > (lastFps.current || 1) &&
         frametimeLog.current.splice(
           0,
           frametimeLog.current.length - lastFps.current
         );
 
       if (now.current - lastFpsUpdate.current > 200) {
-        lastFps.current = Math.round(
-          1000 /
-            (frametimeLog.current.reduce((total, val) => total + val, 0) /
-              frametimeLog.current.length)
-        );
+        lastFps.current =
+          Math.round(
+            1000 /
+              (frametimeLog.current.reduce((total, val) => total + val, 0) /
+                frametimeLog.current.length)
+          ) || 0;
 
         dispatch(setFps(lastFps.current));
         lastFpsUpdate.current = now.current;
