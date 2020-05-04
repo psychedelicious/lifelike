@@ -5,13 +5,14 @@ import { clamp } from 'lodash';
 
 import { AiOutlineColumnHeight, AiOutlineColumnWidth } from 'react-icons/ai';
 import { GiResize } from 'react-icons/gi';
-import { Flex, Button } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/core';
 
 import NumberSlider from 'features/menu/NumberSlider';
 
 import { useCanvas } from 'features/canvas/useCanvas';
 import { getCellDimensions } from 'features/life/getCellDimensions';
 import { FaExpand } from 'react-icons/fa';
+import ConfirmDialogue from './ConfirmDialogue';
 
 const GridAndCellSizeControls = ({
   isMobile,
@@ -192,19 +193,20 @@ const GridAndCellSizeControls = ({
             tooltipLabel={'cell size (px)'}
           />
 
-          <Button
-            style={{ userSelect: 'none' }}
-            leftIcon={FaExpand}
+          <ConfirmDialogue
+            style={{ touchAction: 'manipulation' }}
+            icon={FaExpand}
             isDisabled={isRunning}
-            variant="solid"
-            size="sm"
-            my="0.25rem"
-            aria-label="expand/shrink grid to fit"
-            fontWeight="400"
-            onClick={handleFitCellsToCanvas}
-          >
-            fit grid to window
-          </Button>
+            header="fit grid to window"
+            buttonText="fit grid to window"
+            aria="fit grid to window"
+            message={`are you sure you want to fit the grid to the window? if it is larger than the available space, it will be cropped!`}
+            confirmedCallback={handleFitCellsToCanvas}
+            shortcutKey="f"
+            variantColor="blue"
+            mr="0.5rem"
+            flex="1 1 auto"
+          />
         </Flex>
       ) : (
         <NumberSlider
