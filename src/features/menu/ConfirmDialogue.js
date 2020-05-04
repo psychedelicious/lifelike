@@ -31,6 +31,8 @@ const ConfirmDialogue = ({
     (state) => state.theme.theme.colors
   );
 
+  const bgColor = colorMode === 'light' ? lightBackground : darkBackground;
+
   const { isOpen, onClose, onToggle } = useDisclosure();
 
   const withModifiers = useWithModifiers();
@@ -85,9 +87,7 @@ const ConfirmDialogue = ({
         size="xs"
       >
         <AlertDialogOverlay />
-        <AlertDialogContent
-          bg={colorMode === 'light' ? lightBackground : darkBackground}
-        >
+        <AlertDialogContent bg={bgColor}>
           <AlertDialogHeader fontSize="sm" fontWeight="400">
             {header}
           </AlertDialogHeader>
@@ -122,8 +122,7 @@ ConfirmDialogue.propTypes = {
   header: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,
   confirmedCallback: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  setIsOpen: PropTypes.func.isRequired,
+  shortcutKey: PropTypes.string,
 };
 
 export default React.memo(ConfirmDialogue);

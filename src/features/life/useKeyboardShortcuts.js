@@ -47,11 +47,6 @@ export const useKeyboardShortcuts = ({
           dispatch(toggleIsRunning());
         }
         break;
-      case 'f':
-        if (!isRunning && !withModifiers(e)) {
-          fitCellsToCanvas();
-        }
-        break;
       case 'g':
         if (!withModifiers(e)) {
           dispatch(toggleShouldShowGridlines());

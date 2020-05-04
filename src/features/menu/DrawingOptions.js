@@ -13,6 +13,9 @@ import {
   toggleShouldDrawCrosshairs,
 } from 'store/reducers/drawing';
 import { IoMdBrush } from 'react-icons/io';
+import { clearCells, randomizeCells } from 'store/reducers/life';
+import ConfirmDialogue from './ConfirmDialogue';
+import { FaTrash, FaRandom } from 'react-icons/fa';
 
 const DrawingOptions = () => {
   const brushFill = useSelector((state) => state.drawing.brushFill);
@@ -38,6 +41,15 @@ const DrawingOptions = () => {
   const handleToggleShouldDrawCrosshairs = React.useCallback(() => {
     dispatch(toggleShouldDrawCrosshairs());
   }, [dispatch]);
+
+  const handleClearCells = React.useCallback(() => dispatch(clearCells()), [
+    dispatch,
+  ]);
+
+  const handleRandomizeCells = React.useCallback(
+    () => dispatch(randomizeCells()),
+    [dispatch]
+  );
 
   const handleBrushShapeChange = React.useCallback(
     (e) => {
@@ -85,6 +97,34 @@ const DrawingOptions = () => {
 
   return (
     <Flex direction="column">
+      <Flex direction="row" justify="space-between">
+        <ConfirmDialogue
+          style={{ touchAction: 'manipulation' }}
+          icon={FaTrash}
+          header="clear grid"
+          buttonText="clear grid"
+          aria="clear grid"
+          message="are you sure you want to clear the grid?"
+          confirmedCallback={handleClearCells}
+          shortcutKey="c"
+          variantColor="blue"
+          mr="0.5rem"
+          flex="1 1 auto"
+        />
+
+        <ConfirmDialogue
+          style={{ touchAction: 'manipulation' }}
+          flex="1 1 auto"
+          icon={FaRandom}
+          buttonText="randomize grid"
+          header="randomize grid"
+          aria="randomize grid"
+          message="are you sure you want to randomize the grid?"
+          confirmedCallback={handleRandomizeCells}
+          shortcutKey="r"
+          variantColor="blue"
+        />
+      </Flex>
       <Flex direction="row" height="1.5rem" align-items="center">
         <Text fontSize="sm" width="3rem">
           shape

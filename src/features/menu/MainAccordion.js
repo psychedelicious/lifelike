@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 import {
   Accordion,
@@ -15,8 +16,6 @@ import NeighborhoodControls from 'features/menu/NeighborhoodControls';
 import GridAndCellSizeControls from 'features/menu/GridAndCellSizeControls';
 import DrawingOptions from 'features/menu/DrawingOptions';
 import OptionsSection from 'features/menu/OptionsSection';
-import { useSelector } from 'react-redux';
-import Bookmarks from './Bookmarks';
 
 const Item = React.memo(({ header, children, defaultIsOpen }) => {
   const {
@@ -73,11 +72,7 @@ const MainAccordion = ({
         <DrawingOptions />
       </Item>
 
-      <Item header="bookmarks" defaultIsOpen={!isMobile}>
-        <Bookmarks />
-      </Item>
-
-      <Item header="grid & cell size" defaultIsOpen={false}>
+      <Item header="grid & cell size" defaultIsOpen={!isMobile}>
         <GridAndCellSizeControls
           isMobile={isMobile}
           canvasBaseLayerRef={canvasBaseLayerRef}

@@ -3,14 +3,10 @@ import PropTypes from 'prop-types';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import ConfirmDialogue from 'features/menu/ConfirmDialogue';
-
 import {
   FaPlay,
   FaPause,
   FaStepForward,
-  FaTrash,
-  FaRandom,
   FaBackward,
   FaForward,
   FaPencilAlt,
@@ -18,12 +14,7 @@ import {
 } from 'react-icons/fa';
 import { Flex, IconButton } from '@chakra-ui/core';
 
-import {
-  toggleIsRunning,
-  getNextCells,
-  clearCells,
-  randomizeCells,
-} from 'store/reducers/life';
+import { toggleIsRunning, getNextCells } from 'store/reducers/life';
 
 import { incrementSpeed, decrementSpeed } from 'store/reducers/performance';
 
@@ -31,7 +22,8 @@ import {
   toggleIsInDrawMode,
   toggleIsInTranslateMode,
 } from 'store/reducers/drawing';
-import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
+
+import Bookmarks from './Bookmarks';
 
 const MainControls = ({
   isMobile,
@@ -46,34 +38,9 @@ const MainControls = ({
 
   const speed = useSelector((state) => state.performance.speed);
 
-  const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
-  const isInTranslateMode = useSelector(
-    (state) => state.drawing.isInTranslateMode
+  const { isInDrawMode, isInTranslateMode } = useSelector(
+    (state) => state.drawing
   );
-
-  const withModifiers = useWithModifiers();
-
-  useGlobalKeyDown((e) => {
-    switch (e.key) {
-      case 'c':
-        !withModifiers(e) && setIsClearCellsConfirmOpen(true);
-        break;
-      case 'r':
-        !withModifiers(e) && setIsRandomizeCellsConfirmOpen(true);
-        break;
-      default:
-        break;
-    }
-  });
-
-  const [isClearCellsConfirmOpen, setIsClearCellsConfirmOpen] = React.useState(
-    false
-  );
-
-  const [
-    isRandomizeCellsConfirmOpen,
-    setIsRandomizeCellsConfirmOpen,
-  ] = React.useState(false);
 
   const handleToggleIsRunning = React.useCallback(
     () => dispatch(toggleIsRunning()),
@@ -83,15 +50,6 @@ const MainControls = ({
   const handleGetNextCells = React.useCallback(() => dispatch(getNextCells()), [
     dispatch,
   ]);
-
-  const handleClearCells = React.useCallback(() => dispatch(clearCells()), [
-    dispatch,
-  ]);
-
-  const handleRandomizeCells = React.useCallback(
-    () => dispatch(randomizeCells()),
-    [dispatch]
-  );
 
   const handleToggleIsInDrawMode = React.useCallback(
     () => dispatch(toggleIsInDrawMode()),
@@ -144,29 +102,7 @@ const MainControls = ({
         variantColor="blue"
       />
 
-      <ConfirmDialogue
-        style={{ touchAction: 'manipulation' }}
-        icon={FaTrash}
-        header="clear grid"
-        aria="clear grid"
-        message="are you sure you want to clear the grid?"
-        confirmedCallback={handleClearCells}
-        isOpen={isClearCellsConfirmOpen}
-        setIsOpen={setIsClearCellsConfirmOpen}
-        variantColor="blue"
-      />
-
-      <ConfirmDialogue
-        style={{ touchAction: 'manipulation' }}
-        icon={FaRandom}
-        header="randomize grid"
-        aria="randomize grid"
-        message="are you sure you want to randomize the grid?"
-        confirmedCallback={handleRandomizeCells}
-        isOpen={isRandomizeCellsConfirmOpen}
-        setIsOpen={setIsRandomizeCellsConfirmOpen}
-        variantColor="blue"
-      />
+      <Bookmarks />
 
       <IconButton
         style={{ touchAction: 'manipulation' }}
