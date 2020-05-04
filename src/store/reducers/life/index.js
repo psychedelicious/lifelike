@@ -404,9 +404,9 @@ export default function life(state = initialState, action) {
       };
     }
     case RENAME_BOOKMARK: {
-      const { index, newName } = action;
+      const { index, name } = action;
       const newBookmarks = state.bookmarks.map((val, i) =>
-        i === index ? { ...val, name: newName } : { ...val }
+        i === index ? { ...val, name } : { ...val }
       );
 
       return {
@@ -481,10 +481,10 @@ export const loadBookmark = ({ index }) => ({ type: LOAD_BOOKMARK, index });
 
 export const deleteBookmark = ({ index }) => ({ type: DELETE_BOOKMARK, index });
 
-export const renameBookmark = ({ index, newName }) => ({
+export const renameBookmark = ({ index, name }) => ({
   type: RENAME_BOOKMARK,
   index,
-  newName,
+  name,
 });
 
 export const randomizeCells = () => ({ type: RANDOMIZE_CELLS });
