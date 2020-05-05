@@ -163,6 +163,21 @@ const GridAndCellSizeControls = ({
     <>
       {!isMobile ? (
         <Flex direction="column" justifySelf="stretch">
+          <ConfirmDialogue
+            style={{ touchAction: 'manipulation' }}
+            icon={FaExpand}
+            isDisabled={isRunning}
+            header="fit grid to window"
+            buttonText="fit grid to window"
+            aria="fit grid to window"
+            message={`are you sure you want to fit the grid to the window? if it is larger than the available space, it will be cropped!`}
+            confirmedCallback={handleFitCellsToCanvas}
+            shortcutKey="f"
+            variantColor="blue"
+            mr="0.5rem"
+            flex="1 1 auto"
+          />
+
           <NumberSlider
             value={width}
             min={minWidth}
@@ -191,21 +206,6 @@ const GridAndCellSizeControls = ({
             isDisabled={isRunning}
             icon={GiResize}
             tooltipLabel={'cell size (px)'}
-          />
-
-          <ConfirmDialogue
-            style={{ touchAction: 'manipulation' }}
-            icon={FaExpand}
-            isDisabled={isRunning}
-            header="fit grid to window"
-            buttonText="fit grid to window"
-            aria="fit grid to window"
-            message={`are you sure you want to fit the grid to the window? if it is larger than the available space, it will be cropped!`}
-            confirmedCallback={handleFitCellsToCanvas}
-            shortcutKey="f"
-            variantColor="blue"
-            mr="0.5rem"
-            flex="1 1 auto"
           />
         </Flex>
       ) : (
