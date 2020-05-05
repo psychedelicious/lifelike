@@ -7,6 +7,7 @@ import drawing from './drawing';
 import theme from './theme';
 import performance from './performance';
 import hud from './hud';
+import menu from './menu';
 
 const lifePersistConfig = {
   key: 'life',
@@ -32,10 +33,17 @@ const performancePersistConfig = {
   whitelist: ['speed', 'msDelay'],
 };
 
+const menuPersistConfig = {
+  key: 'menu',
+  storage: storage,
+  whitelist: ['shouldShowTooltips'],
+};
+
 export default combineReducers({
   life: persistReducer(lifePersistConfig, life),
   theme: persistReducer(themePersistConfig, theme),
   hud: persistReducer(hudPersistConfig, hud),
   performance: persistReducer(performancePersistConfig, performance),
+  menu: persistReducer(menuPersistConfig, menu),
   drawing,
 });
