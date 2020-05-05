@@ -13,6 +13,7 @@ import {
   DrawerContent,
   DrawerCloseButton,
   useDisclosure,
+  Text,
 } from '@chakra-ui/core';
 
 import { toggleHUDDisplay, setHUDOpacity } from 'store/reducers/hud';
@@ -91,7 +92,7 @@ const HUDOptions = ({ ...rest }) => {
               ))}
             </List>
             <br />
-            <label>opacity</label>
+            <Text fontSize='sm'>opacity</Text>
             <NumberSlider
               value={opacity}
               min={0.5}
