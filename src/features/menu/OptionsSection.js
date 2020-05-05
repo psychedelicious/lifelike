@@ -10,17 +10,18 @@ import {
 } from 'store/reducers/life';
 
 import { toggleShouldShowHUD } from 'store/reducers/hud';
+
 import StyledCheckbox from 'features/menu/StyledCheckbox';
 
 const OptionsSection = ({ ...rest }) => {
-  const shouldShowGridlines = useSelector(
-    (state) => state.life.shouldShowGridlines
+  const { shouldShowGridlines, shouldWrap, shouldDrawAllCells } = useSelector(
+    (state) => state.life
   );
+
   const { shouldShowHUD } = useSelector((state) => state.hud);
 
-  const shouldDrawAllCells = useSelector(
-    (state) => state.life.shouldDrawAllCells
-  );
+
+  const { shouldPauseOnStableState } = useSelector((state) => state.theme);
 
   const dispatch = useDispatch();
 
