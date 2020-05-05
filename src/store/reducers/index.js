@@ -23,7 +23,7 @@ const themePersistConfig = {
 const hudPersistConfig = {
   key: 'hud',
   storage: storage,
-  whitelist: ['hudDisplay'],
+  whitelist: ['hudDisplay', 'opacity'],
 };
 
 export default combineReducers({

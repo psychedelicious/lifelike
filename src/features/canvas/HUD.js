@@ -45,7 +45,7 @@ const HUD = () => {
     shouldWrap,
   } = useSelector((state) => state.life);
 
-  const { hudDisplay } = useSelector((state) => state.hud);
+  const { hudDisplay, opacity } = useSelector((state) => state.hud);
 
   const { msDelay, speed, fps } = useSelector((state) => state.performance);
 
@@ -72,7 +72,7 @@ const HUD = () => {
       padding="0.5rem"
       pr={hudDisplay.length ? '2rem' : null}
       margin="0.5rem"
-      opacity="0.8"
+      opacity={opacity}
       bg={aliveCellColor}
       borderRadius="0.15rem"
       color={deadCellColor}

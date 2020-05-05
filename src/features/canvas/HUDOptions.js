@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { clamp } from 'lodash';
 
 import {
   List,
@@ -14,19 +15,28 @@ import {
   useDisclosure,
 } from '@chakra-ui/core';
 
-import { toggleHUDDisplay } from 'store/reducers/hud';
+import { toggleHUDDisplay, setHUDOpacity } from 'store/reducers/hud';
 
 import { IoMdSettings } from 'react-icons/io';
 import StyledCheckbox from '../menu/StyledCheckbox';
+import { NumberSlider } from 'features/menu/NumberSlider';
+import { MdOpacity } from 'react-icons/md';
 
 const HUDOptions = ({ ...rest }) => {
   const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { hudDisplay, validHUDDisplayItems } = useSelector(
+  const { hudDisplay, validHUDDisplayItems, opacity } = useSelector(
     (state) => state.hud
   );
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const handleHUDOpacityChange = React.useCallback(
+    (val) => {
+      const newOpacity = clamp(val, 0.5, 1);
+      dispatch(setHUDOpacity({ opacity: newOpacity }));
+    },
+    [dispatch]
+  );
 
   const btnRef = React.useRef();
 
@@ -80,6 +90,18 @@ const HUDOptions = ({ ...rest }) => {
                 </ListItem>
               ))}
             </List>
+            <br />
+            <label>opacity</label>
+            <NumberSlider
+              value={opacity}
+              min={0.5}
+              max={1}
+              onChange={handleHUDOpacityChange}
+              icon={MdOpacity}
+              step={0.01}
+              showTextInput={false}
+              width="calc(100% - 1rem)"
+            />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

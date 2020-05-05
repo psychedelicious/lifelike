@@ -1,4 +1,5 @@
-const TOGGLE_HUD_DISPLAY = 'SET_THINGS_TO_SHOW_ON_HUD';
+const TOGGLE_HUD_DISPLAY = 'TOGGLE_HUD_DISPLAY';
+const SET_HUD_OPACITY = 'SET_HUD_OPACITY';
 
 const initialState = {
   hudDisplay: ['generation', 'fps'],
@@ -15,6 +16,7 @@ const initialState = {
     'running',
     'mode',
   ],
+  opacity: 0.9,
 };
 
 export default function hud(state = initialState, action) {
@@ -35,6 +37,12 @@ export default function hud(state = initialState, action) {
         ...state,
         hudDisplay: newHUDDisplay,
       };
+    case SET_HUD_OPACITY: {
+      return {
+        ...state,
+        opacity: action.opacity,
+      };
+    }
     default:
       return state;
   }
@@ -43,4 +51,9 @@ export default function hud(state = initialState, action) {
 export const toggleHUDDisplay = ({ itemToToggle }) => ({
   type: TOGGLE_HUD_DISPLAY,
   itemToToggle,
+});
+
+export const setHUDOpacity = ({ opacity }) => ({
+  type: SET_HUD_OPACITY,
+  opacity,
 });
