@@ -53,7 +53,7 @@ export default function theme(state = initialState, action) {
           deadCellColor = lifelikeTheme.colors.lightBackground;
           aliveCellColor = lifelikeTheme.colors[themeColor]['600'];
         }
-        headerColor = lifelikeTheme.colors[themeColor]['800'];
+        headerColor = lifelikeTheme.colors.darkBackground;
         sliderThumbBgColor = lifelikeTheme.colors.lightBackground;
         sliderDisabledThumbBgColor = lifelikeTheme.colors.gray['300'];
         sliderThumbColor = lifelikeTheme.colors[themeColor]['600'];
@@ -68,7 +68,7 @@ export default function theme(state = initialState, action) {
           deadCellColor = lifelikeTheme.colors.darkBackground;
           aliveCellColor = lifelikeTheme.colors[themeColor]['200'];
         }
-        headerColor = lifelikeTheme.colors[themeColor]['50'];
+        headerColor = lifelikeTheme.colors.lightBackground;
         sliderThumbBgColor = lifelikeTheme.colors[themeColor]['200'];
         sliderDisabledThumbBgColor = Color(
           lifelikeTheme.colors[themeColor]['200']
