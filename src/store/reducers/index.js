@@ -26,10 +26,16 @@ const hudPersistConfig = {
   whitelist: ['hudDisplay', 'opacity'],
 };
 
+const performancePersistConfig = {
+  key: 'performance',
+  storage: storage,
+  whitelist: ['speed', 'msDelay'],
+};
+
 export default combineReducers({
   life: persistReducer(lifePersistConfig, life),
   theme: persistReducer(themePersistConfig, theme),
   hud: persistReducer(hudPersistConfig, hud),
+  performance: persistReducer(performancePersistConfig, performance),
   drawing,
-  performance,
 });
