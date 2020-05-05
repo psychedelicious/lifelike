@@ -19,7 +19,6 @@ import {
   setWasBookmarkJustLoaded,
 } from 'store/reducers/life';
 import { setFps } from 'store/reducers/performance';
-import { setThemeColor } from 'store/reducers/theme';
 
 const Lifelike = ({ isMobile, colorMode }) => {
   const dispatch = useDispatch();
@@ -54,8 +53,6 @@ const Lifelike = ({ isMobile, colorMode }) => {
     aliveCellColor,
     deadCellColor,
     gridlineColor,
-    shouldSwapCellColors,
-    themeColor,
   } = useSelector((state) => state.theme);
 
   const msDelay = useSelector((state) => state.performance.msDelay);
@@ -65,6 +62,7 @@ const Lifelike = ({ isMobile, colorMode }) => {
   const lastFpsUpdate = React.useRef(0);
   const frametimeLog = React.useRef([]);
   const lastFps = React.useRef(0);
+
 
   const canvasBaseLayerRef = React.useRef(null);
   const canvasGridLayerRef = React.useRef(null);
@@ -137,9 +135,10 @@ const Lifelike = ({ isMobile, colorMode }) => {
     }
   });
 
-  React.useEffect(() => {
-    dispatch(setThemeColor({ colorMode, shouldSwapCellColors, themeColor }));
-  }, [dispatch, colorMode, shouldSwapCellColors, themeColor]);
+  // React.useEffect(() => {
+  //   dispatch(setThemeColor({ colorMode, shouldSwapCellColors, themeColor }));
+  //   themeSetRef.current = true;
+  // }, [dispatch, colorMode, shouldSwapCellColors, themeColor]);
 
   React.useEffect(() => {
     drawCells({

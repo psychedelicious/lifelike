@@ -5,14 +5,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import getStore from 'store';
 
 import App from 'App';
+import Loading from 'components/Loading';
 
-import {
-  ThemeProvider,
-  ColorModeProvider,
-  CSSReset,
-  Spinner,
-  Flex,
-} from '@chakra-ui/core';
+import { ThemeProvider, ColorModeProvider, CSSReset } from '@chakra-ui/core';
 
 // WHY DID YOU RENDER?
 // Commented even in dev mode because of potential performance impact.
@@ -39,14 +34,6 @@ import {
 
 let { store, persistor } = getStore();
 
-const Loading = () => {
-  return (
-    <Flex w="100vw" h="100vh" justify="center" alignItems="center">
-      <Spinner size="xl" />
-    </Flex>
-  );
-};
-
 const CSSResetConfig = (theme) => ({
   light: {
     color: theme.colors.gray[800],
@@ -64,6 +51,7 @@ const CSSResetConfig = (theme) => ({
 
 const WrappedApp = () => {
   const { theme } = useSelector((state) => state.theme);
+
   return (
     <ThemeProvider theme={theme}>
       <ColorModeProvider>
