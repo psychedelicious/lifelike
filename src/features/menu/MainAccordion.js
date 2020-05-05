@@ -68,7 +68,7 @@ const MainAccordion = ({
         <NeighborhoodControls mt="0.5rem" direction="row" />
       </Item>
 
-      <Item header="drawing" defaultIsOpen={!isMobile}>
+      <Item header="draw & fill" defaultIsOpen={!isMobile}>
         <DrawingOptions />
       </Item>
 
