@@ -23,7 +23,7 @@ const CanvasDrawingLayer = ({ canvasDrawLayerRef }) => {
         position: 'absolute',
         top: '0',
         left: '0',
-        zIndex: '5',
+        zIndex: isInTranslateMode || isInDrawMode ? '5' : null,
         width: canvasWidth || '100%',
         height: canvasHeight || '100%',
       }}
