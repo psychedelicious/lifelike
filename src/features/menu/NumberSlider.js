@@ -19,6 +19,7 @@ export const NumberSlider = ({
   max,
   onChange,
   icon,
+  step = 1,
   isDisabled = false,
   showTextInput = true,
   ...rest
@@ -38,6 +39,7 @@ export const NumberSlider = ({
         max={max}
         onChange={onChange}
         isDisabled={isDisabled}
+        step={step}
         style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
       >
         <SliderTrack />
