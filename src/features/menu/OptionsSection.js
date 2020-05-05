@@ -12,6 +12,7 @@ import {
 import { toggleShouldShowHUD } from 'store/reducers/hud';
 
 import StyledCheckbox from 'features/menu/StyledCheckbox';
+import { toggleShouldShowTooltips } from 'store/reducers/menu';
 
 const OptionsSection = ({ ...rest }) => {
   const { shouldShowGridlines, shouldWrap, shouldDrawAllCells } = useSelector(
@@ -20,6 +21,7 @@ const OptionsSection = ({ ...rest }) => {
 
   const { shouldShowHUD } = useSelector((state) => state.hud);
 
+  const { shouldShowTooltips } = useSelector((state) => state.menu);
 
   const { shouldPauseOnStableState } = useSelector((state) => state.theme);
 
@@ -35,6 +37,10 @@ const OptionsSection = ({ ...rest }) => {
 
   const handleToggleShouldShowHUD = React.useCallback(() => {
     dispatch(toggleShouldShowHUD());
+  }, [dispatch]);
+
+  const handleToggleShouldShowTooltips = React.useCallback(() => {
+    dispatch(toggleShouldShowTooltips());
   }, [dispatch]);
 
   const handleToggleShouldPauseOnStableState = React.useCallback(() => {
@@ -75,6 +81,12 @@ const OptionsSection = ({ ...rest }) => {
         isChecked={!shouldDrawAllCells}
         onChange={handleToggleShouldDrawAllCells}
         label="draw only changed cells"
+      />
+
+      <StyledCheckbox
+        isChecked={shouldShowTooltips}
+        onChange={handleToggleShouldShowTooltips}
+        label="show tooltips"
       />
     </Flex>
   );
