@@ -5,22 +5,18 @@ import { Flex } from '@chakra-ui/core';
 import {
   toggleShouldShowGridlines,
   toggleShouldWrap,
-  toggleShouldShowHUD,
   toggleShouldPauseOnStableState,
   toggleShouldDrawAllCells,
 } from 'store/reducers/life';
 
+import { toggleShouldShowHUD } from 'store/reducers/hud';
 import StyledCheckbox from 'features/menu/StyledCheckbox';
 
 const OptionsSection = ({ ...rest }) => {
   const shouldShowGridlines = useSelector(
     (state) => state.life.shouldShowGridlines
   );
-  const shouldWrap = useSelector((state) => state.life.shouldWrap);
-  const shouldShowHUD = useSelector((state) => state.life.shouldShowHUD);
-  const shouldPauseOnStableState = useSelector(
-    (state) => state.theme.shouldPauseOnStableState
-  );
+  const { shouldShowHUD } = useSelector((state) => state.hud);
 
   const shouldDrawAllCells = useSelector(
     (state) => state.life.shouldDrawAllCells

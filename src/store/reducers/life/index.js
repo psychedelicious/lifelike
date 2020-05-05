@@ -32,7 +32,6 @@ const TOGGLE_SHOULD_DRAW_ALL_CELLS = 'TOGGLE_SHOULD_DRAW_ALL_CELLS';
 const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
   'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
 const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
-const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
 const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
 const TRANSLATE_CELLS = 'TRANSLATE_CELLS';
 
@@ -65,7 +64,6 @@ const initialState = {
   shouldNextDrawAllCells: false,
   shouldPauseOnStableState: false,
   shouldShowGridlines: false,
-  shouldShowHUD: false,
   shouldWrap: true,
   survive: [false, false, true, true, false, false, false, false, false],
   wasBookmarkJustLoaded: false,
@@ -138,11 +136,6 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         shouldShowGridlines: !state.shouldShowGridlines,
-      };
-    case TOGGLE_SHOULD_SHOW_HUD:
-      return {
-        ...state,
-        shouldShowHUD: !state.shouldShowHUD,
       };
     case TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE:
       return {
@@ -428,8 +421,6 @@ export default function life(state = initialState, action) {
 export const toggleIsRunning = () => ({ type: TOGGLE_IS_RUNNING });
 
 export const toggleShouldWrap = () => ({ type: TOGGLE_SHOULD_WRAP });
-
-export const toggleShouldShowHUD = () => ({ type: TOGGLE_SHOULD_SHOW_HUD });
 
 export const toggleShouldShowGridlines = () => ({
   type: TOGGLE_SHOULD_SHOW_GRIDLINES,

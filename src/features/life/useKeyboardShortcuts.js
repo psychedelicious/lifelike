@@ -4,11 +4,12 @@ import {
   toggleIsRunning,
   toggleShouldShowGridlines,
   toggleShouldWrap,
-  toggleShouldShowHUD,
   setNeighborhood,
   getNextCells,
   translateCells,
 } from 'store/reducers/life';
+
+import { toggleShouldShowHUD } from 'store/reducers/hud';
 
 import { incrementSpeed, decrementSpeed } from 'store/reducers/performance';
 
