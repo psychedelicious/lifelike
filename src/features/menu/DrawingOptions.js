@@ -2,7 +2,7 @@ import React from 'react';
 import { clamp } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Radio, RadioGroup, Text, Flex } from '@chakra-ui/core';
+import { Radio, RadioGroup, Text, Flex, Box } from '@chakra-ui/core';
 
 import { NumberSlider } from 'features/menu/NumberSlider';
 import StyledCheckbox from 'features/menu/StyledCheckbox';
@@ -111,7 +111,6 @@ const DrawingOptions = () => {
           mr="0.5rem"
           flex="1 1 auto"
         />
-
         <ConfirmDialogue
           style={{ touchAction: 'manipulation' }}
           flex="1 1 auto"
@@ -125,7 +124,9 @@ const DrawingOptions = () => {
           variantColor="blue"
         />
       </Flex>
-      <Flex direction="row" height="1.5rem" align-items="center">
+
+      <Flex direction="row" height="2rem" alignItems="center">
+        <Box as={IoMdBrush} mr="0.25rem" />
         <Text fontSize="sm" width="3rem">
           shape
         </Text>
@@ -136,6 +137,10 @@ const DrawingOptions = () => {
           onChange={handleBrushShapeChange}
           value={brushShape}
           isInline
+          flex="1 1 auto"
+          display="flex"
+          justifyContent="space-between"
+          direction="row"
         >
           {validBrushShapes.map((opt) => (
             <Radio key={opt} value={opt}>
@@ -144,8 +149,9 @@ const DrawingOptions = () => {
           ))}
         </RadioGroup>
       </Flex>
+      <Flex direction="row" height="2rem" alignItems="center">
+        <Box as={IoMdBrush} mr="0.25rem" />
 
-      <Flex direction="row" height="1.5rem" align-items="center">
         <Text fontSize="sm" width="3rem">
           fill
         </Text>
@@ -153,7 +159,15 @@ const DrawingOptions = () => {
           ~>
         </Text>
 
-        <RadioGroup onChange={handleBrushFillChange} value={brushFill} isInline>
+        <RadioGroup
+          onChange={handleBrushFillChange}
+          value={brushFill}
+          isInline
+          flex="1 1 auto"
+          display="flex"
+          justifyContent="space-between"
+          direction="row"
+        >
           {validBrushFills.map((opt) => (
             <Radio key={opt} isDisabled={brushShape === 'pencil'} value={opt}>
               <Text fontSize="sm">{opt}</Text>
@@ -169,18 +183,19 @@ const DrawingOptions = () => {
         max={maxBrushRadius}
         onChange={handleBrushRadiusChange}
         isDisabled={brushShape === 'pencil'}
-        icon={IoMdBrush}
+        icon="radius"
+        tooltip="brush radius"
       />
 
-      <Flex direction="row" height="1.5rem" align-items="center">
+      <Flex direction="column">
         <StyledCheckbox
-          label="erase"
+          label="eraser mode"
           isChecked={isInvertDraw}
           onChange={handleToggleIsInvertDraw}
           mr="0.5rem"
         />
         <StyledCheckbox
-          label="crosshairs"
+          label="show drawing crosshairs"
           isChecked={shouldDrawCrosshairs}
           onChange={handleToggleShouldDrawCrosshairs}
           mr="0.5rem"
