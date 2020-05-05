@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { theme } from '@chakra-ui/core';
 
 const breakpoints = ['30em', '48em', '62em', '80em'];
@@ -7,6 +9,14 @@ breakpoints.md = breakpoints[1];
 breakpoints.lg = breakpoints[2];
 breakpoints.xl = breakpoints[3];
 
+const customIcons = {
+  radius: {
+    path: (
+      <path d="M12,0C18.623,0 24,5.377 24,12C24,18.623 18.623,24 12,24C5.377,24 0,18.623 0,12C0,5.377 5.377,0 12,0ZM21.604,11.203C21.198,6.256 17.05,2.364 12,2.364C6.682,2.364 2.364,6.682 2.364,12C2.364,17.318 6.682,21.636 12,21.636C17.05,21.636 21.198,17.744 21.604,12.797L13.299,12.797C13.031,13.233 12.549,13.524 12,13.524C11.159,13.524 10.476,12.841 10.476,12C10.476,11.159 11.159,10.476 12,10.476C12.549,10.476 13.031,10.767 13.299,11.203L21.604,11.203Z" />
+    ),
+  },
+};
+
 export const lifelikeTheme = {
   ...theme,
   breakpoints,
@@ -14,6 +24,10 @@ export const lifelikeTheme = {
     body: '"Fira Code", monospace',
     heading: '"Fira Code", monospace',
     mono: '"Fira Code", monospace',
+  },
+  icons: {
+    ...theme.icons,
+    ...customIcons,
   },
   colors: {
     ...theme.colors,
