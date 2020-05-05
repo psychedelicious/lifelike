@@ -5,6 +5,7 @@ import { useMediaQuery } from 'react-responsive';
 import { useSelector } from 'react-redux';
 
 const StyledTooltip = ({
+  label,
   children,
   hasArrow = true,
   placement = 'top',
@@ -21,15 +22,15 @@ const StyledTooltip = ({
 
   const color = {
     dark: 'darkBackground',
-    light: 'white',
+    light: 'lightBackground',
   };
 
   const boxShadow = {
-    dark: `0 0 0.5rem 0rem ${theme.colors.darkBackground}`,
-    light: `0 0 0.5rem -.1rem ${theme.colors.blue[800]}`,
+    dark: `0 0 0.5rem 0rem ${theme.colors.darkBackground}70`,
+    light: `0 0 0.25rem 0rem ${theme.colors.darkBackground}70`,
   };
 
-  return !isMobile && shouldShowTooltips ? (
+  return !isMobile && shouldShowTooltips && label ? (
     <Tooltip
       bg={bg[colorMode]}
       color={color[colorMode]}
@@ -38,6 +39,7 @@ const StyledTooltip = ({
       zIndex={5}
       hasArrow={hasArrow}
       placement={placement}
+      label={label}
       {...rest}
     >
       {children}
