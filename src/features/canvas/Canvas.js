@@ -18,22 +18,23 @@ const Canvas = ({
   canvasGridLayerRef,
   canvasDrawLayerRef,
 }) => {
-  const canvasWidth = useSelector((state) => state.life.canvasWidth);
-  const canvasHeight = useSelector((state) => state.life.canvasHeight);
-  const px = useSelector((state) => state.life.px);
-  const shouldWrap = useSelector((state) => state.life.shouldWrap);
-  const width = useSelector((state) => state.life.width);
-  const height = useSelector((state) => state.life.height);
-  const shouldShowHUD = useSelector((state) => state.life.shouldShowHUD);
+  const {
+    canvasWidth,
+    canvasHeight,
+    px,
+    shouldWrap,
+    width,
+    height,
+  } = useSelector((state) => state.life);
 
-  const isInDrawMode = useSelector((state) => state.drawing.isInDrawMode);
-  const isInTranslateMode = useSelector(
-    (state) => state.drawing.isInTranslateMode
-  );
-  const isInvertDraw = useSelector((state) => state.drawing.isInvertDraw);
-  const shouldDrawCrosshairs = useSelector(
-    (state) => state.drawing.shouldDrawCrosshairs
-  );
+  const shouldShowHUD = useSelector((state) => state.hud.shouldShowHUD);
+
+  const {
+    isInDrawMode,
+    isInTranslateMode,
+    isInvertDraw,
+    shouldDrawCrosshairs,
+  } = useSelector((state) => state.drawing);
 
   const brushPoints = useSelector(
     (state) => state.drawing.brushPoints,
