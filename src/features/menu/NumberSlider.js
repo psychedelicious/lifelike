@@ -9,9 +9,11 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Icon,
 } from '@chakra-ui/core';
 
 import { useSelector } from 'react-redux';
+import StyledTooltip from './StyledTooltip';
 
 export const NumberSlider = ({
   value,
@@ -22,6 +24,7 @@ export const NumberSlider = ({
   step = 1,
   isDisabled = false,
   showTextInput = true,
+  tooltip,
   ...rest
 }) => {
   const {
@@ -44,27 +47,35 @@ export const NumberSlider = ({
       >
         <SliderTrack />
         <SliderFilledTrack />
-        <SliderThumb
-          size={6}
-          borderRadius="sm"
-          bg={sliderThumbBgColor}
-          _disabled={{ bg: sliderDisabledThumbBgColor }}
-        >
-          <Box color={sliderThumbColor} as={icon} />
-        </SliderThumb>
+        <StyledTooltip label={tooltip}>
+          <SliderThumb
+            size={6}
+            borderRadius="sm"
+            bg={sliderThumbBgColor}
+            _disabled={{ bg: sliderDisabledThumbBgColor }}
+          >
+            {typeof icon === 'string' ? (
+              <Icon name={icon} />
+            ) : (
+              <Box color={sliderThumbColor} as={icon} />
+            )}
+          </SliderThumb>
+        </StyledTooltip>
       </Slider>
       {showTextInput && (
-        <NumberInput
-          size="sm"
-          maxW="5rem"
-          ml="1.5rem"
-          min={min}
-          max={max}
-          value={value}
-          onChange={onChange}
-          type="number"
-          isDisabled={isDisabled}
-        />
+        <StyledTooltip label={tooltip}>
+          <NumberInput
+            size="sm"
+            maxW="5rem"
+            ml="1.5rem"
+            min={min}
+            max={max}
+            value={value}
+            onChange={onChange}
+            type="number"
+            isDisabled={isDisabled}
+          />
+        </StyledTooltip>
       )}
     </Flex>
   );
