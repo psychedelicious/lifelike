@@ -28,6 +28,7 @@ import {
 } from 'store/reducers/life';
 
 import { FaTrash, FaBookmark } from 'react-icons/fa';
+import StyledTooltip from './StyledTooltip';
 
 const Bookmarks = () => {
   const dispatch = useDispatch();
@@ -72,15 +73,17 @@ const Bookmarks = () => {
 
   return (
     <>
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        ref={btnRef}
-        icon={FaBookmark}
-        variant="solid"
-        aria-label="tick"
-        onClick={onOpen}
-        variantColor="blue"
-      />
+      <StyledTooltip label="open bookmarks">
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          ref={btnRef}
+          icon={FaBookmark}
+          variant="solid"
+          aria-label="tick"
+          onClick={onOpen}
+          variantColor="blue"
+        />
+      </StyledTooltip>
       <Drawer
         isOpen={isOpen}
         placement="left"

@@ -24,6 +24,7 @@ import {
 } from 'store/reducers/drawing';
 
 import Bookmarks from './Bookmarks';
+import StyledTooltip from './StyledTooltip';
 
 const MainControls = ({
   isMobile,
@@ -63,64 +64,82 @@ const MainControls = ({
 
   return (
     <Flex {...rest}>
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        icon={isRunning ? FaPause : FaPlay}
-        variant="solid"
-        aria-label="start/stop"
-        onClick={handleToggleIsRunning}
-        variantColor="blue"
-      />
+      <StyledTooltip label={isRunning ? 'stop' : 'start'}>
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          icon={isRunning ? FaPause : FaPlay}
+          variant="solid"
+          aria-label="start/stop"
+          onClick={handleToggleIsRunning}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        isDisabled={isRunning}
-        icon={FaStepForward}
-        variant="solid"
-        aria-label="tick"
-        onClick={handleGetNextCells}
-        variantColor="blue"
-      />
+      <StyledTooltip label="tick once">
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          isDisabled={isRunning}
+          icon={FaStepForward}
+          variant="solid"
+          aria-label="tick once"
+          onClick={handleGetNextCells}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        isDisabled={speed === 0}
-        icon={FaBackward}
-        variant="solid"
-        aria-label="slower"
-        onPointerDown={() => dispatch(decrementSpeed())}
-        variantColor="blue"
-      />
+      <StyledTooltip label="slow down">
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          isDisabled={speed === 0}
+          icon={FaBackward}
+          variant="solid"
+          aria-label="slow down"
+          onPointerDown={() => dispatch(decrementSpeed())}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        isDisabled={speed === 100}
-        icon={FaForward}
-        variant="solid"
-        aria-label="faster"
-        onPointerDown={() => dispatch(incrementSpeed())}
-        variantColor="blue"
-      />
+      <StyledTooltip label="speed up">
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          isDisabled={speed === 100}
+          icon={FaForward}
+          variant="solid"
+          aria-label="speed up"
+          onPointerDown={() => dispatch(incrementSpeed())}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
       <Bookmarks />
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        icon={FaArrowsAlt}
-        variant={isInTranslateMode ? 'outline' : 'link'}
-        aria-label="toggle translate mode"
-        onClick={handleToggleIsInTranslateMode}
-        variantColor="blue"
-      />
+      <StyledTooltip
+        label={
+          isInTranslateMode ? 'stop translate mode' : 'start translate mode'
+        }
+      >
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          icon={FaArrowsAlt}
+          variant={isInTranslateMode ? 'outline' : 'link'}
+          aria-label="toggle translate mode"
+          onClick={handleToggleIsInTranslateMode}
+          variantColor="blue"
+        />
+      </StyledTooltip>
 
-      <IconButton
-        style={{ touchAction: 'manipulation' }}
-        icon={FaPencilAlt}
-        variant={isInDrawMode ? 'outline' : 'link'}
-        aria-label="toggle drawing mode"
-        onClick={handleToggleIsInDrawMode}
-        variantColor="blue"
-      />
+      <StyledTooltip
+        label={isInDrawMode ? 'stop draw mode' : 'start draw mode'}
+      >
+        <IconButton
+          style={{ touchAction: 'manipulation' }}
+          icon={FaPencilAlt}
+          variant={isInDrawMode ? 'outline' : 'link'}
+          aria-label="toggle drawing mode"
+          onClick={handleToggleIsInDrawMode}
+          variantColor="blue"
+        />
+      </StyledTooltip>
     </Flex>
   );
 };

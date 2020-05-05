@@ -5,6 +5,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { ControlBox, VisuallyHidden, Flex, Text } from '@chakra-ui/core';
 
 import { setBorn, setSurvive } from 'store/reducers/life';
+import StyledTooltip from './StyledTooltip';
 
 const RuleCheckboxRow = ({
   ruleArray,
@@ -13,55 +14,68 @@ const RuleCheckboxRow = ({
   colorMode,
   ...rest
 }) => {
+  const ruleNumbers = ruleArray.reduce(
+    (acc, val, index) => (val ? [...acc, index] : acc),
+    []
+  );
+
+  const ruleString = ruleNumbers.length
+    ? `if neighbors = [${ruleNumbers.join('|')}] ~> ${
+        ruleType === 'born' ? 'is born' : 'survives'
+      }`
+    : `${ruleType === 'born' ? 'never born' : 'never survive'}`;
+
   return (
-    <Flex {...rest} align="center" justify="space-between">
-      <Text fontSize="sm">{ruleType === 'born' ? 'b ~>' : 's ~>'}</Text>
+    <StyledTooltip hasArrow={false} label={ruleString}>
+      <Flex {...rest} align="center" justify="space-between">
+        <Text fontSize="sm">{ruleType === 'born' ? 'b ~>' : 's ~>'}</Text>
 
-      {ruleArray.map((val, index) => {
-        const key = `${ruleType}${index}`;
-        const isChecked = ruleArray[index];
-        return (
-          <label key={key}>
-            <VisuallyHidden
-              as="input"
-              type="checkbox"
-              checked={isChecked}
-              onChange={() => {
-                onChange(ruleType, index);
-              }}
-            />
+        {ruleArray.map((val, index) => {
+          const key = `${ruleType}${index}`;
+          const isChecked = ruleArray[index];
+          return (
+            <label key={key}>
+              <VisuallyHidden
+                as="input"
+                type="checkbox"
+                checked={isChecked}
+                onChange={() => {
+                  onChange(ruleType, index);
+                }}
+              />
 
-            <ControlBox
-              userSelect="none"
-              borderWidth="1px"
-              size="1.5rem"
-              rounded="sm"
-              color={colorMode === 'light' ? 'blue.600' : 'blue.200'}
-              bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.100'}
-              cursor="pointer"
-              borderColor="transparent"
-              _child={{ opacity: 100 }}
-              _checked={
-                colorMode === 'light'
-                  ? {
-                      bg: 'blue.500',
-                      color: 'white',
-                      borderColor: 'blue.500',
-                    }
-                  : {
-                      bg: 'blue.200',
-                      color: 'blue.900',
-                      borderColor: 'blue.200',
-                    }
-              }
-              _focus={{ boxShadow: 'outline' }}
-            >
-              <Text fontSize="sm">{index}</Text>
-            </ControlBox>
-          </label>
-        );
-      })}
-    </Flex>
+              <ControlBox
+                userSelect="none"
+                borderWidth="1px"
+                size="1.5rem"
+                rounded="sm"
+                color={colorMode === 'light' ? 'blue.600' : 'blue.200'}
+                bg={colorMode === 'light' ? 'blackAlpha.100' : 'whiteAlpha.100'}
+                cursor="pointer"
+                borderColor="transparent"
+                _child={{ opacity: 100 }}
+                _checked={
+                  colorMode === 'light'
+                    ? {
+                        bg: 'blue.500',
+                        color: 'white',
+                        borderColor: 'blue.500',
+                      }
+                    : {
+                        bg: 'blue.200',
+                        color: 'blue.900',
+                        borderColor: 'blue.200',
+                      }
+                }
+                _focus={{ boxShadow: 'outline' }}
+              >
+                <Text fontSize="sm">{index}</Text>
+              </ControlBox>
+            </label>
+          );
+        })}
+      </Flex>
+    </StyledTooltip>
   );
 };
 

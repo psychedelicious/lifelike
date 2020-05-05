@@ -185,7 +185,7 @@ const GridAndCellSizeControls = ({
             onChange={handleWidthChange}
             isDisabled={isRunning}
             icon={AiOutlineColumnWidth}
-            tooltipLabel={'grid width (cells)'}
+            tooltip={'grid width (cells)'}
           />
 
           <NumberSlider
@@ -195,7 +195,7 @@ const GridAndCellSizeControls = ({
             onChange={handleHeightChange}
             isDisabled={isRunning}
             icon={AiOutlineColumnHeight}
-            tooltipLabel={'grid height (cells)'}
+            tooltip={'grid height (cells)'}
           />
 
           <NumberSlider
@@ -205,7 +205,7 @@ const GridAndCellSizeControls = ({
             onChange={handlePxChange}
             isDisabled={isRunning}
             icon={GiResize}
-            tooltipLabel={'cell size (px)'}
+            tooltip={'cell size (px)'}
           />
         </Flex>
       ) : (
