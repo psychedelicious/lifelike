@@ -115,27 +115,27 @@ const MainControls = ({
 
       <StyledTooltip
         label={
-          isInTranslateMode ? 'stop translate mode' : 'start translate mode'
+          isInTranslateMode ? 'exit translate mode' : 'enter translate mode'
         }
       >
         <IconButton
           style={{ touchAction: 'manipulation' }}
           icon={FaArrowsAlt}
           variant={isInTranslateMode ? 'outline' : 'link'}
-          aria-label="toggle translate mode"
+          aria-label="enter/exit translate mode"
           onClick={handleToggleIsInTranslateMode}
           variantColor="blue"
         />
       </StyledTooltip>
 
       <StyledTooltip
-        label={isInDrawMode ? 'stop draw mode' : 'start draw mode'}
+        label={isInDrawMode ? 'exit draw mode' : 'enter draw mode'}
       >
         <IconButton
           style={{ touchAction: 'manipulation' }}
           icon={FaPencilAlt}
           variant={isInDrawMode ? 'outline' : 'link'}
-          aria-label="toggle drawing mode"
+          aria-label="enter/exit˝ drawing mode"
           onClick={handleToggleIsInDrawMode}
           variantColor="blue"
         />
