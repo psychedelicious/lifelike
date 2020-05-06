@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import {
   Accordion,
@@ -15,7 +15,8 @@ import RuleControls from 'features/menu/RuleControls';
 import NeighborhoodControls from 'features/menu/NeighborhoodControls';
 import GridAndCellSizeControls from 'features/menu/GridAndCellSizeControls';
 import DrawingOptions from 'features/menu/DrawingOptions';
-import OptionsSection from 'features/menu/OptionsSection';
+import StyledCheckbox from './StyledCheckbox';
+import { toggleShouldWrap } from 'store/reducers/life';
 
 const Item = React.memo(({ header, children, defaultIsOpen }) => {
   const {
@@ -61,11 +62,24 @@ const MainAccordion = ({
   canvasGridLayerRef,
   canvasDrawLayerRef,
 }) => {
+  const dispatch = useDispatch();
+
+  const { shouldWrap } = useSelector((state) => state.life);
+
+  const handleToggleWrap = React.useCallback(() => {
+    dispatch(toggleShouldWrap());
+  }, [dispatch]);
+
   return (
     <Accordion mt="0.5rem" allowMultiple>
       <Item header="rule & neighborhood" defaultIsOpen={!isMobile}>
         <RuleControls />
         <NeighborhoodControls mt="0.5rem" direction="row" />
+        <StyledCheckbox
+          isChecked={shouldWrap}
+          onChange={handleToggleWrap}
+          label="edge wrapping"
+        />
       </Item>
 
       <Item header="draw & fill" defaultIsOpen={!isMobile}>
@@ -79,10 +93,6 @@ const MainAccordion = ({
           canvasGridLayerRef={canvasGridLayerRef}
           canvasDrawLayerRef={canvasDrawLayerRef}
         />
-      </Item>
-
-      <Item header="options" defaultIsOpen={false}>
-        <OptionsSection />
       </Item>
     </Accordion>
   );

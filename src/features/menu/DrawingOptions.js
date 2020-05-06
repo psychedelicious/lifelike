@@ -13,24 +13,28 @@ import {
   toggleShouldDrawCrosshairs,
 } from 'store/reducers/drawing';
 import { IoMdBrush } from 'react-icons/io';
-import { clearCells, randomizeCells } from 'store/reducers/life';
+import {
+  clearCells,
+  randomizeCells,
+  toggleShouldShowGridlines,
+} from 'store/reducers/life';
 import ConfirmDialogue from './ConfirmDialogue';
 import { FaTrash, FaRandom } from 'react-icons/fa';
 
 const DrawingOptions = () => {
-  const brushFill = useSelector((state) => state.drawing.brushFill);
-  const validBrushFills = useSelector((state) => state.drawing.validBrushFills);
-  const brushRadius = useSelector((state) => state.drawing.brushRadius);
-  const brushShape = useSelector((state) => state.drawing.brushShape);
-  const validBrushShapes = useSelector(
-    (state) => state.drawing.validBrushShapes
-  );
-  const isInvertDraw = useSelector((state) => state.drawing.isInvertDraw);
-  const shouldDrawCrosshairs = useSelector(
-    (state) => state.drawing.shouldDrawCrosshairs
-  );
-  const maxBrushRadius = useSelector((state) => state.drawing.maxBrushRadius);
-  const minBrushRadius = useSelector((state) => state.drawing.minBrushRadius);
+  const { shouldShowGridlines } = useSelector((state) => state.life);
+
+  const {
+    brushFill,
+    validBrushFills,
+    brushRadius,
+    brushShape,
+    validBrushShapes,
+    isInvertDraw,
+    shouldDrawCrosshairs,
+    maxBrushRadius,
+    minBrushRadius,
+  } = useSelector((state) => state.drawing);
 
   const dispatch = useDispatch();
 
@@ -90,6 +94,10 @@ const DrawingOptions = () => {
     },
     [brushRadius, brushShape, dispatch]
   );
+
+  const handleToggleShouldShowGridlines = React.useCallback(() => {
+    dispatch(toggleShouldShowGridlines());
+  }, [dispatch]);
 
   React.useEffect(() => {
     dispatch(setBrush({ brushShape, brushRadius, brushFill }));
@@ -199,6 +207,11 @@ const DrawingOptions = () => {
           isChecked={shouldDrawCrosshairs}
           onChange={handleToggleShouldDrawCrosshairs}
           mr="0.5rem"
+        />
+        <StyledCheckbox
+          isChecked={shouldShowGridlines}
+          onChange={handleToggleShouldShowGridlines}
+          label="show gridlines"
         />
       </Flex>
     </Flex>

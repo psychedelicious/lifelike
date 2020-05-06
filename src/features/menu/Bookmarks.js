@@ -89,7 +89,7 @@ const Bookmarks = () => {
         placement="left"
         onClose={onClose}
         finalFocusRef={btnRef}
-        size="sm"
+        size="xs"
       >
         <DrawerOverlay />
         <DrawerContent bg={bgColor}>

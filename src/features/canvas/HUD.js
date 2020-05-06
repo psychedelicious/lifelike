@@ -3,7 +3,6 @@ import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 
 import { Text, Flex } from '@chakra-ui/core';
-import HUDOptions from 'features/canvas/HUDOptions';
 
 const formatDelay = (speed, msDelay) => {
   let delayString;
@@ -80,18 +79,6 @@ const HUD = () => {
       minH="1.5rem"
       minW="1.5rem"
     >
-      <HUDOptions
-        zIndex="4"
-        position="absolute"
-        right={0}
-        bottom={0}
-        m="0.25rem"
-        p="0"
-        w="1rem"
-        h="1rem"
-        fontSize="1rem"
-      />
-
       {hudDisplay.includes('width') && (
         <NumberDisplay name={'width (cells)'} value={width} />
       )}
