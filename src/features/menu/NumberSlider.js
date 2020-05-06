@@ -10,10 +10,15 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Icon,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from '@chakra-ui/core';
 
 import { useSelector } from 'react-redux';
 import StyledTooltip from './StyledTooltip';
+import { useMediaQuery } from 'react-responsive';
 
 export const NumberSlider = ({
   value,
@@ -31,7 +36,10 @@ export const NumberSlider = ({
     sliderThumbBgColor,
     sliderThumbColor,
     sliderDisabledThumbBgColor,
+    theme,
   } = useSelector((state) => state.theme);
+
+  const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.md });
 
   return (
     <Flex my="1" {...rest}>
@@ -66,7 +74,7 @@ export const NumberSlider = ({
         <StyledTooltip label={tooltip}>
           <NumberInput
             size="sm"
-            maxW="5rem"
+            maxW={isMobile ? '3rem' : '5rem'}
             ml="1.5rem"
             min={min}
             max={max}
@@ -74,7 +82,16 @@ export const NumberSlider = ({
             onChange={onChange}
             type="number"
             isDisabled={isDisabled}
-          />
+            keepWithinRange={false}
+          >
+            <NumberInputField type="number" /> {/* <-- "type" here */}
+            {!isMobile && (
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            )}
+          </NumberInput>
         </StyledTooltip>
       )}
     </Flex>

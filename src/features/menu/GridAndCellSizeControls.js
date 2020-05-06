@@ -216,7 +216,6 @@ const GridAndCellSizeControls = ({
           onChange={handlePxChange}
           isDisabled={isRunning}
           icon={GiResize}
-          showTextInput={false}
         />
       )}
     </>
