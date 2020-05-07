@@ -1,3 +1,5 @@
+import 'wydr';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, useSelector } from 'react-redux';
@@ -8,29 +10,6 @@ import App from 'App';
 import Loading from 'components/Loading';
 
 import { ThemeProvider, ColorModeProvider, CSSReset } from '@chakra-ui/core';
-
-// WHY DID YOU RENDER?
-// Commented even in dev mode because of potential performance impact.
-
-// if (process.env.NODE_ENV === 'development') {
-//   const whyDidYouRender = require('@welldone-software/why-did-you-render');
-//   const ReactRedux = require('react-redux');
-//   whyDidYouRender(React, {
-//     trackAllPureComponents: true,
-//     trackHooks: true,
-//     trackExtraHooks: [
-//       [
-//         ReactRedux,
-//         'useSelector',
-//         'useDispatch',
-//         'useEffect',
-//         'useLayoutEffect',
-//         'useCanvas',
-//         'useAnimationFrame',
-//       ],
-//     ],
-//   });
-// }
 
 let { store, persistor } = getStore();
 
