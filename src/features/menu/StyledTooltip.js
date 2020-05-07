@@ -15,27 +15,21 @@ const StyledTooltip = ({
   const { shouldShowTooltips } = useSelector((state) => state.menu);
   const isMobile = useMediaQuery({ maxWidth: theme.breakpoints.md });
 
-  const bg = {
-    dark: 'blue.200',
-    light: 'blue.500',
-  };
+  const bg = colorMode === 'light' ? 'blue.500' : 'blue.200';
 
-  const color = {
-    dark: 'darkBackground',
-    light: 'lightBackground',
-  };
+  const color = colorMode === 'light' ? 'lightBackground' : 'darkBackground';
 
-  const boxShadow = {
-    dark: `0 0 0.5rem 0rem ${theme.colors.darkBackground}70`,
-    light: `0 0 0.25rem 0rem ${theme.colors.darkBackground}70`,
-  };
+  const boxShadow =
+    colorMode === 'light'
+      ? `0 0 0.25rem 0rem ${theme.colors.darkBackground}70`
+      : `0 0 0.5rem 0rem ${theme.colors.darkBackground}70`;
 
   return !isMobile && shouldShowTooltips && label ? (
     <Tooltip
-      bg={bg[colorMode]}
-      color={color[colorMode]}
+      bg={bg}
+      color={color}
       fontWeight="300"
-      boxShadow={boxShadow[colorMode]}
+      boxShadow={boxShadow}
       zIndex={1500}
       hasArrow={hasArrow}
       placement={placement}
