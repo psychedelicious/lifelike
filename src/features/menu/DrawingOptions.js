@@ -8,24 +8,17 @@ import { NumberSlider } from 'features/menu/NumberSlider';
 import StyledCheckbox from 'features/menu/StyledCheckbox';
 
 import {
-  toggleIsInvertDraw,
   setBrush,
+  toggleIsInvertDraw,
   toggleShouldDrawCrosshairs,
+  toggleShouldShowGridlines,
 } from 'store/reducers/drawing';
 import { IoMdBrush } from 'react-icons/io';
-import {
-  clearCells,
-  randomizeCells,
-  toggleShouldShowGridlines,
-} from 'store/reducers/life';
+import { clearCells, randomizeCells } from 'store/reducers/life';
 import ConfirmDialogue from './ConfirmDialogue';
 import { FaTrash, FaRandom } from 'react-icons/fa';
 
 const DrawingOptions = () => {
-  const shouldShowGridlines = useSelector(
-    (state) => state.life.shouldShowGridlines
-  );
-
   const {
     brushFill,
     validBrushFills,
@@ -36,6 +29,7 @@ const DrawingOptions = () => {
     shouldDrawCrosshairs,
     maxBrushRadius,
     minBrushRadius,
+    shouldShowGridlines,
   } = useSelector((state) => state.drawing);
 
   const dispatch = useDispatch();

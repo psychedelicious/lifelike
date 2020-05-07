@@ -44,16 +44,17 @@ const Lifelike = ({ isMobile, colorMode }) => {
     minHeight,
     minWidth,
     px,
-    shouldShowGridlines,
     width,
     wasBookmarkJustLoaded,
   } = useSelector((state) => state.life, shallowEqual);
 
-  const {
-    aliveCellColor,
-    deadCellColor,
-    gridlineColor,
-  } = useSelector((state) => state.theme);
+  const { aliveCellColor, deadCellColor, gridlineColor } = useSelector(
+    (state) => state.theme
+  );
+
+  const shouldShowGridlines = useSelector(
+    (state) => state.drawing.shouldShowGridlines
+  );
 
   const msDelay = useSelector((state) => state.performance.msDelay);
 
@@ -62,7 +63,6 @@ const Lifelike = ({ isMobile, colorMode }) => {
   const lastFpsUpdate = React.useRef(0);
   const frametimeLog = React.useRef([]);
   const lastFps = React.useRef(0);
-
 
   const canvasBaseLayerRef = React.useRef(null);
   const canvasGridLayerRef = React.useRef(null);

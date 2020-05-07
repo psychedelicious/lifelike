@@ -4,8 +4,9 @@ import { getBrushPoints } from './getBrushPoints';
 const SET_BRUSH = 'SET_BRUSH';
 const TOGGLE_IS_IN_DRAW_MODE = 'TOGGLE_IS_IN_DRAW_MODE';
 const TOGGLE_IS_INVERT_DRAW = 'TOGGLE_IS_INVERT_DRAW';
-const TOGGLE_SHOULD_DRAW_CROSSHAIRS = 'TOGGLE_SHOULD_DRAW_CROSSHAIRS';
 const TOGGLE_IS_IN_TRANSLATE_MODE = 'TOGGLE_IS_IN_TRANSLATE_MODE';
+const TOGGLE_SHOULD_DRAW_CROSSHAIRS = 'TOGGLE_SHOULD_DRAW_CROSSHAIRS';
+const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
 
 const initialState = {
   brushShape: 'circle',
@@ -20,6 +21,7 @@ const initialState = {
   isInTranslateMode: false,
   isInvertDraw: false,
   shouldDrawCrosshairs: false,
+  shouldShowGridlines: false,
 };
 
 export default function drawing(state = initialState, action) {
@@ -58,18 +60,23 @@ export default function drawing(state = initialState, action) {
         isInvertDraw: !state.isInvertDraw,
       };
     }
-    case TOGGLE_SHOULD_DRAW_CROSSHAIRS: {
-      return {
-        ...state,
-        shouldDrawCrosshairs: !state.shouldDrawCrosshairs,
-      };
-    }
     case TOGGLE_IS_IN_TRANSLATE_MODE: {
       return {
         ...state,
         isInTranslateMode: !state.isInTranslateMode,
       };
     }
+    case TOGGLE_SHOULD_DRAW_CROSSHAIRS: {
+      return {
+        ...state,
+        shouldDrawCrosshairs: !state.shouldDrawCrosshairs,
+      };
+    }
+    case TOGGLE_SHOULD_SHOW_GRIDLINES:
+      return {
+        ...state,
+        shouldShowGridlines: !state.shouldShowGridlines,
+      };
     default:
       return state;
   }
@@ -92,4 +99,8 @@ export const toggleIsInvertDraw = () => ({ type: TOGGLE_IS_INVERT_DRAW });
 
 export const toggleShouldDrawCrosshairs = () => ({
   type: TOGGLE_SHOULD_DRAW_CROSSHAIRS,
+});
+
+export const toggleShouldShowGridlines = () => ({
+  type: TOGGLE_SHOULD_SHOW_GRIDLINES,
 });

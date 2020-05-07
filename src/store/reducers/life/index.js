@@ -31,7 +31,6 @@ const TOGGLE_IS_RUNNING = 'TOGGLE_IS_RUNNING';
 const TOGGLE_SHOULD_DRAW_ALL_CELLS = 'TOGGLE_SHOULD_DRAW_ALL_CELLS';
 const TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE =
   'TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE';
-const TOGGLE_SHOULD_SHOW_GRIDLINES = 'TOGGLE_SHOULD_SHOW_GRIDLINES';
 const TOGGLE_SHOULD_WRAP = 'TOGGLE_SHOULD_WRAP';
 const TRANSLATE_CELLS = 'TRANSLATE_CELLS';
 
@@ -63,7 +62,6 @@ const initialState = {
   shouldDrawAllCells: true,
   shouldNextDrawAllCells: false,
   shouldPauseOnStableState: false,
-  shouldShowGridlines: false,
   shouldWrap: true,
   survive: [false, false, true, true, false, false, false, false, false],
   wasBookmarkJustLoaded: false,
@@ -131,11 +129,6 @@ export default function life(state = initialState, action) {
       return {
         ...state,
         shouldWrap: !state.shouldWrap,
-      };
-    case TOGGLE_SHOULD_SHOW_GRIDLINES:
-      return {
-        ...state,
-        shouldShowGridlines: !state.shouldShowGridlines,
       };
     case TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE:
       return {
@@ -364,7 +357,6 @@ export default function life(state = initialState, action) {
       const bookmark = {
         ...omit(state, [
           'bookmarks',
-          'shouldShowGridlines',
           'isRunning',
           'shouldPauseOnStableState',
           'shouldShowHUD',
@@ -421,10 +413,6 @@ export default function life(state = initialState, action) {
 export const toggleIsRunning = () => ({ type: TOGGLE_IS_RUNNING });
 
 export const toggleShouldWrap = () => ({ type: TOGGLE_SHOULD_WRAP });
-
-export const toggleShouldShowGridlines = () => ({
-  type: TOGGLE_SHOULD_SHOW_GRIDLINES,
-});
 
 export const toggleShouldPauseOnStableState = () => ({
   type: TOGGLE_SHOULD_PAUSE_ON_STABLE_STATE,

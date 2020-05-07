@@ -3,11 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Flex } from '@chakra-ui/core';
 
 import {
-  toggleShouldShowGridlines,
   toggleShouldWrap,
   toggleShouldPauseOnStableState,
   toggleShouldDrawAllCells,
 } from 'store/reducers/life';
+
+import { toggleShouldShowGridlines } from 'store/reducers/drawing';
 
 import { toggleShouldShowHUD } from 'store/reducers/hud';
 
@@ -15,8 +16,10 @@ import StyledCheckbox from 'features/menu/StyledCheckbox';
 import { toggleShouldShowTooltips } from 'store/reducers/menu';
 
 const OptionsSection = ({ ...rest }) => {
-  const { shouldShowGridlines, shouldWrap, shouldDrawAllCells } = useSelector(
-    (state) => state.life
+  const { shouldWrap, shouldDrawAllCells } = useSelector((state) => state.life);
+
+  const shouldShowGridlines = useSelector(
+    (state) => state.drawing.shouldShowGridlines
   );
 
   const { shouldShowHUD } = useSelector((state) => state.hud);

@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
   toggleIsRunning,
-  toggleShouldShowGridlines,
   toggleShouldWrap,
   setNeighborhood,
   getNextCells,
@@ -16,6 +15,7 @@ import { incrementSpeed, decrementSpeed } from 'store/reducers/performance';
 import {
   toggleIsInDrawMode,
   toggleIsInTranslateMode,
+  toggleShouldShowGridlines,
 } from 'store/reducers/drawing';
 
 import { useGlobalKeyDown, useWithModifiers } from 'hooks/useWindowEvent';
