@@ -39,11 +39,23 @@ const menuPersistConfig = {
   whitelist: ['shouldShowTooltips'],
 };
 
+const drawingPersistConfig = {
+  key: 'drawing',
+  storage: storage,
+  whitelist: [
+    'brushShape',
+    'brushRadius',
+    'brushFill',
+    'shouldDrawCrosshairs',
+    'shouldShowGridlines',
+  ],
+};
+
 export default combineReducers({
   life: persistReducer(lifePersistConfig, life),
   theme: persistReducer(themePersistConfig, theme),
   hud: persistReducer(hudPersistConfig, hud),
   performance: persistReducer(performancePersistConfig, performance),
   menu: persistReducer(menuPersistConfig, menu),
-  drawing,
+  drawing: persistReducer(drawingPersistConfig, drawing),
 });
