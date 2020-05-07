@@ -32,6 +32,7 @@ import StyledTooltip from './StyledTooltip';
 
 const Bookmarks = () => {
   const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const bookmarks = useSelector(
     (state) => state.life.bookmarks,
@@ -42,6 +43,20 @@ const Bookmarks = () => {
       );
     }
   );
+
+  const { colorMode, headerColor, buttonBackgroundColor } = useSelector(
+    (state) => state.theme
+  );
+  const { lightBackground, darkBackground } = useSelector(
+    (state) => state.theme.theme.colors
+  );
+
+  const btnRef = React.useRef();
+
+  const bgColor = colorMode === 'light' ? lightBackground : darkBackground;
+
+  const handleChangeBookmarkName = ({ index, name }) =>
+    dispatch(renameBookmark({ index, name }));
 
   const getFormattedDate = React.useCallback(() => {
     const d = new Date();
@@ -54,22 +69,6 @@ const Bookmarks = () => {
 
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
   }, []);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const btnRef = React.useRef();
-
-  const { colorMode, headerColor, buttonBackgroundColor } = useSelector(
-    (state) => state.theme
-  );
-  const { lightBackground, darkBackground } = useSelector(
-    (state) => state.theme.theme.colors
-  );
-
-  const bgColor = colorMode === 'light' ? lightBackground : darkBackground;
-
-  const handleChangeBookmarkName = ({ index, name }) =>
-    dispatch(renameBookmark({ index, name }));
 
   return (
     <>
