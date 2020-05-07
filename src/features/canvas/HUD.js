@@ -44,7 +44,7 @@ const HUD = () => {
     shouldWrap,
   } = useSelector((state) => state.life);
 
-  const { hudDisplay, opacity } = useSelector((state) => state.hud);
+  const { hudDisplayItems, opacity } = useSelector((state) => state.hud);
 
   const { msDelay, speed, fps } = useSelector((state) => state.performance);
 
@@ -69,7 +69,7 @@ const HUD = () => {
       gridTemplateRows="auto"
       position="absolute"
       padding="0.5rem"
-      pr={hudDisplay.length ? '2rem' : null}
+      pr={hudDisplayItems.length ? '2rem' : null}
       margin="0.5rem"
       opacity={opacity}
       bg={aliveCellColor}
@@ -79,35 +79,35 @@ const HUD = () => {
       minH="1.5rem"
       minW="1.5rem"
     >
-      {hudDisplay.includes('width') && (
+      {hudDisplayItems.includes('width') && (
         <NumberDisplay name={'width (cells)'} value={width} />
       )}
-      {hudDisplay.includes('height') && (
+      {hudDisplayItems.includes('height') && (
         <NumberDisplay name={'height (cells)'} value={height} />
       )}
-      {hudDisplay.includes('scale') && (
+      {hudDisplayItems.includes('scale') && (
         <NumberDisplay name={'scale (px)'} value={px} />
       )}
-      {hudDisplay.includes('generation') && (
+      {hudDisplayItems.includes('generation') && (
         <NumberDisplay name={'generation'} value={generation} />
       )}
-      {hudDisplay.includes('population') && (
+      {hudDisplayItems.includes('population') && (
         <NumberDisplay name={'population'} value={population} />
       )}
-      {hudDisplay.includes('density') && (
+      {hudDisplayItems.includes('density') && (
         <NumberDisplay name={'density (%)'} value={`${density}`} />
       )}
-      {hudDisplay.includes('delay') && (
+      {hudDisplayItems.includes('delay') && (
         <NumberDisplay name={'delay'} value={formatDelay(speed, msDelay)} />
       )}
-      {hudDisplay.includes('fps') && <NumberDisplay name={'fps'} value={fps} />}
-      {hudDisplay.includes('wrap') && (
+      {hudDisplayItems.includes('fps') && <NumberDisplay name={'fps'} value={fps} />}
+      {hudDisplayItems.includes('wrap') && (
         <NumberDisplay name={'wrap'} value={shouldWrap ? 'yes' : 'no'} />
       )}
-      {hudDisplay.includes('running') && (
+      {hudDisplayItems.includes('running') && (
         <NumberDisplay name={'running'} value={isRunning ? 'yes' : 'no'} />
       )}
-      {hudDisplay.includes('mode') && (
+      {hudDisplayItems.includes('mode') && (
         <NumberDisplay
           name={'mode'}
           value={
