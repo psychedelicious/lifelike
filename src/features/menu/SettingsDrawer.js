@@ -34,7 +34,7 @@ import { toggleShouldShowTooltips } from 'store/reducers/menu';
 import { FaWrench } from 'react-icons/fa';
 import StyledTooltip from 'features/menu/StyledTooltip';
 
-const OptionsDrawer = ({ ...rest }) => {
+const SettingsDrawer = ({ ...rest }) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -91,14 +91,14 @@ const OptionsDrawer = ({ ...rest }) => {
 
   return (
     <>
-      <StyledTooltip label="options">
+      <StyledTooltip label="settings">
         <IconButton
           {...rest}
           style={{ touchAction: 'manipulation' }}
           ref={btnRef}
           icon={FaWrench}
           variant="solid"
-          aria-label="options"
+          aria-label="settings"
           onClick={onOpen}
           variantColor="blue"
         />
@@ -114,7 +114,7 @@ const OptionsDrawer = ({ ...rest }) => {
         <DrawerContent bg={bgColor}>
           <DrawerCloseButton />
           <DrawerHeader fontSize="sm" color={headerColor}>
-            options
+            settings
           </DrawerHeader>
 
           <DrawerBody>
@@ -184,4 +184,4 @@ const OptionsDrawer = ({ ...rest }) => {
   );
 };
 
-export default React.memo(OptionsDrawer);
+export default React.memo(SettingsDrawer);

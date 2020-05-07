@@ -25,7 +25,7 @@ import {
 
 import Bookmarks from './Bookmarks';
 import StyledTooltip from './StyledTooltip';
-import OptionsDrawer from 'features/menu/OptionsDrawer';
+import SettingsDrawer from 'features/menu/SettingsDrawer';
 
 const MainControls = ({
   isMobile,
@@ -114,7 +114,7 @@ const MainControls = ({
 
       <Bookmarks />
 
-      <OptionsDrawer />
+      <SettingsDrawer />
 
       <StyledTooltip
         label={
