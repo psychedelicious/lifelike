@@ -22,7 +22,9 @@ import ConfirmDialogue from './ConfirmDialogue';
 import { FaTrash, FaRandom } from 'react-icons/fa';
 
 const DrawingOptions = () => {
-  const { shouldShowGridlines } = useSelector((state) => state.life);
+  const shouldShowGridlines = useSelector(
+    (state) => state.life.shouldShowGridlines
+  );
 
   const {
     brushFill,

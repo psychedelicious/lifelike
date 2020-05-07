@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { clamp } from 'lodash';
 
 import {
@@ -38,10 +38,32 @@ const OptionsDrawer = ({ ...rest }) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { hudDisplayItems, validHUDDisplayItems, opacity } = useSelector(
-    (state) => state.hud,
-    shallowEqual
+  const {
+    opacity,
+    shouldShowHUD,
+    hudDisplayItems,
+    validHUDDisplayItems,
+  } = useSelector((state) => state.hud);
+
+  const { colorMode, headerColor } = useSelector((state) => state.theme);
+
+  const { lightBackground, darkBackground } = useSelector(
+    (state) => state.theme.theme.colors
   );
+
+  const shouldDrawAllCells = useSelector(
+    (state) => state.life.shouldDrawAllCells
+  );
+
+  const shouldPauseOnStableState = useSelector(
+    (state) => state.life.shouldPauseOnStableState
+  );
+
+  const { shouldShowTooltips } = useSelector((state) => state.menu);
+
+  const btnRef = React.useRef();
+
+  const bgColor = colorMode === 'light' ? lightBackground : darkBackground;
 
   const handleHUDOpacityChange = React.useCallback(
     (val) => {
@@ -50,24 +72,6 @@ const OptionsDrawer = ({ ...rest }) => {
     },
     [dispatch]
   );
-
-  const btnRef = React.useRef();
-
-  const { colorMode, headerColor } = useSelector((state) => state.theme);
-
-  const { lightBackground, darkBackground } = useSelector(
-    (state) => state.theme.theme.colors
-  );
-
-  const bgColor = colorMode === 'light' ? lightBackground : darkBackground;
-
-  const { shouldDrawAllCells, shouldPauseOnStableState } = useSelector(
-    (state) => state.life
-  );
-
-  const { shouldShowHUD } = useSelector((state) => state.hud);
-
-  const { shouldShowTooltips } = useSelector((state) => state.menu);
 
   const handleToggleShouldShowHUD = React.useCallback(() => {
     dispatch(toggleShouldShowHUD());

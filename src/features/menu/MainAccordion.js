@@ -64,7 +64,7 @@ const MainAccordion = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { shouldWrap } = useSelector((state) => state.life);
+  const shouldWrap = useSelector((state) => state.life.shouldWrap);
 
   const handleToggleWrap = React.useCallback(() => {
     dispatch(toggleShouldWrap());
