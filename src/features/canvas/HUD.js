@@ -68,8 +68,8 @@ const HUD = () => {
       gridTemplateColumns="auto auto"
       gridTemplateRows="auto"
       position="absolute"
-      padding="0.5rem"
-      pr={hudDisplayItems.length ? '2rem' : null}
+      py="0.5rem"
+      px="1rem"
       margin="0.5rem"
       opacity={opacity}
       bg={aliveCellColor}
@@ -100,7 +100,9 @@ const HUD = () => {
       {hudDisplayItems.includes('delay') && (
         <NumberDisplay name={'delay'} value={formatDelay(speed, msDelay)} />
       )}
-      {hudDisplayItems.includes('fps') && <NumberDisplay name={'fps'} value={fps} />}
+      {hudDisplayItems.includes('fps') && (
+        <NumberDisplay name={'fps'} value={fps} />
+      )}
       {hudDisplayItems.includes('wrap') && (
         <NumberDisplay name={'wrap'} value={shouldWrap ? 'yes' : 'no'} />
       )}
