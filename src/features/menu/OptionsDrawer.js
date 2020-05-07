@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/core';
 
 import {
-  toggleHUDDisplay,
+  toggleHUDDisplayItems,
   setHUDOpacity,
   toggleShouldShowHUD,
 } from 'store/reducers/hud';
@@ -154,7 +154,7 @@ const OptionsDrawer = ({ ...rest }) => {
                       label={displayItem}
                       onChange={() =>
                         dispatch(
-                          toggleHUDDisplay({ itemToToggle: displayItem })
+                          toggleHUDDisplayItems({ itemToToggle: displayItem })
                         )
                       }
                     />

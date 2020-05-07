@@ -55,7 +55,7 @@ export default function hud(state = initialState, action) {
   }
 }
 
-export const togglehudDisplayItems = ({ itemToToggle }) => ({
+export const toggleHUDDisplayItems = ({ itemToToggle }) => ({
   type: TOGGLE_HUD_DISPLAY,
   itemToToggle,
 });
