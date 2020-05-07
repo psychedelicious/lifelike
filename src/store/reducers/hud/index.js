@@ -3,7 +3,7 @@ const SET_HUD_OPACITY = 'SET_HUD_OPACITY';
 const TOGGLE_SHOULD_SHOW_HUD = 'TOGGLE_SHOULD_SHOW_HUD';
 
 const initialState = {
-  hudDisplay: ['generation', 'fps'],
+  hudDisplayItems: ['generation', 'fps'],
   validHUDDisplayItems: [
     'width',
     'height',
@@ -24,20 +24,20 @@ const initialState = {
 export default function hud(state = initialState, action) {
   switch (action.type) {
     case TOGGLE_HUD_DISPLAY:
-      const { hudDisplay } = state;
+      const { hudDisplayItems } = state;
       const { itemToToggle } = action;
 
-      let newHUDDisplay;
+      let newhudDisplayItems;
 
-      if (hudDisplay.includes(itemToToggle)) {
-        newHUDDisplay = hudDisplay.filter((val) => val !== itemToToggle);
+      if (hudDisplayItems.includes(itemToToggle)) {
+        newhudDisplayItems = hudDisplayItems.filter((val) => val !== itemToToggle);
       } else {
-        newHUDDisplay = [...hudDisplay, itemToToggle];
+        newhudDisplayItems = [...hudDisplayItems, itemToToggle];
       }
 
       return {
         ...state,
-        hudDisplay: newHUDDisplay,
+        hudDisplayItems: newhudDisplayItems,
       };
     case SET_HUD_OPACITY: {
       return {
@@ -55,7 +55,7 @@ export default function hud(state = initialState, action) {
   }
 }
 
-export const toggleHUDDisplay = ({ itemToToggle }) => ({
+export const togglehudDisplayItems = ({ itemToToggle }) => ({
   type: TOGGLE_HUD_DISPLAY,
   itemToToggle,
 });

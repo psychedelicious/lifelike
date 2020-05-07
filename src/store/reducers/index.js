@@ -24,7 +24,7 @@ const themePersistConfig = {
 const hudPersistConfig = {
   key: 'hud',
   storage: storage,
-  whitelist: ['hudDisplay', 'opacity', 'shouldShowHUD'],
+  whitelist: ['hudDisplayItems', 'opacity', 'shouldShowHUD'],
 };
 
 const performancePersistConfig = {
