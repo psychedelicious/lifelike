@@ -103,7 +103,7 @@ NumberSlider.propTypes = {
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
-  icon: PropTypes.func.isRequired,
+  icon: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
   isDisabled: PropTypes.bool,
 };
 
