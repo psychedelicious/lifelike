@@ -8,104 +8,98 @@ The app is built using React with Chakra UI and uses HTML Canvas to render the g
 
 - [Features](#features)
 - [Guide](#guide)
-  - [Main Controls](#main-controls)
+  - [Main controls](#main-controls)
+    - [Translate mode](#translate-mode)
+  - [Draw & Fill](#draw---fill)
   - [Rule & Neighborhood](#rule---neighborhood)
-  - [Drawing](#drawing)
-  - [Bookmarks](#bookmarks)
   - [Grid & Cell Size](#grid---cell-size)
-  - [Options](#options)
+  - [Bookmarks](#bookmarks)
+  - [Settings](#settings)
   - [Image & Video Recording](#image---video-recording)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Tips](#tips)
   - [Some interesting rules](#some-interesting-rules)
 - [Roadmap](#roadmap)
 - [Design Decisions](#design-decisions)
+  - [React, Chakra UI and Canvas](#react--chakra-ui-and-canvas)
+  - [Design](#design)
+    - [State management](#state-management)
+    - [Drawing to canvas](#drawing-to-canvas)
+    - [Reducing re-renders](#reducing-re-renders)
+    - [Other challenges](#other-challenges)
 
 ## Features
 
 - Supports any [totalistic rule](https://www.conwaylife.com/wiki/Totalistic_Life-like_cellular_automaton)
 - [Moore, von Neumann and hexagonal neighborhoods](https://www.conwaylife.com/wiki/Cellular_automaton#Common_dimensions_and_neighborhoods)
 - Basic drawing functionality
-- Edge-wrapping (or not)
-- Play with most options while the automaton is running (except grid and cell size)
+- Edge-wrapping
+- Play with most options while the automaton is running
 - Save automaton state as image or record video of automaton
 - Bookmark automaton states for safe experimentation
-- Save bookmarks between reloads
+- App settings and bookmarks are saved in your browser's storage - be sure to create a bookmark if you want to pick up where you left off
 - Mobile-friendly
 
 ## Guide
 
-### Main Controls
+### Main controls
 
-Just below the header are the main controls for the automaton:
+Use the main row of controls to start, stop, tick, speed up and slow down the automaton, create automaton state bookmarks, change app settings, translate the grid and draw on the grid.
 
-- Start/stop automaton
-- Tick/iterate once
-- Speed up and slow down the automaton (via the delay between iterations):
-  - Minimum speed = delay of 1 second
-  - Maximum speed = no delay => as fast as your computer can go, limited by CPU and browser framerate - usually maxing at 60fps
-  - Chromium browsers and Safari seem to do run noticeably faster than Firefox and manage garbage collection better, reducing stutters.
+#### Translate mode
 
-There is a toggle button for Translate mode:
+Click and drag the grid to translate (shift) it.
 
-- In translate mode, can click and drag the grid totranslate it. You can translate while the automatonis running.
-- When wrapping is enabled, the grid wraps aroundthe edges as you'd expect.
-- **When wrapping is not enabled, the grid iscropped!**
-- Translate mode over-rides drawing mode.
-- Use the arrow keys to move one cell at a time, or hold shift and use arrow keys to move 10 cells at a time.
+If edge wrapping is enabled, the grid wraps as you'd expect. **If it is disabled, anything that goes out of view while translating the grid is cropped!**
 
-And one for Drawing mode (see Drawing section below).
+Use the arrow keys to nudge the grid by one cell, or hold shift and use arrows to move 10 cells at a time.
+
+Translate mode overrides drawing mode.
+
+### Draw & Fill
+
+From the draw & fill menu you can change drawing settings and clear or randomize the entire grid.
+
+While drawing, use the mouse or your finger to draw on the canvas. Hold alt/option to erase. Eraser mode reverses this, so that erasing is the default action and alt/option-mousing draws.
+
+Hold shift while clicking to draw or erase a line. Uses the current brush.
 
 ### Rule & Neighborhood
 
-These controls do what you'd expect. You can change them while the automaton is running.
+These settings change the rules by which the automaton's next state is calculated. You can change these while the automaton is running.
 
-- Set born rule (if a cell is dead and has X neighbors, it will be born)
-- Set survive rule (if a cell is alive and _doesn't have_ X neighbors, it will die)
-- Set neighborhood
+Born rule: if a cell is dead and has X neighbors, it will be born.
 
-### Drawing
+Survive rule: if a cell is alive and _doesn't have_ X neighbors, it will die.
 
-In draw mode, click / drag to draw on the canvas.
+In all other cases, cell state does not change.
 
-Hold Alt or Option while drawing to erase (or draw if in erase mode).
+[Neighborhood](https://www.conwaylife.com/wiki/Cellular_automaton#Common_dimensions_and_neighborhoods): determines which cells are considered as possible neighbors.
 
-Hold Shift while clicking to draw (or erase) a line using the current brush, from the last place you clicked to where you just clicked.
-
-- Change brush shape
-- Change brush fill type
-  - Spray randomizes each time the radius is changed
-- Change brush radius
-- Toggle erase mode
-- Toggle crosshairs (helps with exact drawing)
-
-### Bookmarks
-
-- A bookmark is a snapshot of the current automaton's state, including the rule, neighborhood, cells, grid size, etc.
-- Loading a bookmark will overwrite the current state.
-- Bookmarks can be renamed.
-- Bookmarks are saved between app reloads. They use localstorage, so they will only last for 7 days on Safari, but should last forever (?) on Chrome & FF.
+Edge wrapping means opposite edges of the grid behave as if they are connected, like a torus.
 
 ### Grid & Cell Size
 
 Changes to the grid width and height (measured in cells) occur from the top left corner. So, if you increase the width or height, it will expand toward the right or downwards.
 
-Changes to cell size (measured in pixels) does not change the width and height.
+Changes to cell size (measured in pixels) do not change the width and height.
 
 When you fit the grid to window...
 
 - ...if grid is smaller than the available space, it will expand to fill the available space.
 - ...if grid is larger than the available space, it will be **cropped** to fit, from upper-left corner.
 
-### Options
+### Bookmarks
 
-- Gridlines are included in saved images, but not saved videos
-- Edge wrapping means opposite edges of the grid behave as if they are connected, like a torus.
-- Toggle HUD (info overlay)
-- Toggle pause on stable state
-  - If the current state is identical to the previous, pauses the automaton
-- Draw only changed cells
-  - Alternate algorithm and drawing method. May be faster in some specific situations, worth trying if the app is running slowly.
+Add, rename, delete, and load bookmarks. Loading a bookmark will overwrite the current state.
+
+No hard limit on bookmark count. Everything that affects the evolution of the CA is included in a bookmark (cell state, width, height, rule, etc), but most other things are not included in the bookmark (like if the HUD is enabled or not).
+
+### Settings
+
+Pause on stable state: If no cells changed in the last generation, stop the CA.
+
+Draw only changed cells: Alternate algorithm and drawing method. Is faster in when there is a particular ratio of cells changing per generation to grid size. This depends on your machine. Worth trying if the app is running slow.
 
 ### Image & Video Recording
 
