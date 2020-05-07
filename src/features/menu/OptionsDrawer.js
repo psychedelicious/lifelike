@@ -38,7 +38,7 @@ const OptionsDrawer = ({ ...rest }) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { hudDisplay, validHUDDisplayItems, opacity } = useSelector(
+  const { hudDisplayItems, validHUDDisplayItems, opacity } = useSelector(
     (state) => state.hud,
     shallowEqual
   );
@@ -150,7 +150,7 @@ const OptionsDrawer = ({ ...rest }) => {
                 {validHUDDisplayItems.map((displayItem) => (
                   <ListItem key={displayItem}>
                     <StyledCheckbox
-                      isChecked={hudDisplay.includes(displayItem)}
+                      isChecked={hudDisplayItems.includes(displayItem)}
                       label={displayItem}
                       onChange={() =>
                         dispatch(
