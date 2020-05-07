@@ -1,4 +1,4 @@
-import 'wydr';
+// import 'wydr';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -28,7 +28,7 @@ const CSSResetConfig = (theme) => ({
   },
 });
 
-const WrappedApp = () => {
+const WrappedApp = React.memo(() => {
   const { theme } = useSelector((state) => state.theme);
 
   return (
@@ -39,7 +39,7 @@ const WrappedApp = () => {
       </ColorModeProvider>
     </ThemeProvider>
   );
-};
+});
 
 ReactDOM.render(
   <Provider store={store}>
