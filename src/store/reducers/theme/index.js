@@ -35,6 +35,36 @@ export default function theme(state = initialState, action) {
         shouldSwapCellColors = state.shouldSwapCellColors,
       } = action;
 
+      const primaryColorMap = {
+        plum: 'green',
+        gray: 'green',
+        offgray: 'green',
+        red: 'green',
+        orange: 'green',
+        yellow: 'green',
+        green: 'orange',
+        teal: 'orange',
+        blue: 'green',
+        cyan: 'orange',
+        purple: 'green',
+        pink: 'green',
+      };
+
+      const secondaryColorMap = {
+        plum: 'red',
+        gray: 'red',
+        offgray: 'red',
+        red: 'purple',
+        orange: 'purple',
+        yellow: 'red',
+        green: 'purple',
+        teal: 'purple',
+        blue: 'red',
+        cyan: 'purple',
+        purple: 'red',
+        pink: 'purple',
+      };
+
       let aliveCellColor,
         deadCellColor,
         gridlineColor,
@@ -101,6 +131,8 @@ export default function theme(state = initialState, action) {
           colors: {
             ...lifelikeTheme.colors,
             blue: lifelikeTheme.colors[themeColor],
+            primary: lifelikeTheme.colors[primaryColorMap[themeColor]],
+            secondary: lifelikeTheme.colors[secondaryColorMap[themeColor]],
           },
         },
       };
