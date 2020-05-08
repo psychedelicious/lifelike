@@ -127,7 +127,7 @@ const MainControls = ({
           variant={isInTranslateMode ? 'outline' : 'link'}
           aria-label="enter/exit translate mode"
           onClick={handleToggleIsInTranslateMode}
-          variantColor="blue"
+          variantColor={isInTranslateMode ? 'primary' : 'blue'}
         />
       </StyledTooltip>
 
@@ -140,7 +140,7 @@ const MainControls = ({
           variant={isInDrawMode ? 'outline' : 'link'}
           aria-label="enter/exit˝ drawing mode"
           onClick={handleToggleIsInDrawMode}
-          variantColor="blue"
+          variantColor={isInDrawMode ? 'primary' : 'blue'}
         />
       </StyledTooltip>
     </Flex>
