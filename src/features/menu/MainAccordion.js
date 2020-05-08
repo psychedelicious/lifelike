@@ -76,6 +76,7 @@ const MainAccordion = ({
         <RuleControls />
         <NeighborhoodControls mt="0.5rem" direction="row" />
         <StyledCheckbox
+          mt="0.25rem"
           isChecked={shouldWrap}
           onChange={handleToggleWrap}
           label="edge wrapping"
