@@ -1944,9 +1944,9 @@
     "@xtuc/long" "4.2.2"
 
 "@welldone-software/why-did-you-render@^4.1.0-alpha.1":
-  version "4.1.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@welldone-software/why-did-you-render/-/why-did-you-render-4.1.0-alpha.1.tgz#2238d9f318454c5cb568106e1a8b7c2693275b95"
-  integrity sha512-BE+EIzfpNTmFMEPeY09qZNeVXtLSobUdnh2A5ceYbdN3YKTkK//bMgxiuvAGc866UWY6R66DOY2rgadntcpCHg==
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@welldone-software/why-did-you-render/-/why-did-you-render-4.2.0.tgz#061ecb9c67278802ded21ae68a204a87a84d10f4"
+  integrity sha512-vTy5wmcSvaYSellZX6mZeJHgpntKS/9ZBUxvbswoa5NMoL62F3I8di6CfojFUx42N4n0NapCARJhcMAvupI4IQ==
   dependencies:
     lodash "^4"
 
@@ -8901,9 +8901,9 @@ react-focus-lock@^2.2.1:
     use-sidecar "^1.0.1"
 
 react-icons@^3.9.0:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-3.9.0.tgz#89a00f20a0e02e6bfd899977eaf46eb4624239d5"
-  integrity sha512-gKbYKR+4QsD3PmIHLAM9TDDpnaTsr3XZeK1NTAb6WQQ+gxEdJ0xuCgLq0pxXdS7Utg2AIpcVhM1ut/jlDhcyNg==
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-3.10.0.tgz#6c217a2dde2e8fa8d293210023914b123f317297"
+  integrity sha512-WsQ5n1JToG9VixWilSo1bHv842Cj5aZqTGiS3Ud47myF6aK7S/IUY2+dHcBdmkQcCFRuHsJ9OMUI0kTDfjyZXQ==
   dependencies:
     camelcase "^5.0.0"
 
